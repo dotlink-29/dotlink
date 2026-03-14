@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>点桥网页版</title>
     <style>
-        /* 重置和基础样式 */
+        /* ========== 原有完整样式 ========== */
         * {
             margin: 0;
             padding: 0;
@@ -21,15 +21,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* 改为flex-start，让内容可以滚动 */
+            justify-content: flex-start;
             color: #4A3429;
             overflow-x: hidden;
-            padding: 10px;
+            padding: 10px 10px 50px; /* 底部留出固定版权空间 */
             position: relative;
-            overflow-y: auto; /* 允许整个页面滚动 */
+            overflow-y: auto;
         }
         
-        /* 初始选择界面 - 改回白色半透明 */
         .start-screen {
             background: rgba(255, 255, 255, 0.734);
             border-radius: 20px;
@@ -39,17 +38,16 @@
             max-width: 500px;
             text-align: center;
             display: block;
-            margin: 20px auto; /* 添加边距 */
+            margin: 20px auto;
         }
         
         .game-screen {
             display: none;
             width: 100%;
             max-width: 1000px;
-            margin: 20px auto; /* 添加边距，允许内容向下扩展 */
+            margin: 20px auto;
         }
         
-        /* 标题样式 */
         .header {
             text-align: center;
             margin-bottom: 15px;
@@ -69,15 +67,13 @@
             margin-bottom: 20px;
         }
         
-        /* 退出按钮样式 */
-        .exit-btn {
+        /* 通用顶部圆形按钮 */
+        .exit-btn, .return-phase1-btn, .import-btn, .export-btn {
             position: absolute;
             top: 20px;
-            left: 20px;
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: white;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -87,51 +83,44 @@
             justify-content: center;
             z-index: 100;
         }
-        
-        /* 返回第一阶段按钮 */
-        .return-phase1-btn {
-            position: absolute;
-            top: 20px;
-            left: 80px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #8B5A2B;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            font-size: 28px;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .exit-btn:hover, .return-phase1-btn:hover {
+        .exit-btn { left: 20px; background: white; }
+        .return-phase1-btn { left: 80px; background: #8B5A2B; color: white; font-size: 28px; font-weight: 700; }
+        .import-btn { right: 80px; left: auto; background: #B0E57C; }
+        .export-btn { right: 20px; left: auto; background: #FFB347; }
+
+        .exit-btn:hover, .return-phase1-btn:hover, .import-btn:hover, .export-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
-        
-        .exit-btn:active, .return-phase1-btn:active {
+        .exit-btn:active, .return-phase1-btn:active, .import-btn:active, .export-btn:active {
             transform: scale(0.95);
         }
-        
-        .exit-btn svg, .return-phase1-btn svg {
+        .exit-btn svg, .return-phase1-btn svg, .import-btn svg, .export-btn svg {
             width: 24px;
             height: 24px;
         }
-        
-        /* 关卡选择样式 - 改为纯色 */
+        .import-btn svg path, .export-btn svg path { stroke: black; stroke-width: 2; fill: none; }
+        .export-btn svg path.arrow-up { stroke: black; }
+
+        @media (max-width: 768px) {
+            .exit-btn { top: 10px; left: 10px; width: 40px; height: 40px; }
+            .return-phase1-btn { top: 10px; left: 60px; width: 40px; height: 40px; font-size: 24px; }
+            .import-btn { top: 10px; right: 60px; left: auto; width: 40px; height: 40px; }
+            .export-btn { top: 10px; right: 10px; left: auto; width: 40px; height: 40px; }
+            .exit-btn svg, .return-phase1-btn svg, .import-btn svg, .export-btn svg { width: 20px; height: 20px; }
+        }
+        @media (max-width: 480px) {
+            .import-btn { right: 60px; }
+            .export-btn { right: 10px; }
+        }
+
+        /* 原有其他样式 */
         .size-selection {
             display: flex;
             flex-direction: column;
             gap: 15px;
             margin: 25px 0;
         }
-        
         .size-btn {
             border: none;
             padding: 22px 20px;
@@ -149,45 +138,14 @@
             position: relative;
             min-height: 120px;
         }
+        .size-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+        .size-btn:active { transform: translateY(-2px); }
+        .size-symbol { font-size: 36px; margin-bottom: 8px; font-weight: 800; z-index: 1; }
+        .size-desc { font-size: 16px; font-weight: 600; z-index: 1; }
+        .size-s { background-color: #FFA500; }
+        .size-m { background-color: #C0C0C0; }
+        .size-l { background-color: #FF3333; }
         
-        .size-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .size-btn:active {
-            transform: translateY(-2px);
-        }
-        
-        .size-symbol {
-            font-size: 36px;
-            margin-bottom: 8px;
-            font-weight: 800;
-            z-index: 1;
-        }
-        
-        .size-desc {
-            font-size: 16px;
-            font-weight: 600;
-            z-index: 1;
-        }
-        
-        .size-s {
-            background-color: #FFA500; /* 改为纯色 */
-            color: black;
-        }
-        
-        .size-m {
-            background-color: #C0C0C0; /* 改为纯色 */
-            color: black;
-        }
-        
-        .size-l {
-            background-color: #FF3333; /* 改为纯色 */
-            color: black;
-        }
-        
-        /* 游戏主容器 - 改回白色半透明 */
         .game-container {
             background: rgba(255, 255, 255, 0.734);
             border-radius: 20px;
@@ -199,16 +157,12 @@
             align-items: center;
             position: relative;
         }
-        
-        /* 游戏内容布局 */
         .game-content {
             display: flex;
             width: 100%;
             gap: 20px;
-            min-height: 500px; /* 确保最小高度 */
+            min-height: 500px;
         }
-        
-        /* 左侧工具面板 */
         .left-toolbar {
             width: 80px;
             display: flex;
@@ -217,8 +171,6 @@
             gap: 15px;
             padding-top: 50px;
         }
-        
-        /* 右侧工具面板 */
         .right-toolbar {
             width: 80px;
             display: flex;
@@ -227,7 +179,6 @@
             gap: 15px;
             padding-top: 50px;
         }
-        
         .tool-section {
             display: flex;
             flex-direction: column;
@@ -235,15 +186,12 @@
             gap: 15px;
             width: 100%;
         }
-        
         .tool-divider {
             width: 60px;
             height: 2px;
             background: #D2B48C;
             margin: 10px 0;
         }
-        
-        /* 工具按钮样式 - 改为纯色 */
         .tool-btn {
             width: 60px;
             height: 60px;
@@ -257,470 +205,220 @@
             justify-content: center;
             position: relative;
         }
-        
-        .tool-btn:hover {
-            transform: scale(1.1);
-        }
-        
-        .tool-btn.active {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-        }
-        
-        .tool-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        /* 特殊烟花按钮样式 */
-        .special-firework-btn {
-            background-color: #FF3333 !important; /* 红色背景 */
-            animation: firework-pulse 2s infinite;
-        }
-        
-        @keyframes firework-pulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
-            50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 51, 51, 0); }
-        }
-        
-        /* 大小选择按钮 - 改为纯色 */
-        .size-tool-btn {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-            background-color: var(--color); /* 改为纯色 */
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .size-tool-btn.active {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-        }
-        
-        /* 第一阶段工具按钮 - 改为纯色 */
-        .tool-point {
-            background-color: #777777; /* 改为纯色 */
-        }
-        
-        .tool-wall {
-            background-color: #5A9BD4; /* 改为纯色 */
-        }
-        
-        .tool-wall-line {
-            background-color: #A3D8F4; /* 改为纯色 */
-        }
-        
-        /* 第二阶段工具按钮 - 改为纯色 */
-        .tool-line {
-            background-color: #777777; /* 改为纯色 */
-        }
-        
-        .tool-annotation {
-            background-color: #4CAF50; /* 改为纯色 */
-        }
-        
-        /* 标注按钮 - 改为纯色 */
-        .tool-annotation-type {
-            background-color: #FFFFFF; /* 改为纯色 */
-            border: 2px solid #D2B48C;
-        }
-        
-        .tool-annotation-type.active {
-            background-color: #4CAF50; /* 改为纯色 */
-            border-color: #2E8B57;
-        }
-        
-        .tool-annotation-type.active svg {
-            filter: brightness(0) invert(1); /* 将图标变为白色 */
-        }
-        
-        /* 确保标注按钮的SVG图标在未激活时是黑色的 */
-        .tool-annotation-type svg {
-            color: #000000;
-            fill: #000000;
-            stroke: #000000;
-        }
-        
-        /* 主游戏区域 */
-        .main-game-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* 控制按钮区域 - 改为纯色 */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-            justify-content: center;
-            width: 100%;
-        }
-        
-        .control-btn {
-            background-color: #A0542D; /* 改为纯色 */
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(139, 90, 43, 0.3);
-            flex: 1;
-            min-width: 120px;
-            text-align: center;
-        }
-        
-        .control-btn:hover, .control-btn.active {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(139, 90, 43, 0.4);
-        }
-        
-        .control-btn:active {
-            transform: translateY(0);
-        }
-        
-        .control-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .phase-btn {
-            background-color: #C19A6B; /* 改为纯色 */
-            color: #4A3429;
-        }
-        
-        .clear-btn {
-            background-color: #B8860B; /* 改为纯色 */
-        }
-        
-        .check-btn {
-            background-color: #7AA874; /* 改为纯色 */
-        }
-        
-        .start-btn {
-            background-color: #2E7D32; /* 改为纯色 */
-        }
-        
-        .pause-btn {
-            background-color: #C19A6B; /* 与出完题按钮相同颜色 */
-            color: #4A3429;
-        }
-        
-        /* 游戏状态显示 - 改为纯色 */
-        .game-phase {
-            display: inline-block;
-            background-color: #A0542D; /* 改为纯色 */
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        
-        /* 画布容器 - 修复：移除overflow:auto，允许整个页面滚动 */
-        .grid-container {
-            width: 100%;
-            margin-bottom: 15px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            /* 移除 overflow: auto; 和 max-width: 100%; */
-        }
-        
-        #gameCanvas {
-            display: block;
-            background: #F5E6D3; /* 改回原来的棋盘颜色 */
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            touch-action: none;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            max-width: 100%; /* 确保画布不会超出容器 */
-        }
-        
-        /* 暂停提示蒙版样式 */
-        .pause-overlay {
-            position: absolute;
+        .tool-btn:hover { transform: scale(1.1); }
+        .tool-btn.active { transform: scale(1.1); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); }
+        .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .special-firework-btn { background-color: #FF3333 !important; animation: firework-pulse 2s infinite; }
+        @keyframes firework-pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,51,51,0.7);} 50%{transform:scale(1.1);box-shadow:0 0 0 10px rgba(255,51,51,0);} }
+        .size-tool-btn { font-size:24px; font-weight:700; color:white; background-color:var(--color); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+        .size-tool-btn.active { transform:scale(1.1); box-shadow:0 6px 15px rgba(0,0,0,0.25); }
+        .tool-point { background-color:#777777; }
+        .tool-wall { background-color:#5A9BD4; }
+        .tool-wall-line { background-color:#A3D8F4; }
+        .tool-line { background-color:#777777; }
+        .tool-annotation { background-color:#4CAF50; }
+        .tool-annotation-type { background-color:#FFFFFF; border:2px solid #D2B48C; }
+        .tool-annotation-type.active { background-color:#4CAF50; border-color:#2E8B57; }
+        .tool-annotation-type.active svg { filter: brightness(0) invert(1); }
+        .tool-annotation-type svg { color:#000000; fill:#000000; stroke:#000000; }
+        .main-game-area { flex:1; display:flex; flex-direction:column; }
+        .controls { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; justify-content:center; width:100%; }
+        .control-btn { background-color:#A0542D; color:white; border:none; padding:12px 15px; border-radius:10px; font-size:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; box-shadow:0 4px 10px rgba(139,90,43,0.3); flex:1; min-width:120px; text-align:center; }
+        .control-btn:hover, .control-btn.active { transform:translateY(-2px); box-shadow:0 6px 15px rgba(139,90,43,0.4); }
+        .control-btn:active { transform:translateY(0); }
+        .control-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .phase-btn { background-color:#C19A6B; color:#4A3429; }
+        .clear-btn { background-color:#B8860B; }
+        .check-btn { background-color:#2E7D32; } /* 改为与开始答题相同绿色 */
+        .start-btn { background-color:#2E7D32; }
+        .pause-btn { background-color:#C19A6B; color:#4A3429; }
+        .game-phase { display:inline-block; background-color:#A0542D; color:white; padding:8px 20px; border-radius:20px; font-size:16px; font-weight:600; margin-bottom:10px; }
+        .grid-container { width:100%; margin-bottom:15px; position:relative; display:flex; justify-content:center; }
+        #gameCanvas { display:block; background:#F5E6D3; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.08); touch-action: auto; /* 允许滚动 */ image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; max-width:100%; }
+        .pause-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.95); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; font-size:24px; font-weight:700; color:#A0542D; text-align:center; padding:20px; display:none; }
+        .pause-text { font-size:32px; margin-bottom:20px; color:#8B5A2B; }
+        .pause-warning { font-size:28px; color:#FF3333; }
+        .timer, .point-counter { font-size:18px; font-weight:700; color:#2E7D32; background:white; padding:10px 20px; border-radius:10px; margin-bottom:15px; text-align:center; display:none; border:2px solid #4CAF50; font-family:'Courier New', monospace; }
+        .point-counter { color:#A0542D; border:2px solid #A0542D; }
+        .special-btn-container { margin-bottom:20px; display:flex; justify-content:center; }
+        .special-btn { width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; transition:all 0.2s ease; box-shadow:0 4px 10px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+        .special-btn:hover { transform:scale(1.1); }
+        .special-btn:active { transform:scale(0.95); }
+        .special-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+        .start-answer-btn { background-color:#2E7D32; }
+        .check-answer-btn { background-color:#2E7D32; } /* 统一绿色 */
+        .message-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; z-index:10001; display:none; max-width:350px; width:90%; } /* 提高层级 */
+        .message-title { font-size:24px; color:#4A3429; margin-bottom:15px; font-weight:700; }
+        .message-content { font-size:16px; color:#8B5A2B; margin-bottom:25px; line-height:1.5; }
+        .message-buttons { display:flex; gap:15px; justify-content:center; }
+        .message-btn { background-color:#A0542D; color:white; border:none; padding:12px 25px; border-radius:50px; font-size:16px; cursor:pointer; font-weight:600; min-width:100px; }
+        .message-btn.cancel { background-color:#C19A6B; color:#4A3429; }
+        .message-btn.confirm { background-color:#2E7D32; }
+        .overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000; display:none; }
+        .success-message { font-size:18px; color:#2E7D32; font-weight:700; margin-top:10px; }
+        .cobalt-coefficient { color:#1E3A5F; font-size:16px; font-weight:700; margin-top:8px; }
+        .secret-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.98); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+        .secret-container { background:white; padding:40px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); max-width:500px; width:90%; text-align:center; }
+        .secret-title { font-size:28px; color:#4A3429; margin-bottom:20px; font-weight:700; }
+        .secret-input { width:100%; padding:15px; font-size:18px; border:2px solid #A0542D; border-radius:10px; margin-bottom:20px; text-align:center; font-family:'Courier New', monospace; }
+        .secret-btn { background-color:#A0542D; color:white; border:none; padding:12px 30px; border-radius:10px; font-size:18px; cursor:pointer; font-weight:600; margin-top:10px; }
+        .secret-btn:hover { background-color:#8B4513; }
+        .congrats-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:#EB4E3C; z-index:2001; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; color:#FFD734; text-align:center; }
+        .congrats-container { max-width:800px; width:90%; padding:40px; }
+        .congrats-title { font-size:36px; margin-bottom:30px; font-weight:700; color:#FFD734; }
+        .congrats-content { font-size:22px; line-height:1.6; margin-bottom:30px; }
+        .congrats-footer { font-size:18px; text-align:right; margin-top:40px; font-style:italic; }
+        .congrats-screen2 {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            display: flex;
+            z-index: 2002;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 10;
-            font-size: 24px;
-            font-weight: 700;
-            color: #A0542D;
-            text-align: center;
             padding: 20px;
-            display: none;
-        }
-        
-        .pause-text {
-            font-size: 32px;
-            margin-bottom: 20px;
-            color: #8B5A2B;
-        }
-        
-        .pause-warning {
-            font-size: 28px;
-            color: #FF3333;
-        }
-        
-        /* 信息面板 */
-        .info-panel {
-            width: 100%;
-            background: #F5F0E9;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .info-section {
-            margin-bottom: 20px;
-        }
-        
-        h2 {
             color: #4A3429;
-            font-size: 18px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #D2B48C;
-        }
-        
-        .status {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #8B5A2B;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .status-line {
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .status-label {
-            font-weight: 600;
-            color: #4A3429;
-        }
-        
-        .status-value {
-            font-weight: 700;
-            color: #8B5A2B;
-        }
-        
-        /* 计时器和点数计数器 */
-        .timer, .point-counter {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2E7D32;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
             text-align: center;
-            display: none;
-            border: 2px solid #4CAF50;
-            font-family: 'Courier New', monospace;
         }
-        
-        .point-counter {
-            color: #A0542D;
-            border: 2px solid #A0542D;
+        .congrats-container2 {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            max-width: 700px;
+            width: 90%;
+            padding: 40px 30px;
+            box-shadow: 0 15px 40px rgba(74, 52, 41, 0.2);
         }
-        
-        /* 第二阶段特殊按钮（圆形） */
-        .special-btn-container {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .special-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .congrats-title2 {
+            font-size: 40px;
             margin-bottom: 10px;
+            font-weight: 800;
         }
-        
-        .special-btn:hover {
-            transform: scale(1.1);
+        .congrats-subtitle2 {
+            font-size: 28px;
+            color: #8B5A2B;
+            margin-bottom: 30px;
+            font-weight: 600;
         }
-        
-        .special-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .special-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        .start-answer-btn {
-            background-color: #2E7D32; /* 开始答题按钮颜色 */
-        }
-        
-        .check-answer-btn {
-            background-color: #7AA874; /* 检查答案按钮颜色 */
-        }
-        
-        /* 消息弹窗 */
-        .message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
+        .congrats-body2 {
+            font-size: 24px;
+            line-height: 1.5;
+            background: #F5F0E9;
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        .days-number {
+            font-weight: 800;
+            color: #2E7D32;
+            font-size: 32px;
+        }
+        /* 统一固定版权信息 */
+        .fixed-copyright {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             text-align: center;
-            z-index: 1000;
+            font-size: 12px;
+            color: #5C4033;
+            padding: 8px;
+            background: rgba(139, 90, 43, 0.1);
+            backdrop-filter: blur(2px);
+            z-index: 9999;
+            border-top: 1px solid rgba(74, 52, 41, 0.2);
+        }
+        /* 移除原来分散的copyright */
+        .start-screen .copyright, .game-screen .copyright, .secret-screen .copyright, .congrats-screen .copyright, .congrats-screen2 .copyright {
             display: none;
-            max-width: 350px;
-            width: 90%;
         }
-        
-        .message-title {
-            font-size: 24px;
-            color: #4A3429;
-            margin-bottom: 15px;
-            font-weight: 700;
+
+        @media (max-width:768px) {
+            .game-content { flex-direction:column; }
+            .left-toolbar, .right-toolbar { flex-direction:row; width:100%; padding-top:10px; justify-content:center; gap:10px; }
+            .tool-section { flex-direction:row; gap:10px; }
+            .tool-divider { width:2px; height:60px; }
+            .tool-btn { width:50px; height:50px; }
+            .size-tool-btn { width:50px; height:50px; font-size:20px; }
+            .game-container { padding:15px; }
+            .control-btn { min-width:calc(50% - 5px); padding:10px 15px; font-size:14px; }
+            h1 { font-size:24px; }
+            .special-btn { width:50px; height:50px; }
+            .secret-container { padding:20px; }
+            .secret-title { font-size:24px; }
+            .secret-input { font-size:16px; padding:12px; }
+            .congrats-title { font-size:28px; }
+            .congrats-content { font-size:18px; }
+            .congrats-title2 { font-size:32px; }
+            .congrats-subtitle2 { font-size:24px; }
+            .congrats-body2 { font-size:20px; padding:20px; }
+            .days-number { font-size:26px; }
         }
-        
-        .message-content {
-            font-size: 16px;
-            color: #8B5A2B;
-            margin-bottom: 25px;
-            line-height: 1.5;
+        @media (max-width:480px) {
+            .control-btn { min-width:100%; }
+            .size-btn { padding:18px 15px; font-size:20px; }
+            .size-symbol { font-size:32px; }
         }
-        
-        .message-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
+        @media (-webkit-min-device-pixel-ratio:2),(min-resolution:192dpi) {
+            .tool-btn { background-size:28px 28px; }
         }
-        
-        .message-btn {
-            background-color: #A0542D; /* 改为纯色 */
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: 600;
-            min-width: 100px;
+        @media (min-width:769px) {
+            body { justify-content:flex-start; }
+            .game-content { min-height:600px; }
         }
-        
-        .message-btn.cancel {
-            background-color: #C19A6B; /* 改为纯色 */
-            color: #4A3429;
-        }
-        
-        .message-btn.confirm {
-            background-color: #2E7D32; /* 改为纯色 */
-        }
-        
-        .overlay {
+
+        /* 导入模态框 */
+        .import-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            z-index: 10000;
             display: none;
-        }
-        
-        .success-message {
-            font-size: 18px;
-            color: #2E7D32;
-            font-weight: 700;
-            margin-top: 10px;
-        }
-        
-        .cobalt-coefficient {
-            color: #1E3A5F; /* 墨蓝色 */
-            font-size: 16px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-        
-        /* 密钥输入界面 */
-        .secret-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.98);
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        
-        .secret-container {
+        .import-container {
             background: white;
-            padding: 40px;
+            padding: 30px;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 90%;
+            max-width: 400px;
+            width: 100%;
             text-align: center;
         }
-        
-        .secret-title {
-            font-size: 28px;
+        .import-title {
+            font-size: 24px;
             color: #4A3429;
             margin-bottom: 20px;
             font-weight: 700;
         }
-        
-        .secret-input {
+        .import-input {
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
+            padding: 12px 15px;
+            font-size: 16px;
             border: 2px solid #A0542D;
             border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
             font-family: 'Courier New', monospace;
+            outline: none;
         }
-        
-        .secret-btn {
+        .import-input:focus {
+            border-color: #8B5A2B;
+        }
+        .import-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .import-btn-confirm, .import-btn-cancel {
             background-color: #A0542D;
             color: white;
             border: none;
@@ -729,205 +427,64 @@
             font-size: 18px;
             cursor: pointer;
             font-weight: 600;
-            margin-top: 10px;
+            min-width: 120px;
+            transition: background 0.2s;
         }
-        
-        .secret-btn:hover {
-            background-color: #8B4513;
+        .import-btn-confirm:hover { background-color: #8B4513; }
+        .import-btn-cancel {
+            background-color: #C19A6B;
+            color: #4A3429;
         }
-        
-        /* 祝贺界面 */
-        .congrats-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #EB4E3C; /* 红色背景 */
-            z-index: 2001;
-            display: none;
-            flex-direction: column;
+        .import-btn-cancel:hover { background-color: #B0885C; }
+        .paste-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            border: none;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            color: #FFD734; /* 黄色字体 */
-            text-align: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background 0.2s;
         }
-        
-        .congrats-container {
-            max-width: 800px;
-            width: 90%;
-            padding: 40px;
+        .paste-btn:hover { transform: scale(1.05); background-color: #3e9c45; }
+        .paste-btn:active { transform: scale(0.95); }
+        .paste-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
         }
-        
-        .congrats-title {
-            font-size: 36px;
-            margin-bottom: 30px;
-            font-weight: 700;
-            color: #FFD734;
+        .import-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
         }
-        
-        .congrats-content {
-            font-size: 22px;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .import-input-row .import-input {
+            margin-bottom: 0;
+            flex: 1;
         }
-        
-        .congrats-footer {
-            font-size: 18px;
-            text-align: right;
-            margin-top: 40px;
-            font-style: italic;
-        }
-        
-        /* 底部版权信息 */
-        .copyright {
-            position: relative; /* 改为相对定位 */
-            text-align: center;
-            font-size: 12px;
-            color: #5C4033;
-            padding: 5px;
-            background: rgba(139, 90, 43, 0.1);
-            z-index: 100;
-            width: 100%;
-            margin-top: 20px;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .game-content {
-                flex-direction: column;
-            }
-            
-            .left-toolbar, .right-toolbar {
-                flex-direction: row;
-                width: 100%;
-                padding-top: 10px;
-                justify-content: center;
-                gap: 10px;
-            }
-            
-            .tool-section {
-                flex-direction: row;
-                gap: 10px;
-            }
-            
-            .tool-divider {
-                width: 2px;
-                height: 60px;
-            }
-            
-            .tool-btn {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .size-tool-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-            
-            .game-container {
-                padding: 15px;
-            }
-            
-            .control-btn {
-                min-width: calc(50% - 5px);
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            .exit-btn {
-                top: 10px;
-                left: 10px;
-                width: 40px;
-                height: 40px;
-            }
-            
-            .return-phase1-btn {
-                top: 10px;
-                left: 60px;
-                width: 40px;
-                height: 40px;
-                font-size: 24px;
-            }
-            
-            .exit-btn svg, .return-phase1-btn svg {
-                width: 20px;
-                height: 20px;
-            }
-            
-            .special-btn {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .secret-container {
-                padding: 20px;
-            }
-            
-            .secret-title {
-                font-size: 24px;
-            }
-            
-            .secret-input {
-                font-size: 16px;
-                padding: 12px;
-            }
-            
-            .congrats-title {
-                font-size: 28px;
-            }
-            
-            .congrats-content {
-                font-size: 18px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .control-btn {
-                min-width: 100%;
-            }
-            
-            .size-btn {
-                padding: 18px 15px;
-                font-size: 20px;
-            }
-            
-            .size-symbol {
-                font-size: 32px;
-            }
-            
-            .congrats-title {
-                font-size: 24px;
-            }
-            
-            .congrats-content {
-                font-size: 16px;
-            }
-        }
-        
-        /* 高DPI设备优化 */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .tool-btn {
-                background-size: 28px 28px;
-            }
-        }
-        
-        /* 桌面端特定样式 - 确保棋盘完全显示 */
-        @media (min-width: 769px) {
-            body {
-                justify-content: flex-start; /* 顶部对齐 */
-            }
-            
-            .game-content {
-                min-height: 600px; /* 增加最小高度 */
-            }
+
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2E7D32;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 10002;
+            display: none;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -938,42 +495,31 @@
             <h1>点桥网页版</h1>
             <p class="subtitle">选择关卡大小开始游戏</p>
         </div>
-        
         <div class="size-selection">
-            <button id="sizeS" class="size-btn size-s">
-                <div class="size-symbol">S</div>
-                <div class="size-desc">小关卡</div>
-                <div style="font-size: 14px; margin-top: 5px;">宽20 × 高30</div>
-            </button>
-            
-            <button id="sizeM" class="size-btn size-m">
-                <div class="size-symbol">M</div>
-                <div class="size-desc">中等关卡</div>
-                <div style="font-size: 14px; margin-top: 5px;">宽40 × 高30</div>
-            </button>
-            
-            <button id="sizeL" class="size-btn size-l">
-                <div class="size-symbol">L</div>
-                <div class="size-desc">大关卡</div>
-                <div style="font-size: 14px; margin-top: 5px;">宽40 × 高55</div>
-            </button>
+            <button id="sizeS" class="size-btn size-s"><div class="size-symbol">S</div><div class="size-desc">小关卡</div><div style="font-size: 14px; margin-top: 5px;">宽20 × 高30</div></button>
+            <button id="sizeM" class="size-btn size-m"><div class="size-symbol">M</div><div class="size-desc">中等关卡</div><div style="font-size: 14px; margin-top: 5px;">宽40 × 高30</div></button>
+            <button id="sizeL" class="size-btn size-l"><div class="size-symbol">L</div><div class="size-desc">大关卡</div><div style="font-size: 14px; margin-top: 5px;">宽40 × 高55</div></button>
         </div>
     </div>
     
     <!-- 游戏界面 -->
     <div id="gameScreen" class="game-screen">
-        <!-- 退出按钮 -->
         <button id="exitBtn" class="exit-btn" title="返回主界面">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button id="returnPhase1Btn" class="return-phase1-btn" title="返回第一阶段" style="display: none;">1</button>
+        <button id="importBtn" class="import-btn" title="导入关卡">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 5L12 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                <path d="M5 14L12 21L19 14" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
-        
-        <!-- 返回第一阶段按钮（只在第二阶段显示） -->
-        <button id="returnPhase1Btn" class="return-phase1-btn" title="返回第一阶段" style="display: none;">
-            1
+        <button id="exportBtn" class="export-btn" title="导出关卡">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 19V5M5 12L12 5L19 12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </button>
-        
+
         <div class="header">
             <h1>点桥网页版</h1>
             <div id="phaseIndicator" class="game-phase">第一阶段：放置点</div>
@@ -981,7 +527,7 @@
         
         <div class="game-container">
             <div class="game-content">
-                <!-- 左侧工具面板（大小选择） -->
+                <!-- 左侧工具面板 -->
                 <div class="left-toolbar">
                     <div class="tool-section">
                         <button id="sizeBtnS" class="tool-btn size-tool-btn active" data-size="S">S</button>
@@ -1001,80 +547,38 @@
                         <button id="undoBtn" class="control-btn">撤销上一步</button>
                     </div>
                     
-                    <!-- 第一阶段点数计数器 -->
-                    <div id="pointCounter" class="point-counter">
-                        点数: <span id="pointCountValue">0</span>
-                    </div>
-                    
-                    <!-- 第二阶段计时器 -->
-                    <div id="timerDisplay" class="timer">
-                        用时: <span id="timerValue">00:00.00</span>
-                    </div>
+                    <div id="pointCounter" class="point-counter">点数: <span id="pointCountValue">0</span></div>
+                    <div id="timerDisplay" class="timer">用时: <span id="timerValue">00:00.00</span></div>
                     
                     <div class="grid-container">
                         <canvas id="gameCanvas"></canvas>
-                        <!-- 暂停提示蒙版 -->
                         <div id="pauseOverlay" class="pause-overlay">
                             <div class="pause-text">暂停的时候</div>
                             <div class="pause-warning">不许看!!>-<</div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-panel">
-                        <div class="info-section">
-                            <h2>游戏状态</h2>
-                            <div class="status">
-                                <div class="status-line">
-                                    <span class="status-label">当前阶段:</span>
-                                    <span id="currentPhase" class="status-value">放置点</span>
-                                </div>
-                                <div class="status-line">
-                                    <span class="status-label">关卡大小:</span>
-                                    <span id="currentSize" class="status-value">S (20×30)</span>
-                                </div>
-                                <div class="status-line">
-                                    <span class="status-label">已放置点数:</span>
-                                    <span id="pointCount" class="status-value">0</span>
-                                </div>
-                                <div class="status-line">
-                                    <span class="status-label">已绘制直线数:</span>
-                                    <span id="lineCount" class="status-value">0</span>
-                                </div>
-                                <div class="status-line">
-                                    <span class="status-label">连接1条线的点数:</span>
-                                    <span id="singleConnectionCount" class="status-value">0</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- 右侧工具面板 -->
                 <div class="right-toolbar">
-                    <!-- 第二阶段特殊按钮容器 -->
                     <div id="phase2SpecialButtons" style="display:none; margin-bottom: 20px;">
                         <div class="special-btn-container">
                             <button id="specialActionBtn" class="special-btn start-answer-btn" title="开始答题">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M8 5V19L19 12L8 5Z" fill="white"/>
-                                </svg>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5V19L19 12L8 5Z" fill="white"/></svg>
                             </button>
                         </div>
                     </div>
                     
-                    <!-- 第一阶段工具 -->
                     <div id="phase1Tools" class="tool-section">
                         <button id="toolPointBtn" class="tool-btn tool-point active" data-tool="point"></button>
                         <button id="toolWallBtn" class="tool-btn tool-wall" data-tool="wall"></button>
                         <button id="toolWallLineBtn" class="tool-btn tool-wall-line" data-tool="wallLine"></button>
                     </div>
                     
-                    <!-- 第二阶段工具 -->
                     <div id="phase2Tools" class="tool-section" style="display:none;">
                         <button id="toolLineBtn" class="tool-btn tool-line active" data-mode="line"></button>
                         <button id="toolAnnotationModeBtn" class="tool-btn tool-annotation" data-mode="annotation"></button>
                         
-                        <!-- 标注类型选择（只在标注模式下显示） -->
                         <div id="annotationTypesSection" style="display:none; width:100%;">
                             <div class="tool-divider"></div>
                             <div class="tool-section">
@@ -1095,52 +599,44 @@
     
     <!-- 密钥输入界面 -->
     <div id="secretScreen" class="secret-screen">
-        <!-- 退出按钮 -->
         <button id="secretExitBtn" class="exit-btn" title="返回主界面">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        
         <div class="secret-container">
             <h2 class="secret-title">请输入密钥</h2>
             <input type="password" id="secretInput" class="secret-input" placeholder="输入四位数字密钥" maxlength="4">
             <button id="secretSubmitBtn" class="secret-btn">提交</button>
         </div>
-        
-        <!-- 底部版权信息 -->
-        <div class="copyright">
-            Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, Leaky. All Rights Reserved.
-        </div>
+        <!-- 原版权已移除 -->
     </div>
     
-    <!-- 祝贺界面 -->
+    <!-- 祝贺界面1 (2026新年) -->
     <div id="congratsScreen" class="congrats-screen">
-        <!-- 退出按钮 -->
         <button id="congratsExitBtn" class="exit-btn" title="返回主界面">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        
         <div class="congrats-container">
             <h2 class="congrats-title">新年快乐！</h2>
-            <div class="congrats-content">
-                点桥连奇思，智趣映新辰。<br>
-                愿你2026年的每一天，都如解开巧局时——<br>
-                一步一桥接云霞，一念一亮通星河。<br>
-                新年启程，处处是通达的谜底！<br>
-                2026新年快乐！
-            </div>
-            <div class="congrats-footer">
-                ——为我编写此程序的DeepSeek对话
+            <div class="congrats-content">点桥连奇思，智趣映新辰。<br>愿你2026年的每一天，都如解开巧局时——<br>一步一桥接云霞，一念一亮通星河。<br>新年启程，处处是通达的谜底！<br>2026新年快乐！</div>
+            <div class="congrats-footer">——为我编写此程序的DeepSeek对话</div>
+        </div>
+        <!-- 原版权已移除 -->
+    </div>
+
+    <!-- 新增祝贺界面2 (点桥网站正式发布) -->
+    <div id="congratsScreen2" class="congrats-screen2">
+        <button id="congrats2ExitBtn" class="exit-btn" title="返回主界面">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="congrats-container2">
+            <div class="congrats-title2">🎉点桥网站正式发布🎉</div>
+            <div class="congrats-subtitle2">2026.3.14</div>
+            <div class="congrats-body2">
+                <div>今天是点桥创立第 <span id="daysSinceFounding" class="days-number">0</span> 天</div>
+                <div style="margin-top: 20px;">今天是点桥网站创立第 <span id="daysSinceWebsite" class="days-number">0</span> 天</div>
             </div>
         </div>
-        
-        <!-- 底部版权信息 -->
-        <div class="copyright" style="color: #FFD734; background: rgba(255, 215, 0, 0.1);">
-            Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, Leaky, Etc. All Rights Reserved.
-        </div>
+        <!-- 原版权已移除 -->
     </div>
     
     <!-- 消息弹窗 -->
@@ -1150,60 +646,80 @@
         <div id="messageContent" class="message-content">这里是消息内容</div>
         <div id="successMessage" class="success-message" style="display:none;"></div>
         <div class="message-buttons">
-            <button id="messageCancelBtn" class="message-btn cancel">取消</button>
+            <button id="messageCancelBtn" class="message-btn cancel">再说吧</button>
             <button id="messageConfirmBtn" class="message-btn confirm">确定</button>
         </div>
     </div>
 
-    <!-- 底部版权信息 -->
-    <div class="copyright">
-        Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, Leaky, etc. All Rights Reserved.
+    <!-- 导入模态框 -->
+    <div id="importModal" class="import-modal">
+        <div class="import-container">
+            <h2 class="import-title">输入关卡代码</h2>
+            <div class="import-input-row">
+                <input type="text" id="importCodeInput" class="import-input" placeholder="例如 S;0,0|1,1; ;0,0-1,1" spellcheck="false">
+                <button id="pasteClipboardBtn" class="paste-btn" title="粘贴剪贴板内容">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="white" stroke-width="2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="white" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="import-buttons">
+                <button id="importConfirmBtn" class="import-btn-confirm">确定</button>
+                <button id="importCancelBtn" class="import-btn-cancel">取消</button>
+            </div>
+        </div>
     </div>
 
+    <!-- 导出成功提示 -->
+    <div id="exportToast" class="toast-message">复制成功</div>
+
+    <!-- 统一固定版权信息 (始终显示) -->
+    <div class="fixed-copyright">Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, etc. All Rights Reserved.</div>
+
     <script>
-        // 游戏状态变量
+        // ========== 原游戏所有变量和函数 (恢复初始点样式，移除高亮) ==========
         const gameState = {
-            phase: 'placing', // 'placing' 或 'connecting'
-            points: [], // 存储所有点的数组 [{x, y, id}]
-            walls: [], // 存储墙点的数组 [{x, y, id}]
-            wallLines: [], // 存储墙线的数组 [{start: {x, y}, end: {x, y}, angle}]
-            wallLinePoints: new Set(), // 存储墙线经过的点（字符串格式 "x,y"）
-            lines: [], // 存储所有直线的数组 [{start: {x, y}, end: {x, y}, angle}]
-            selectedPoint: null, // 当前选中的点（用于绘制直线）
-            selectedWallLineStart: null, // 当前选中的墙线起点
-            pointIdCounter: 1, // 点的ID计数器
-            wallIdCounter: 1, // 墙的ID计数器
-            gridSize: { width: 20, height: 30 }, // 当前关卡大小
-            cellSize: 0, // 每个单元格的大小（像素，将根据画布大小动态计算）
-            canvasPadding: 25, // 画布内边距
-            history: [], // 历史记录，用于撤销
-            startTime: 0, // 计时开始时间
-            elapsedTime: 0, // 已用时间（毫秒）
-            timerInterval: null, // 计时器间隔
-            isAnswering: false, // 是否已经开始答题
-            currentSize: 'S', // 当前关卡大小
-            currentTool: 'point', // 当前工具：'point', 'wall', 'wallLine'
-            currentMode: 'line', // 当前模式：'line' 或 'annotation'
-            currentAnnotation: 'none', // 当前标注类型
-            annotations: new Map(), // 标注映射：pointId -> annotationType
-            isCompleted: false, // 是否已完成
-            answerLocked: false, // 答案是否已锁定
-            dpr: window.devicePixelRatio || 1, // 设备像素比
-            timerRunning: false, // 计时器是否正在运行
-            isPaused: false, // 是否处于暂停状态
-            pauseStartTime: 0, // 暂停开始时间
-            pausedDuration: 0, // 已暂停的时间（毫秒）
-            specialFireworkActive: false // 特殊烟花按钮是否激活
+            phase: 'placing',
+            points: [],
+            walls: [],
+            wallLines: [],
+            wallLinePoints: new Set(),
+            lines: [],
+            selectedPoint: null,
+            selectedWallLineStart: null,
+            pointIdCounter: 1,
+            wallIdCounter: 1,
+            gridSize: { width: 20, height: 30 },
+            cellSize: 0,
+            canvasPadding: 25,
+            history: [],
+            startTime: 0,
+            elapsedTime: 0,
+            timerInterval: null,
+            isAnswering: false,
+            currentSize: 'S',
+            currentTool: 'point',
+            currentMode: 'line',
+            currentAnnotation: 'none',
+            annotations: new Map(),
+            isCompleted: false,
+            answerLocked: false,
+            dpr: window.devicePixelRatio || 1,
+            timerRunning: false,
+            isPaused: false,
+            pauseStartTime: 0,
+            pausedDuration: 0,
+            specialFireworkActive: false
         };
 
-        // 关卡定义
         const sizeDefinitions = {
             'S': { width: 20, height: 30, color: '#FFA500', name: '小关卡' },
             'M': { width: 40, height: 30, color: '#C0C0C0', name: '中等关卡' },
             'L': { width: 40, height: 55, color: '#FF3333', name: '大关卡' }
         };
 
-        // 获取DOM元素
+        // DOM元素获取
         const startScreen = document.getElementById('startScreen');
         const gameScreen = document.getElementById('gameScreen');
         const canvas = document.getElementById('gameCanvas');
@@ -1223,11 +739,6 @@
         const restartGameBtn = document.getElementById('restartGameBtn');
         const undoBtn = document.getElementById('undoBtn');
         const phaseIndicator = document.getElementById('phaseIndicator');
-        const currentPhaseSpan = document.getElementById('currentPhase');
-        const currentSizeSpan = document.getElementById('currentSize');
-        const pointCountSpan = document.getElementById('pointCount');
-        const lineCountSpan = document.getElementById('lineCount');
-        const singleConnectionCountSpan = document.getElementById('singleConnectionCount');
         const timerDisplay = document.getElementById('timerDisplay');
         const timerValue = document.getElementById('timerValue');
         const pointCounter = document.getElementById('pointCounter');
@@ -1263,43 +774,35 @@
         const secretExitBtn = document.getElementById('secretExitBtn');
         const congratsScreen = document.getElementById('congratsScreen');
         const congratsExitBtn = document.getElementById('congratsExitBtn');
+        const congratsScreen2 = document.getElementById('congratsScreen2');
+        const congrats2ExitBtn = document.getElementById('congrats2ExitBtn');
+        const daysSinceFoundingSpan = document.getElementById('daysSinceFounding');
+        const daysSinceWebsiteSpan = document.getElementById('daysSinceWebsite');
 
-        // 初始化游戏
+        // ========== 原函数定义 (修改网格绘制和标注图标大小) ==========
         function initGame() {
-            // 设置开始界面按钮事件
             sizeS.addEventListener('click', () => startGame('S'));
             sizeM.addEventListener('click', () => startGame('M'));
             sizeL.addEventListener('click', () => startGame('L'));
             
-            // 设置游戏界面按钮事件
             sizeBtnS.addEventListener('click', () => changeSize('S'));
             sizeBtnM.addEventListener('click', () => changeSize('M'));
             sizeBtnL.addEventListener('click', () => changeSize('L'));
             
-            // 设置退出按钮事件
             exitBtn.addEventListener('click', exitToStartScreen);
-            
-            // 设置返回第一阶段按钮事件
             returnPhase1Btn.addEventListener('click', returnToPhase1);
-            
             clearAllPointsBtn.addEventListener('click', clearAllPoints);
             finishPlacingBtn.addEventListener('click', confirmFinishPlacing);
             pauseContinueBtn.addEventListener('click', togglePauseContinue);
             checkBtn.addEventListener('click', checkSolution);
             restartGameBtn.addEventListener('click', restartGame);
             undoBtn.addEventListener('click', undoLastAction);
-            
-            // 设置特殊按钮事件
             specialActionBtn.addEventListener('click', handleSpecialAction);
-            
-            // 设置工具按钮事件
             toolPointBtn.addEventListener('click', () => setCurrentTool('point'));
             toolWallBtn.addEventListener('click', () => setCurrentTool('wall'));
             toolWallLineBtn.addEventListener('click', () => setCurrentTool('wallLine'));
             toolLineBtn.addEventListener('click', () => setCurrentMode('line'));
             toolAnnotationModeBtn.addEventListener('click', () => setCurrentMode('annotation'));
-            
-            // 设置标注按钮事件
             annotationCircleBtn.addEventListener('click', () => setCurrentAnnotation('circle'));
             annotationSquareBtn.addEventListener('click', () => setCurrentAnnotation('square'));
             annotationTriangleBtn.addEventListener('click', () => setCurrentAnnotation('triangle'));
@@ -1307,72 +810,253 @@
             annotationStarBtn.addEventListener('click', () => setCurrentAnnotation('star'));
             annotationCrossBtn.addEventListener('click', () => setCurrentAnnotation('cross'));
             annotationCheckBtn.addEventListener('click', () => setCurrentAnnotation('check'));
-            
-            // 创建工具图标
             createToolIcons();
-            
-            // 设置消息弹窗按钮事件
             messageCancelBtn.addEventListener('click', closeMessage);
-            messageConfirmBtn.addEventListener('click', confirmMessage);
-            
-            // 设置密钥界面按钮事件
+            messageConfirmBtn.onclick = confirmMessage;
             secretSubmitBtn.addEventListener('click', checkSecret);
-            secretExitBtn.addEventListener('click', exitToStartScreenFromSecret);
-            secretInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkSecret();
-                }
+            secretExitBtn.addEventListener('click', exitWithoutConfirm);
+            secretInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkSecret(); });
+            congratsExitBtn.addEventListener('click', exitWithoutConfirm);
+            congrats2ExitBtn.addEventListener('click', function() {
+                showConfirmMessage('返回主界面', '确定要返回主界面吗？', exitWithoutConfirm);
             });
             
-            // 设置祝贺界面按钮事件
-            congratsExitBtn.addEventListener('click', exitToStartScreenFromCongrats);
-            
-            // 设置画布点击事件
             canvas.addEventListener('click', handleCanvasClick);
+            // 移除touch事件，允许滚动
             
-            // 为触摸设备优化
-            canvas.addEventListener('touchstart', handleTouch, { passive: false });
-            
-            // 初始显示开始界面
             startScreen.style.display = 'block';
             gameScreen.style.display = 'none';
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
+            congratsScreen2.style.display = 'none';
             
-            // 初始化画布大小
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             window.addEventListener('orientationchange', resizeCanvas);
-            
-            // 初始化大小按钮样式
             updateSizeButtonStyles();
+
+            // 导入导出相关监听
+            const importBtn = document.getElementById('importBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const importModal = document.getElementById('importModal');
+            const importCodeInput = document.getElementById('importCodeInput');
+            const importConfirm = document.getElementById('importConfirmBtn');
+            const importCancel = document.getElementById('importCancelBtn');
+            const exportToast = document.getElementById('exportToast');
+            const pasteBtn = document.getElementById('pasteClipboardBtn');
+
+            function closeImportModal() {
+                importModal.style.display = 'none';
+                importCodeInput.value = '';
+            }
+
+            function showToast(text) {
+                exportToast.textContent = text || '复制成功';
+                exportToast.style.display = 'block';
+                setTimeout(() => { exportToast.style.display = 'none'; }, 1000);
+            }
+
+            function encodeLevel() {
+                const size = gameState.currentSize;
+                const pointsStr = gameState.points.map(p => `${p.x},${p.y}`).join('|');
+                const wallsStr = gameState.walls.map(w => `${w.x},${w.y}`).join('|');
+                const wallLinesStr = gameState.wallLines.map(line => `${line.start.x},${line.start.y}-${line.end.x},${line.end.y}`).join('|');
+                return `${size};${pointsStr};${wallsStr};${wallLinesStr}`;
+            }
+
+            function decodeAndLoad(code) {
+                const parts = code.split(';');
+                if (parts.length !== 4) throw new Error('格式错误：必须包含4个部分（尺寸;点;墙;墙线）');
+                const [sizeLetter, pointsPart, wallsPart, wallLinesPart] = parts;
+                if (!['S','M','L'].includes(sizeLetter)) throw new Error('尺寸必须是 S, M, 或 L');
+
+                const newPoints = [];
+                if (pointsPart.trim() !== '') {
+                    const pointTokens = pointsPart.split('|');
+                    for (const token of pointTokens) {
+                        const [x, y] = token.split(',').map(Number);
+                        if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
+                            throw new Error(`点坐标无效: ${token}`);
+                        newPoints.push({ x, y });
+                    }
+                }
+
+                const newWalls = [];
+                if (wallsPart.trim() !== '') {
+                    const wallTokens = wallsPart.split('|');
+                    for (const token of wallTokens) {
+                        const [x, y] = token.split(',').map(Number);
+                        if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
+                            throw new Error(`墙坐标无效: ${token}`);
+                        newWalls.push({ x, y });
+                    }
+                }
+
+                const newWallLines = [];
+                const wallLinePointsSet = new Set();
+                if (wallLinesPart.trim() !== '') {
+                    const lineTokens = wallLinesPart.split('|');
+                    for (const token of lineTokens) {
+                        const [startStr, endStr] = token.split('-');
+                        if (!startStr || !endStr) throw new Error(`墙线段格式错误: ${token}`);
+                        const [sx, sy] = startStr.split(',').map(Number);
+                        const [ex, ey] = endStr.split(',').map(Number);
+                        if ([sx, sy, ex, ey].some(isNaN) || !Number.isInteger(sx) || !Number.isInteger(sy) || !Number.isInteger(ex) || !Number.isInteger(ey))
+                            throw new Error(`墙线段坐标无效: ${token}`);
+                        const dx = ex - sx, dy = ey - sy;
+                        if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)))
+                            throw new Error(`墙线段必须水平、垂直或45度对角线: ${token}`);
+                        const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                        for (let i = 0; i <= steps; i++) {
+                            const x = sx + Math.round(dx * i / steps);
+                            const y = sy + Math.round(dy * i / steps);
+                            wallLinePointsSet.add(`${x},${y}`);
+                        }
+                        newWallLines.push({
+                            start: { x: sx, y: sy },
+                            end: { x: ex, y: ey },
+                            angle: dx === 0 ? 90 : (dy === 0 ? 0 : (dx * dy > 0 ? 45 : 135))
+                        });
+                    }
+                }
+
+                for (const p of newPoints) {
+                    if (wallLinePointsSet.has(`${p.x},${p.y}`)) throw new Error(`点 (${p.x},${p.y}) 位于墙线上，非法`);
+                }
+                const pointSet = new Set(newPoints.map(p => `${p.x},${p.y}`));
+                for (const w of newWalls) {
+                    if (pointSet.has(`${w.x},${w.y}`)) throw new Error(`墙 (${w.x},${w.y}) 与点重叠`);
+                }
+
+                const sizeDef = sizeDefinitions[sizeLetter];
+                const maxX = sizeDef.width, maxY = sizeDef.height;
+                for (const p of newPoints) if (p.x < 0 || p.x > maxX || p.y < 0 || p.y > maxY) throw new Error(`点 (${p.x},${p.y}) 超出棋盘范围`);
+                for (const w of newWalls) if (w.x < 0 || w.x > maxX || w.y < 0 || w.y > maxY) throw new Error(`墙 (${w.x},${w.y}) 超出棋盘范围`);
+                for (const line of newWallLines) {
+                    if (line.start.x < 0 || line.start.x > maxX || line.start.y < 0 || line.start.y > maxY ||
+                        line.end.x < 0 || line.end.x > maxX || line.end.y < 0 || line.end.y > maxY)
+                        throw new Error(`墙线段端点超出棋盘范围`);
+                }
+
+                if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+                gameState.points = newPoints.map((p, index) => ({ ...p, id: index + 1 }));
+                gameState.walls = newWalls.map((w, index) => ({ ...w, id: index + 1 }));
+                gameState.wallLines = newWallLines;
+                gameState.wallLinePoints = wallLinePointsSet;
+                gameState.lines = [];
+                gameState.annotations.clear();
+                gameState.selectedPoint = null;
+                gameState.selectedWallLineStart = null;
+                gameState.pointIdCounter = gameState.points.length + 1;
+                gameState.wallIdCounter = gameState.walls.length + 1;
+                gameState.currentSize = sizeLetter;
+                gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
+                setPhase('placing');
+                gameState.history = [];
+                gameState.isAnswering = false;
+                gameState.isCompleted = false;
+                gameState.answerLocked = false;
+                gameState.specialFireworkActive = false;
+                gameState.isPaused = false;
+                gameState.pausedDuration = 0;
+                gameState.startTime = 0;
+                gameState.elapsedTime = 0;
+                timerDisplay.style.display = 'none';
+                pauseOverlay.style.display = 'none';
+                updateSpecialButton();
+                updateSizeUI();
+                updateUI();
+                resizeCanvas();
+                drawEverything();
+                saveToHistory();
+            }
+
+            exportBtn.addEventListener('click', async () => {
+                if (!gameScreen.style.display || gameScreen.style.display === 'none') { 
+                    showMessage('提示', '请先进入游戏'); 
+                    return; 
+                }
+                const code = encodeLevel();
+                try {
+                    await navigator.clipboard.writeText(code);
+                    showToast('复制成功');
+                } catch (err) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showToast('复制成功');
+                }
+            });
+
+            importBtn.addEventListener('click', () => {
+                if (!gameScreen.style.display || gameScreen.style.display === 'none') { 
+                    showMessage('提示', '请先进入游戏'); 
+                    return; 
+                }
+                importModal.style.display = 'flex';
+                importCodeInput.value = '';
+                importCodeInput.focus();
+            });
+
+            importConfirm.addEventListener('click', () => {
+                const code = importCodeInput.value.trim();
+                if (!code) { 
+                    showMessage('提示', '请输入关卡代码'); 
+                    return; 
+                }
+                try {
+                    decodeAndLoad(code);
+                    closeImportModal();
+                } catch (e) { 
+                    showMessage('导入失败', e.message); 
+                }
+            });
+
+            importCancel.addEventListener('click', closeImportModal);
+            importModal.addEventListener('click', (e) => { if (e.target === importModal) closeImportModal(); });
+
+            pasteBtn.addEventListener('click', async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    importCodeInput.value = text;
+                } catch (err) {
+                    // 移除英文错误信息
+                    showMessage('粘贴失败', '无法读取剪贴板，请手动粘贴。');
+                }
+            });
         }
 
-        // 更新大小按钮样式
+        function exitWithoutConfirm() {
+            startScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
+            secretScreen.style.display = 'none';
+            congratsScreen.style.display = 'none';
+            congratsScreen2.style.display = 'none';
+            if(gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = null;
+            pauseOverlay.style.display = 'none';
+            gameState.specialFireworkActive = false;
+            updateSpecialButton();
+        }
+
         function updateSizeButtonStyles() {
-            // 设置S按钮样式
             const sDef = sizeDefinitions['S'];
             sizeBtnS.style.setProperty('--color', sDef.color);
-            
-            // 设置M按钮样式
             const mDef = sizeDefinitions['M'];
             sizeBtnM.style.setProperty('--color', mDef.color);
-            
-            // 设置L按钮样式
             const lDef = sizeDefinitions['L'];
             sizeBtnL.style.setProperty('--color', lDef.color);
         }
 
-        // 创建工具图标
         function createToolIcons() {
-            // 创建SVG图标
             createPointIcon(toolPointBtn);
             createWallIcon(toolWallBtn);
             createWallLineIcon(toolWallLineBtn);
             createLineIcon(toolLineBtn);
-            createAnnotationIcon(toolAnnotationModeBtn);
-            
-            // 创建标注类型图标
+            createAnnotationIcon(toolAnnotationModeBtn);  // 调整后的标注图标
             createCircleIcon(annotationCircleBtn);
             createSquareIcon(annotationSquareBtn);
             createTriangleIcon(annotationTriangleBtn);
@@ -1382,478 +1066,155 @@
             createCheckIcon(annotationCheckBtn);
         }
 
-        // 创建点图标（白色圆形）
         function createPointIcon(button) {
-            const svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="10" cy="10" r="8" fill="white"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="white"/></svg>';
         }
-
-        // 创建墙图标（白色十字）
         function createWallIcon(button) {
-            const svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 5V15M5 10H15" stroke="white" stroke-width="3" stroke-linecap="round"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 5V15M5 10H15" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>';
         }
-
-        // 创建墙线图标（白色斜线）
         function createWallLineIcon(button) {
-            const svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6L14 14" stroke="white" stroke-width="3" stroke-linecap="round"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 6L14 14" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>';
         }
-
-        // 创建连线图标（白色斜线）
         function createLineIcon(button) {
-            const svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6L14 14" stroke="white" stroke-width="3" stroke-linecap="round"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 6L14 14" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>';
         }
-
-        // 创建标注图标（白色星星）
+        // 标注图标大小改为0.7倍 (相对于放大后的36x36, 0.7 ≈ 25)
         function createAnnotationIcon(button) {
-            // 使用与星星标记相同的白色星星
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 1L12.47 7.53L19 9L13.5 14.47L14.53 21L10 17.53L5.47 21L6.5 14.47L1 9L7.53 7.53L10 1Z" fill="white"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="25" height="25" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.9 7.2L17 7.8L13.2 11.2L14.2 16.3L10 13.7L5.8 16.3L6.8 11.2L3 7.8L8.1 7.2L10 2.5Z" fill="white"/></svg>';
         }
-
-        // 创建圆圈图标 - 改为空心圆圈
         function createCircleIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
         }
-
-        // 创建方形图标（实心）
         function createSquareIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="5" y="5" width="10" height="10" fill="currentColor"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="5" y="5" width="10" height="10" fill="currentColor"/></svg>';
         }
-
-        // 创建三角形图标（实心）
         function createTriangleIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 5L5 15H15L10 5Z" fill="currentColor"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 5L5 15H15L10 5Z" fill="currentColor"/></svg>';
         }
-
-        // 创建菱形图标（实心）
         function createDiamondIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 5L15 10L10 15L5 10L10 5Z" fill="currentColor"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 5L15 10L10 15L5 10L10 5Z" fill="currentColor"/></svg>';
         }
-
-        // 创建星形图标（实心，星星变小一点）
         function createStarIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 2.5L11.9 7.2L17 7.8L13.2 11.2L14.2 16.3L10 13.7L5.8 16.3L6.8 11.2L3 7.8L8.1 7.2L10 2.5Z" fill="currentColor"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.9 7.2L17 7.8L13.2 11.2L14.2 16.3L10 13.7L5.8 16.3L6.8 11.2L3 7.8L8.1 7.2L10 2.5Z" fill="currentColor"/></svg>';
         }
-
-        // 创建叉图标（实心）
         function createCrossIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 6L14 14M14 6L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M6 6L14 14M14 6L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
         }
-
-        // 创建对勾图标（轮廓，没有实心部分）
         function createCheckIcon(button) {
-            const svg = `<svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5 10L8 13L15 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            </svg>`;
-            button.innerHTML = svg;
+            button.innerHTML = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5 10L8 13L15 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
         }
 
-        // 退出到开始界面
         function exitToStartScreen() {
             if (gameState.phase === 'connecting' && gameState.isAnswering && !gameState.isCompleted) {
-                showConfirmMessage(
-                    "返回主界面",
-                    "确定要返回主界面吗？当前游戏进度将会丢失！",
-                    () => {
-                        startScreen.style.display = 'block';
-                        gameScreen.style.display = 'none';
-                        secretScreen.style.display = 'none';
-                        congratsScreen.style.display = 'none';
-                        
-                        // 停止计时器
-                        if (gameState.timerInterval) {
-                            clearInterval(gameState.timerInterval);
-                            gameState.timerInterval = null;
-                        }
-                        
-                        // 隐藏暂停提示
-                        pauseOverlay.style.display = 'none';
-                        
-                        // 重置特殊按钮状态
-                        gameState.specialFireworkActive = false;
-                    }
-                );
+                showConfirmMessage("返回主界面","确定要返回主界面吗？当前游戏进度将会丢失！",()=>{
+                    exitWithoutConfirm();
+                });
             } else {
-                showConfirmMessage(
-                    "返回主界面",
-                    "确定要返回主界面吗？",
-                    () => {
-                        startScreen.style.display = 'block';
-                        gameScreen.style.display = 'none';
-                        secretScreen.style.display = 'none';
-                        congratsScreen.style.display = 'none';
-                        
-                        // 停止计时器
-                        if (gameState.timerInterval) {
-                            clearInterval(gameState.timerInterval);
-                            gameState.timerInterval = null;
-                        }
-                        
-                        // 隐藏暂停提示
-                        pauseOverlay.style.display = 'none';
-                        
-                        // 重置特殊按钮状态
-                        gameState.specialFireworkActive = false;
-                    }
-                );
+                showConfirmMessage("返回主界面","确定要返回主界面吗？",()=>{
+                    exitWithoutConfirm();
+                });
             }
         }
 
-        // 从密钥界面退出到开始界面
-        function exitToStartScreenFromSecret() {
-            showConfirmMessage(
-                "返回主界面",
-                "确定要返回主界面吗？当前游戏进度将会丢失！",
-                () => {
-                    startScreen.style.display = 'block';
-                    gameScreen.style.display = 'none';
-                    secretScreen.style.display = 'none';
-                    congratsScreen.style.display = 'none';
-                    
-                    // 重置特殊按钮状态
-                    gameState.specialFireworkActive = false;
-                    updateSpecialButton();
-                    
-                    // 停止计时器
-                    if (gameState.timerInterval) {
-                        clearInterval(gameState.timerInterval);
-                        gameState.timerInterval = null;
-                    }
-                }
-            );
-        }
-
-        // 从祝贺界面退出到开始界面
-        function exitToStartScreenFromCongrats() {
-            // 祝贺界面只能通过左上角按钮退出，直接返回到主界面
-            showConfirmMessage(
-                "返回主界面",
-                "确定要返回主界面吗？",
-                () => {
-                    startScreen.style.display = 'block';
-                    gameScreen.style.display = 'none';
-                    secretScreen.style.display = 'none';
-                    congratsScreen.style.display = 'none';
-                    
-                    // 重置特殊按钮状态
-                    gameState.specialFireworkActive = false;
-                    updateSpecialButton();
-                    
-                    // 停止计时器
-                    if (gameState.timerInterval) {
-                        clearInterval(gameState.timerInterval);
-                        gameState.timerInterval = null;
-                    }
-                }
-            );
-        }
-
-        // 返回第一阶段
         function returnToPhase1() {
             if (gameState.phase === 'connecting') {
-                showConfirmMessage(
-                    "返回第一阶段",
-                    "确定要返回第一阶段吗？所有标记和线段将被清除，但点和墙会保留。",
-                    () => {
-                        // 清除所有线段和标注
-                        gameState.lines = [];
-                        gameState.annotations.clear();
-                        gameState.selectedPoint = null;
-                        gameState.selectedWallLineStart = null;
-                        
-                        // 清空计时器
-                        if (gameState.timerInterval) {
-                            clearInterval(gameState.timerInterval);
-                            gameState.timerInterval = null;
-                        }
-                        
-                        gameState.startTime = 0;
-                        gameState.elapsedTime = 0;
-                        gameState.isAnswering = false;
-                        gameState.timerRunning = false;
-                        gameState.isPaused = false;
-                        gameState.pauseStartTime = 0;
-                        gameState.pausedDuration = 0;
-                        
-                        timerDisplay.style.display = 'none';
-                        timerValue.textContent = '00:00.00';
-                        
-                        // 返回第一阶段
-                        setPhase('placing');
-                        
-                        // 更新UI
-                        updateUI();
-                        
-                        // 重新绘制
-                        drawEverything();
-                        
-                        // 保存到历史记录
-                        saveToHistory();
-                    }
-                );
+                showConfirmMessage("返回第一阶段","确定要返回第一阶段吗？所有标记和线段将被清除，但点和墙会保留。",()=>{
+                    gameState.lines = []; gameState.annotations.clear(); gameState.selectedPoint = null; gameState.selectedWallLineStart = null;
+                    if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+                    gameState.startTime = 0; gameState.elapsedTime = 0; gameState.isAnswering = false; gameState.timerRunning = false;
+                    gameState.isPaused = false; gameState.pauseStartTime = 0; gameState.pausedDuration = 0;
+                    timerDisplay.style.display = 'none'; timerValue.textContent = '00:00.00';
+                    setPhase('placing');
+                    gameState.isCompleted = false; gameState.answerLocked = false; gameState.specialFireworkActive = false; updateSpecialButton();
+                    document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
+                    document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+                    specialActionBtn.disabled = false; returnPhase1Btn.disabled = false;
+                    updateUI(); drawEverything(); saveToHistory();
+                });
             }
         }
 
-        // 开始游戏 - 修复了显示问题
         function startGame(size) {
             gameState.currentSize = size;
             const sizeDef = sizeDefinitions[size];
             gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-            
-            // 切换到游戏界面
-            startScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            secretScreen.style.display = 'none';
-            congratsScreen.style.display = 'none';
-            
-            // 重置游戏状态
-            resetGameState();
-            
-            // 设置阶段为放置点
-            setPhase('placing');
-            
-            // 更新UI
-            updateSizeUI();
-            updateUI();
-            
-            // 重新计算画布大小
-            resizeCanvas();
-            
-            // 绘制
-            drawEverything();
-            
-            // 保存初始状态到历史记录
-            saveToHistory();
+            startScreen.style.display = 'none'; gameScreen.style.display = 'block'; secretScreen.style.display = 'none'; congratsScreen.style.display = 'none'; congratsScreen2.style.display = 'none';
+            resetGameState(); setPhase('placing'); updateSizeUI(); updateUI(); resizeCanvas(); drawEverything(); saveToHistory();
         }
 
-        // 更改关卡大小
         function changeSize(newSize) {
             if (gameState.currentSize === newSize) return;
-            
-            // 如果已经有内容，提示用户
-            if (gameState.points.length > 0 || gameState.walls.length > 0 || gameState.wallLines.length > 0) {
-                showConfirmMessage(
-                    "更换关卡大小",
-                    `确定更换关卡大小吗？<br>更换后所有已放置的点将被清除，需要重新出题。`,
-                    () => {
-                        // 确认更换
-                        gameState.currentSize = newSize;
-                        const sizeDef = sizeDefinitions[newSize];
-                        gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-                        
-                        // 重置游戏状态
-                        resetGameState();
-                        setPhase('placing');
-                        
-                        // 更新UI
-                        updateSizeUI();
-                        updateUI();
-                        
-                        // 重新计算画布大小
-                        resizeCanvas();
-                        
-                        // 绘制
-                        drawEverything();
-                        
-                        // 保存初始状态到历史记录
-                        saveToHistory();
-                        
-                        // 隐藏暂停提示
-                        pauseOverlay.style.display = 'none';
-                    }
-                );
+            if (gameState.points.length>0 || gameState.walls.length>0 || gameState.wallLines.length>0) {
+                showConfirmMessage("更换关卡大小","确定更换关卡大小吗？<br>更换后所有已放置的点将被清除，需要重新出题。",()=>{
+                    gameState.currentSize = newSize;
+                    const sizeDef = sizeDefinitions[newSize];
+                    gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
+                    resetGameState(); setPhase('placing'); updateSizeUI(); updateUI(); resizeCanvas(); drawEverything(); saveToHistory(); pauseOverlay.style.display='none';
+                });
             } else {
-                // 没有内容，直接更换
                 gameState.currentSize = newSize;
                 const sizeDef = sizeDefinitions[newSize];
                 gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-                
-                // 更新UI
-                updateSizeUI();
-                
-                // 重新计算画布大小
-                resizeCanvas();
-                
-                // 绘制
-                drawEverything();
-                
-                // 隐藏暂停提示
-                pauseOverlay.style.display = 'none';
+                updateSizeUI(); resizeCanvas(); drawEverything(); pauseOverlay.style.display='none';
             }
         }
 
-        // 更新大小选择器UI
         function updateSizeUI() {
-            // 更新按钮状态
-            sizeBtnS.classList.remove('active');
-            sizeBtnM.classList.remove('active');
-            sizeBtnL.classList.remove('active');
-            
-            // 重新设置按钮颜色
-            const sizeDef = sizeDefinitions[gameState.currentSize];
+            sizeBtnS.classList.remove('active'); sizeBtnM.classList.remove('active'); sizeBtnL.classList.remove('active');
             document.getElementById(`sizeBtn${gameState.currentSize}`).classList.add('active');
-            
-            // 更新显示的大小
-            currentSizeSpan.textContent = `${gameState.currentSize} (${sizeDef.width}×${sizeDef.height})`;
         }
 
-        // 重置游戏状态
         function resetGameState() {
-            gameState.points = [];
-            gameState.walls = [];
-            gameState.wallLines = [];
-            gameState.wallLinePoints.clear();
-            gameState.lines = [];
-            gameState.selectedPoint = null;
-            gameState.selectedWallLineStart = null;
-            gameState.pointIdCounter = 1;
-            gameState.wallIdCounter = 1;
-            gameState.history = [];
-            gameState.startTime = 0;
-            gameState.elapsedTime = 0;
-            gameState.isAnswering = false;
-            gameState.currentTool = 'point';
-            gameState.currentMode = 'line';
-            gameState.currentAnnotation = 'none';
-            gameState.annotations.clear();
-            gameState.isCompleted = false;
-            gameState.answerLocked = false;
-            gameState.timerRunning = false;
-            gameState.isPaused = false;
-            gameState.pauseStartTime = 0;
-            gameState.pausedDuration = 0;
+            gameState.points = []; gameState.walls = []; gameState.wallLines = []; gameState.wallLinePoints.clear(); gameState.lines = [];
+            gameState.selectedPoint = null; gameState.selectedWallLineStart = null; gameState.pointIdCounter = 1; gameState.wallIdCounter = 1;
+            gameState.history = []; gameState.startTime = 0; gameState.elapsedTime = 0; gameState.isAnswering = false; gameState.currentTool = 'point';
+            gameState.currentMode = 'line'; gameState.currentAnnotation = 'none'; gameState.annotations.clear(); gameState.isCompleted = false;
+            gameState.answerLocked = false; gameState.timerRunning = false; gameState.isPaused = false; gameState.pauseStartTime = 0; gameState.pausedDuration = 0;
             gameState.specialFireworkActive = false;
-            
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-                gameState.timerInterval = null;
-            }
-            
-            timerDisplay.style.display = 'none';
-            timerValue.textContent = '00:00.00';
-            
-            // 隐藏暂停提示
-            pauseOverlay.style.display = 'none';
-            
-            // 重置特殊按钮
-            updateSpecialButton();
-            
-            // 重置工具选择器
-            setCurrentTool('point');
-            setCurrentMode('line');
-            setCurrentAnnotation('none');
-            
-            // 启用所有按钮
-            document.querySelectorAll('.control-btn').forEach(btn => {
-                btn.disabled = false;
-            });
-            
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.disabled = false;
-            });
-            
-            // 启用特殊按钮
-            specialActionBtn.disabled = false;
-            
-            // 隐藏返回第一阶段按钮
-            returnPhase1Btn.style.display = 'none';
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+            timerDisplay.style.display = 'none'; timerValue.textContent = '00:00.00'; pauseOverlay.style.display = 'none'; updateSpecialButton();
+            setCurrentTool('point'); setCurrentMode('line'); setCurrentAnnotation('none');
+            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+            specialActionBtn.disabled = false; returnPhase1Btn.style.display = 'none';
         }
 
-        // 动态调整画布大小（响应式设计） - 修复棋盘显示问题
         function resizeCanvas() {
             const container = document.querySelector('.grid-container');
             const containerWidth = container.clientWidth;
-            
-            // 计算合适的格子大小
             const maxGridWidth = gameState.gridSize.width;
             const maxGridHeight = gameState.gridSize.height;
-            
-            // 根据设备类型调整格子大小
             let baseCellSize;
             const isMobile = window.innerWidth <= 768;
-            
             if (isMobile) {
-                // 手机和平板：确保棋盘适应屏幕
                 baseCellSize = Math.max(15, Math.min(22, (containerWidth - 40) / (maxGridWidth + 2)));
             } else {
-                // 桌面：使用更大的格子，但确保不会超出容器
-                // 计算最大可用宽度和高度
                 const availableWidth = containerWidth - 40;
-                const availableHeight = window.innerHeight * 0.6; // 使用屏幕高度的60%
-                
-                // 根据宽度和高度计算合适的格子大小
+                const availableHeight = window.innerHeight * 0.6;
                 const widthBasedSize = availableWidth / (maxGridWidth + 2);
                 const heightBasedSize = availableHeight / (maxGridHeight + 2);
-                
-                // 取两者中较小的值，确保棋盘完全可见
                 baseCellSize = Math.max(18, Math.min(28, Math.min(widthBasedSize, heightBasedSize)));
             }
-            
             gameState.cellSize = baseCellSize;
-            
-            // 计算当前关卡的画布大小（考虑高DPI）
+            // canvas宽度保持不变，但内部格子只画到 width-1 和 height-1
             const canvasWidth = (gameState.gridSize.width + 1) * gameState.cellSize;
             const canvasHeight = (gameState.gridSize.height + 1) * gameState.cellSize;
-            
-            // 设置画布CSS尺寸
             canvas.style.width = canvasWidth + 'px';
             canvas.style.height = canvasHeight + 'px';
-            
-            // 设置画布实际像素尺寸（考虑高DPI）
             const scaledWidth = canvasWidth * gameState.dpr;
             const scaledHeight = canvasHeight * gameState.dpr;
-            
             canvas.width = scaledWidth;
             canvas.height = scaledHeight;
-            
-            // 缩放上下文以匹配高DPI
             ctx.scale(gameState.dpr, gameState.dpr);
-            
-            // 重新绘制
             drawEverything();
         }
 
-        // 设置游戏阶段
         function setPhase(phase) {
             gameState.phase = phase;
             gameState.selectedPoint = null;
             gameState.selectedWallLineStart = null;
-            
-            // 更新UI
             if (phase === 'placing') {
                 phaseIndicator.textContent = '第一阶段：放置点';
-                currentPhaseSpan.textContent = '放置点';
                 finishPlacingBtn.style.display = 'inline-block';
                 pauseContinueBtn.style.display = 'none';
                 checkBtn.style.display = 'none';
@@ -1862,21 +1223,11 @@
                 phase1Tools.style.display = 'flex';
                 phase2Tools.style.display = 'none';
                 phase2SpecialButtons.style.display = 'none';
-                
-                // 隐藏返回第一阶段按钮
                 returnPhase1Btn.style.display = 'none';
-                
-                if (gameState.timerInterval) {
-                    clearInterval(gameState.timerInterval);
-                    gameState.timerInterval = null;
-                    gameState.timerRunning = false;
-                }
-                
-                // 隐藏暂停提示
+                if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
                 pauseOverlay.style.display = 'none';
             } else {
                 phaseIndicator.textContent = '第二阶段：连线';
-                currentPhaseSpan.textContent = '连线';
                 finishPlacingBtn.style.display = 'none';
                 pauseContinueBtn.style.display = 'inline-block';
                 pointCounter.style.display = 'none';
@@ -1884,94 +1235,49 @@
                 phase1Tools.style.display = 'none';
                 phase2Tools.style.display = 'flex';
                 phase2SpecialButtons.style.display = 'block';
-                
-                // 显示返回第一阶段按钮
                 returnPhase1Btn.style.display = 'flex';
-                
-                // 更新特殊按钮
                 updateSpecialButton();
-                
                 setCurrentMode('line');
             }
-            
-            // 更新按钮文本
             updateButtonText();
-            
-            // 重新绘制
             drawEverything();
         }
 
-        // 更新特殊按钮
         function updateSpecialButton() {
             if (gameState.phase === 'connecting') {
                 if (gameState.specialFireworkActive) {
-                    // 特殊烟花按钮 - 中间黄点，四周8个方向放射状黄线
                     specialActionBtn.className = 'special-btn special-firework-btn';
                     specialActionBtn.title = '烟花惊喜';
-                    specialActionBtn.innerHTML = `
-                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 中间黄点 -->
-                            <circle cx="15" cy="15" r="3" fill="#FFD734"/>
-                            
-                            <!-- 8个方向放射状黄线 -->
-                            <!-- 水平线 -->
-                            <path d="M6 15H10" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M20 15H24" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            
-                            <!-- 垂直线 -->
-                            <path d="M15 6V10" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M15 20V24" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            
-                            <!-- 对角线 -->
-                            <path d="M11 11L9 9" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M19 11L21 9" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M9 21L11 19" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                            <path d="M19 19L21 21" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
-                    `;
+                    specialActionBtn.innerHTML = `<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="3" fill="#FFD734"/><path d="M6 15H10" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M20 15H24" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M15 6V10" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M15 20V24" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M11 11L9 9" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M19 11L21 9" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M9 21L11 19" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/><path d="M19 19L21 21" stroke="#FFD734" stroke-width="3" stroke-linecap="round"/></svg>`;
                     specialActionBtn.disabled = false;
                 } else if (!gameState.isAnswering) {
-                    // 还未开始答题，显示开始答题按钮
                     specialActionBtn.className = 'special-btn start-answer-btn';
                     specialActionBtn.title = '开始答题';
-                    specialActionBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5V19L19 12L8 5Z" fill="white"/></svg>';
+                    specialActionBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5V19L19 12L8 5Z" fill="white"/></svg>';
                     specialActionBtn.disabled = gameState.answerLocked;
                 } else {
-                    // 已经开始答题，显示检查答案按钮
                     specialActionBtn.className = 'special-btn check-answer-btn';
                     specialActionBtn.title = '检查答案';
-                    specialActionBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    specialActionBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
                     specialActionBtn.disabled = gameState.answerLocked;
                 }
             }
         }
 
-        // 设置当前工具
         function setCurrentTool(tool) {
             gameState.currentTool = tool;
-            
-            // 更新按钮状态
             toolPointBtn.classList.remove('active');
             toolWallBtn.classList.remove('active');
             toolWallLineBtn.classList.remove('active');
-            
-            if (tool === 'point') {
-                toolPointBtn.classList.add('active');
-            } else if (tool === 'wall') {
-                toolWallBtn.classList.add('active');
-            } else {
-                toolWallLineBtn.classList.add('active');
-            }
+            if (tool === 'point') toolPointBtn.classList.add('active');
+            else if (tool === 'wall') toolWallBtn.classList.add('active');
+            else toolWallLineBtn.classList.add('active');
         }
 
-        // 设置当前模式
         function setCurrentMode(mode) {
             gameState.currentMode = mode;
-            
-            // 更新按钮状态
             toolLineBtn.classList.remove('active');
             toolAnnotationModeBtn.classList.remove('active');
-            
             if (mode === 'line') {
                 toolLineBtn.classList.add('active');
                 annotationTypesSection.style.display = 'none';
@@ -1979,59 +1285,26 @@
                 toolAnnotationModeBtn.classList.add('active');
                 annotationTypesSection.style.display = 'block';
             }
-            
-            // 重置当前标注
             setCurrentAnnotation('none');
         }
 
-        // 设置当前标注
         function setCurrentAnnotation(type) {
             gameState.currentAnnotation = type;
-            
-            // 更新按钮状态
-            const annotationButtons = [
-                annotationCircleBtn,
-                annotationSquareBtn,
-                annotationTriangleBtn,
-                annotationDiamondBtn,
-                annotationStarBtn,
-                annotationCrossBtn,
-                annotationCheckBtn
-            ];
-            
-            annotationButtons.forEach(btn => {
-                btn.classList.remove('active');
-                // 移除filter效果
-                btn.querySelector('svg').style.filter = '';
-            });
-            
+            const annotationButtons = [annotationCircleBtn, annotationSquareBtn, annotationTriangleBtn, annotationDiamondBtn, annotationStarBtn, annotationCrossBtn, annotationCheckBtn];
+            annotationButtons.forEach(btn => { btn.classList.remove('active'); btn.querySelector('svg').style.filter = ''; });
             if (type !== 'none') {
                 const activeBtn = document.querySelector(`[data-type="${type}"]`);
-                if (activeBtn) {
-                    activeBtn.classList.add('active');
-                    // 激活时图标变为白色
-                    activeBtn.querySelector('svg').style.filter = 'brightness(0) invert(1)';
-                }
+                if (activeBtn) { activeBtn.classList.add('active'); activeBtn.querySelector('svg').style.filter = 'brightness(0) invert(1)'; }
             }
         }
 
-        // 处理特殊按钮点击
         function handleSpecialAction() {
             if (gameState.isPaused) return;
-            
-            if (gameState.specialFireworkActive) {
-                // 激活烟花按钮，显示密钥输入界面
-                showSecretScreen();
-            } else if (!gameState.isAnswering) {
-                // 开始答题
-                startAnswering();
-            } else {
-                // 检查答案
-                checkSolution();
-            }
+            if (gameState.specialFireworkActive) showSecretScreen();
+            else if (!gameState.isAnswering) startAnswering();
+            else checkSolution();
         }
 
-        // 显示密钥输入界面
         function showSecretScreen() {
             secretScreen.style.display = 'flex';
             gameScreen.style.display = 'none';
@@ -2039,73 +1312,57 @@
             secretInput.focus();
         }
 
-        // 检查密钥
+        function daysBetweenInclusive(startYear, startMonth, startDay, endDate = new Date()) {
+            const start = new Date(Date.UTC(startYear, startMonth-1, startDay, 0, 0, 0));
+            const end = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 0, 0, 0));
+            const diffMs = end - start;
+            const diffDays = Math.floor(diffMs / 86400000);
+            return diffDays + 1;
+        }
+
         function checkSecret() {
             const input = secretInput.value.trim();
-            
+            const today = new Date();
             if (input === '2026') {
-                // 密钥正确，显示祝贺界面
                 secretScreen.style.display = 'none';
                 congratsScreen.style.display = 'flex';
+            } else if (input === '0314') {
+                const daysFounding = daysBetweenInclusive(2024, 10, 25, today);
+                const daysWebsite = daysBetweenInclusive(2026, 3, 14, today);
+                daysSinceFoundingSpan.textContent = daysFounding;
+                daysSinceWebsiteSpan.textContent = daysWebsite;
+                secretScreen.style.display = 'none';
+                congratsScreen2.style.display = 'flex';
             } else {
-                // 密钥错误，显示提示
-                showMessage("密钥错误", "请输入正确的密钥！");
+                showMessage("密钥错误","请输入正确的密钥！");
                 secretInput.value = '';
                 secretInput.focus();
             }
         }
 
-        // 切换暂停/继续状态
         function togglePauseContinue() {
-            if (gameState.isPaused) {
-                // 继续作答
-                continueAnswering();
-            } else {
-                // 暂停作答
-                pauseAnswering();
-            }
+            if (gameState.isPaused) continueAnswering();
+            else pauseAnswering();
         }
 
-        // 暂停作答
         function pauseAnswering() {
             if (!gameState.isAnswering || gameState.isCompleted || gameState.isPaused) return;
-            
             gameState.isPaused = true;
             gameState.pauseStartTime = Date.now();
             pauseContinueBtn.textContent = '继续作答';
-            
-            // 显示暂停提示
             pauseOverlay.style.display = 'flex';
-            
-            // 停止计时器
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-                gameState.timerInterval = null;
-                gameState.timerRunning = false;
-            }
-            
-            // 禁用除了退出、清空、重新开始、继续作答按钮外的所有按钮
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
             disableButtonsInPauseMode();
-            
-            showMessage("暂停", "游戏已暂停，计时器已停止。");
+            showMessage("暂停","游戏已暂停，计时器已停止。");
         }
 
-        // 继续作答
         function continueAnswering() {
             if (!gameState.isPaused) return;
-            
             gameState.isPaused = false;
-            
-            // 隐藏暂停提示
             pauseOverlay.style.display = 'none';
-            
-            // 计算暂停时间
             const pauseEndTime = Date.now();
             gameState.pausedDuration += (pauseEndTime - gameState.pauseStartTime);
-            
             pauseContinueBtn.textContent = '暂停做答';
-            
-            // 重新开始计时
             if (gameState.isAnswering && !gameState.isCompleted) {
                 gameState.timerRunning = true;
                 gameState.timerInterval = setInterval(() => {
@@ -2113,409 +1370,165 @@
                     updateTimerDisplay();
                 }, 10);
             }
-            
-            // 启用所有按钮
             enableButtonsAfterPause();
-            
             closeMessage();
         }
 
-        // 在暂停模式下禁用按钮
         function disableButtonsInPauseMode() {
-            // 禁用控制按钮（除了退出、清空、重新开始、继续作答）
-            document.querySelectorAll('.control-btn').forEach(btn => {
-                if (btn.id !== 'clearAllPointsBtn' && btn.id !== 'restartGameBtn' && btn.id !== 'pauseContinueBtn') {
-                    btn.disabled = true;
-                }
-            });
-            
-            // 禁用工具按钮
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.disabled = true;
-            });
-            
-            // 禁用特殊按钮
+            document.querySelectorAll('.control-btn').forEach(btn => { if (btn.id !== 'clearAllPointsBtn' && btn.id !== 'restartGameBtn' && btn.id !== 'pauseContinueBtn') btn.disabled = true; });
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
             specialActionBtn.disabled = true;
-            
-            // 禁用标注类型按钮
-            document.querySelectorAll('.tool-annotation-type').forEach(btn => {
-                btn.disabled = true;
-            });
+            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = true);
         }
 
-        // 暂停后启用按钮
         function enableButtonsAfterPause() {
-            // 启用控制按钮
-            document.querySelectorAll('.control-btn').forEach(btn => {
-                btn.disabled = false;
-            });
-            
-            // 启用工具按钮
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.disabled = false;
-            });
-            
-            // 启用特殊按钮
+            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
             specialActionBtn.disabled = false;
-            
-            // 启用标注类型按钮
-            document.querySelectorAll('.tool-annotation-type').forEach(btn => {
-                btn.disabled = false;
-            });
-            
-            // 如果游戏已完成，禁用相应按钮
+            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = false);
             if (gameState.isCompleted) {
-                document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => {
-                    btn.disabled = true;
-                });
-                
-                document.querySelectorAll('.tool-btn').forEach(btn => {
-                    btn.disabled = true;
-                });
-                
+                document.querySelectorAll('.control-btn:not(#restartGameBtn):not(#clearAllPointsBtn)').forEach(btn => btn.disabled = true);
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
                 specialActionBtn.disabled = true;
             }
         }
 
-        // 根据阶段更新按钮文本
         function updateButtonText() {
-            if (gameState.phase === 'placing') {
-                clearAllPointsBtn.textContent = '清除所有点/墙';
-            } else {
-                clearAllPointsBtn.textContent = '清除所有线段';
-            }
+            clearAllPointsBtn.textContent = gameState.phase === 'placing' ? '清除所有点/墙' : '清除所有线段';
         }
 
-        // 处理画布点击
         function handleCanvasClick(event) {
             if (gameState.answerLocked || gameState.isPaused) return;
-            
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / canvas.clientWidth;
             const scaleY = canvas.height / canvas.clientHeight;
-            
-            // 考虑高DPI缩放
             const x = (event.clientX - rect.left) * scaleX / gameState.dpr;
             const y = (event.clientY - rect.top) * scaleY / gameState.dpr;
-            
-            // 将点击坐标转换为网格坐标（放宽判定范围）
             const gridPos = screenToGrid(x, y);
-            
             if (gridPos) {
-                if (gameState.phase === 'placing') {
-                    handlePlacingPhase(gridPos.x, gridPos.y);
-                } else if (gameState.phase === 'connecting') {
-                    // 第二阶段只有在开始答题后才能操作
-                    if (!gameState.isAnswering && gameState.currentMode === 'line') {
-                        showMessage("提示", "请先点击'开始做答'按钮才能开始连线！");
-                        return;
-                    }
-                    
-                    if (gameState.currentMode === 'line') {
-                        handleConnectingPhase(gridPos.x, gridPos.y);
-                    } else {
-                        handleAnnotationPhase(gridPos.x, gridPos.y);
-                    }
+                if (gameState.phase === 'placing') handlePlacingPhase(gridPos.x, gridPos.y);
+                else if (gameState.phase === 'connecting') {
+                    if (!gameState.isAnswering && gameState.currentMode === 'line') { showMessage("提示","请先点击'开始做答'按钮才能开始连线！"); return; }
+                    if (gameState.currentMode === 'line') handleConnectingPhase(gridPos.x, gridPos.y);
+                    else handleAnnotationPhase(gridPos.x, gridPos.y);
                 }
             }
         }
 
-        // 处理触摸事件
-        function handleTouch(event) {
-            event.preventDefault();
-            const touch = event.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / canvas.clientWidth;
-            const scaleY = canvas.height / canvas.clientHeight;
-            
-            // 考虑高DPI缩放
-            const x = (touch.clientX - rect.left) * scaleX / gameState.dpr;
-            const y = (touch.clientY - rect.top) * scaleY / gameState.dpr;
-            
-            // 将触摸坐标转换为网格坐标（放宽判定范围）
-            const gridPos = screenToGrid(x, y);
-            
-            if (gridPos) {
-                if (gameState.phase === 'placing') {
-                    handlePlacingPhase(gridPos.x, gridPos.y);
-                } else if (gameState.phase === 'connecting') {
-                    // 第二阶段只有在开始答题后才能操作
-                    if (!gameState.isAnswering && gameState.currentMode === 'line') {
-                        showMessage("提示", "请先点击'开始做答'按钮才能开始连线！");
-                        return;
-                    }
-                    
-                    if (gameState.currentMode === 'line') {
-                        handleConnectingPhase(gridPos.x, gridPos.y);
-                    } else {
-                        handleAnnotationPhase(gridPos.x, gridPos.y);
-                    }
-                }
-            }
-        }
+        // 移除了handleTouch函数
 
-        // 将屏幕坐标转换为网格坐标（放宽判定范围）
         function screenToGrid(screenX, screenY) {
-            // 计算网格起始位置
             const gridStartX = gameState.canvasPadding;
             const gridStartY = gameState.canvasPadding;
-            
-            // 计算点击位置到最近网格点的距离
             const gridX = (screenX - gridStartX) / gameState.cellSize;
             const gridY = (screenY - gridStartY) / gameState.cellSize;
-            
-            // 计算最近的网格点（使用四舍五入，增加容错）
             const nearestX = Math.round(gridX);
             const nearestY = Math.round(gridY);
-            
-            // 检查距离是否在容错范围内（0.6个格子，进一步放宽）
-            const distance = Math.sqrt(
-                Math.pow(gridX - nearestX, 2) + 
-                Math.pow(gridY - nearestY, 2)
-            );
-            
-            if (distance <= 0.6 && 
-                nearestX >= 0 && nearestX <= gameState.gridSize.width && 
-                nearestY >= 0 && nearestY <= gameState.gridSize.height) {
+            const distance = Math.sqrt(Math.pow(gridX - nearestX, 2) + Math.pow(gridY - nearestY, 2));
+            // 边界限制：最大索引为 gridSize.width-1 和 gridSize.height-1
+            if (distance <= 0.6 && nearestX >= 0 && nearestX <= gameState.gridSize.width-1 && nearestY >= 0 && nearestY <= gameState.gridSize.height-1) {
                 return { x: nearestX, y: nearestY };
             }
-            
             return null;
         }
 
-        // 处理放置阶段
         function handlePlacingPhase(x, y) {
-            // 检查是否在墙线上
-            if (gameState.currentTool === 'point' && isPointOnWallLine(x, y)) {
-                showMessage("提示", "该位置有墙线，请先移除墙线或选择其他位置！");
-                return;
-            }
-            
+            if (gameState.currentTool === 'point' && isPointOnWallLine(x, y)) { showMessage("提示","该位置有墙线，请先移除墙线或选择其他位置！"); return; }
             if (gameState.currentTool === 'point') {
-                // 检查该位置是否已有点或墙
                 const existingPoint = gameState.points.find(p => p.x === x && p.y === y);
                 const existingWall = gameState.walls.find(w => w.x === x && w.y === y);
-                
-                if (existingWall) {
-                    showMessage("提示", "该位置已有墙，请先移除墙或选择其他位置！");
-                    return;
-                }
-                
-                if (existingPoint) {
-                    // 如果已有点，则移除它
-                    removePoint(existingPoint);
-                } else {
-                    // 添加新点
-                    addPoint(x, y);
-                }
+                if (existingWall) { showMessage("提示","该位置已有墙，请先移除墙或选择其他位置！"); return; }
+                if (existingPoint) removePoint(existingPoint);
+                else addPoint(x, y);
             } else if (gameState.currentTool === 'wall') {
-                // 放置墙点
-                // 检查该位置是否已有点或墙
                 const existingPoint = gameState.points.find(p => p.x === x && p.y === y);
                 const existingWall = gameState.walls.find(w => w.x === x && w.y === y);
-                
-                if (existingPoint) {
-                    showMessage("提示", "该位置已有点，请先移除点或选择其他位置！");
-                    return;
-                }
-                
-                if (existingWall) {
-                    // 如果已有墙点，则移除它
-                    removeWall(existingWall);
-                } else {
-                    // 添加新墙点
-                    addWall(x, y);
-                }
-            } else {
-                // 放置墙线
-                handleWallLinePhase(x, y);
-            }
-            
-            saveToHistory();
-            updateUI();
-            drawEverything();
+                if (existingPoint) { showMessage("提示","该位置已有点，请先移除点或选择其他位置！"); return; }
+                if (existingWall) removeWall(existingWall);
+                else addWall(x, y);
+            } else handleWallLinePhase(x, y);
+            saveToHistory(); updateUI(); drawEverything();
         }
 
-        // 检查点是否在墙线上
-        function isPointOnWallLine(x, y) {
-            const pointKey = `${x},${y}`;
-            return gameState.wallLinePoints.has(pointKey);
-        }
+        function isPointOnWallLine(x, y) { return gameState.wallLinePoints.has(`${x},${y}`); }
 
-        // 处理墙线放置
         function handleWallLinePhase(x, y) {
-            if (!gameState.selectedWallLineStart) {
-                // 如果没有已选起点，则检查该位置是否可以作为起点
-                // 墙线可以从任意位置开始
-                gameState.selectedWallLineStart = { x, y };
-            } else {
-                // 如果已有点被选中，尝试绘制或删除墙线
+            if (!gameState.selectedWallLineStart) gameState.selectedWallLineStart = { x, y };
+            else {
                 if (gameState.selectedWallLineStart.x !== x || gameState.selectedWallLineStart.y !== y) {
-                    // 检查是否已经存在这条墙线
                     const existingLineIndex = findWallLineIndex(gameState.selectedWallLineStart, {x, y});
-                    
                     if (existingLineIndex !== -1) {
-                        // 如果已存在，则删除这条墙线
                         gameState.wallLines.splice(existingLineIndex, 1);
                         updateWallLinePoints();
                         gameState.selectedWallLineStart = null;
                     } else {
-                        // 否则尝试添加新墙线
                         const lineAdded = addWallLine(gameState.selectedWallLineStart, {x, y});
-                        
-                        if (lineAdded) {
-                            // 如果成功添加墙线，将当前点设为新的选中点
-                            gameState.selectedWallLineStart = {x, y};
-                        } else {
-                            // 如果无法添加墙线，取消选择
-                            gameState.selectedWallLineStart = null;
-                        }
+                        if (lineAdded) gameState.selectedWallLineStart = {x, y};
+                        else gameState.selectedWallLineStart = null;
                     }
-                } else {
-                    // 点击同一个点，取消选择
-                    gameState.selectedWallLineStart = null;
-                }
+                } else gameState.selectedWallLineStart = null;
             }
         }
 
-        // 处理连线阶段
         function handleConnectingPhase(x, y) {
-            // 查找点击位置的点
             const clickedPoint = gameState.points.find(p => p.x === x && p.y === y);
-            
-            if (!clickedPoint) {
-                // 如果没有点到点，则取消选择
-                gameState.selectedPoint = null;
-                drawEverything();
-                return;
-            }
-            
-            if (!gameState.selectedPoint) {
-                // 如果没有已选点，则选择当前点
-                gameState.selectedPoint = clickedPoint;
-            } else {
-                // 如果已有点被选中，尝试绘制或删除直线
+            if (!clickedPoint) { gameState.selectedPoint = null; drawEverything(); return; }
+            if (!gameState.selectedPoint) gameState.selectedPoint = clickedPoint;
+            else {
                 if (gameState.selectedPoint !== clickedPoint) {
-                    // 检查是否已经存在这条线
                     const existingLineIndex = findLineIndex(gameState.selectedPoint, clickedPoint);
-                    
                     if (existingLineIndex !== -1) {
-                        // 如果已存在，则删除这条线
                         gameState.lines.splice(existingLineIndex, 1);
                         gameState.selectedPoint = null;
                     } else {
-                        // 否则尝试添加新直线
                         const lineAdded = addLine(gameState.selectedPoint, clickedPoint);
-                        
-                        if (lineAdded) {
-                            // 如果成功添加直线，将当前点设为新的选中点
-                            gameState.selectedPoint = clickedPoint;
-                        } else {
-                            // 如果无法添加直线，取消选择
-                            gameState.selectedPoint = null;
-                        }
+                        if (lineAdded) gameState.selectedPoint = clickedPoint;
+                        else gameState.selectedPoint = null;
                     }
-                } else {
-                    // 点击同一个点，取消选择
-                    gameState.selectedPoint = null;
-                }
+                } else gameState.selectedPoint = null;
             }
-            
-            saveToHistory();
-            updateUI();
-            drawEverything();
+            saveToHistory(); updateUI(); drawEverything();
         }
 
-        // 处理标注阶段
         function handleAnnotationPhase(x, y) {
-            // 查找点击位置的点
             const clickedPoint = gameState.points.find(p => p.x === x && p.y === y);
-            
-            if (!clickedPoint) {
-                return;
-            }
-            
-            // 设置或移除标注
-            if (gameState.currentAnnotation === 'none') {
-                gameState.annotations.delete(clickedPoint.id);
-            } else {
-                gameState.annotations.set(clickedPoint.id, gameState.currentAnnotation);
-            }
-            
-            saveToHistory();
-            drawEverything();
+            if (!clickedPoint) return;
+            if (gameState.currentAnnotation === 'none') gameState.annotations.delete(clickedPoint.id);
+            else gameState.annotations.set(clickedPoint.id, gameState.currentAnnotation);
+            saveToHistory(); drawEverything();
         }
 
-        // 查找墙线索引
         function findWallLineIndex(point1, point2) {
             return gameState.wallLines.findIndex(line => 
-                (line.start.x === point1.x && line.start.y === point1.y && 
-                 line.end.x === point2.x && line.end.y === point2.y) ||
-                (line.start.x === point2.x && line.start.y === point2.y && 
-                 line.end.x === point1.x && line.end.y === point1.y)
-            );
+                (line.start.x === point1.x && line.start.y === point1.y && line.end.x === point2.x && line.end.y === point2.y) ||
+                (line.start.x === point2.x && line.start.y === point2.y && line.end.x === point1.x && line.end.y === point1.y));
         }
 
-        // 查找直线索引
         function findLineIndex(point1, point2) {
             return gameState.lines.findIndex(line => 
-                (line.start.x === point1.x && line.start.y === point1.y && 
-                 line.end.x === point2.x && line.end.y === point2.y) ||
-                (line.start.x === point2.x && line.start.y === point2.y && 
-                 line.end.x === point1.x && line.end.y === point1.y)
-            );
+                (line.start.x === point1.x && line.start.y === point1.y && line.end.x === point2.x && line.end.y === point2.y) ||
+                (line.start.x === point2.x && line.start.y === point2.y && line.end.x === point1.x && line.end.y === point1.y));
         }
 
-        // 添加点
-        function addPoint(x, y) {
-            gameState.points.push({
-                x, y,
-                id: gameState.pointIdCounter++
-            });
-        }
-
-        // 移除点
+        function addPoint(x, y) { gameState.points.push({ x, y, id: gameState.pointIdCounter++ }); }
         function removePoint(point) {
-            // 移除该点
             const pointIndex = gameState.points.indexOf(point);
-            if (pointIndex !== -1) {
-                gameState.points.splice(pointIndex, 1);
-            }
-            
-            // 移除该点的标注
+            if (pointIndex !== -1) gameState.points.splice(pointIndex, 1);
             gameState.annotations.delete(point.id);
-            
-            // 移除所有连接到该点的直线
-            gameState.lines = gameState.lines.filter(line => 
-                !(line.start.x === point.x && line.start.y === point.y) &&
-                !(line.end.x === point.x && line.end.y === point.y)
-            );
+            gameState.lines = gameState.lines.filter(line => !(line.start.x === point.x && line.start.y === point.y) && !(line.end.x === point.x && line.end.y === point.y));
         }
-
-        // 添加墙点
-        function addWall(x, y) {
-            gameState.walls.push({
-                x, y,
-                id: gameState.wallIdCounter++
-            });
-        }
-
-        // 移除墙点
+        function addWall(x, y) { gameState.walls.push({ x, y, id: gameState.wallIdCounter++ }); }
         function removeWall(wall) {
             const wallIndex = gameState.walls.indexOf(wall);
-            if (wallIndex !== -1) {
-                gameState.walls.splice(wallIndex, 1);
-            }
+            if (wallIndex !== -1) gameState.walls.splice(wallIndex, 1);
         }
 
-        // 更新墙线经过的点
         function updateWallLinePoints() {
             gameState.wallLinePoints.clear();
             gameState.wallLines.forEach(line => {
                 const dx = line.end.x - line.start.x;
                 const dy = line.end.y - line.start.y;
                 const steps = Math.max(Math.abs(dx), Math.abs(dy));
-                
                 for (let i = 0; i <= steps; i++) {
                     const x = line.start.x + Math.round(dx * i / steps);
                     const y = line.start.y + Math.round(dy * i / steps);
@@ -2524,473 +1537,214 @@
             });
         }
 
-        // 检查是否与墙点或墙线冲突
         function checkWallConflict(point1, point2) {
             const dx = point2.x - point1.x;
             const dy = point2.y - point1.y;
             const steps = Math.max(Math.abs(dx), Math.abs(dy));
-            
             for (let i = 0; i <= steps; i++) {
                 const x = point1.x + Math.round(dx * i / steps);
                 const y = point1.y + Math.round(dy * i / steps);
-                
-                // 检查点周围1/4格边长范围内是否有墙点
                 for (const wall of gameState.walls) {
-                    const wallDx = Math.abs(wall.x - x);
-                    const wallDy = Math.abs(wall.y - y);
-                    
-                    // 使用曼哈顿距离检查1/4格范围
-                    if (wallDx <= 0.25 && wallDy <= 0.25) {
-                        return true;
-                    }
+                    if (Math.abs(wall.x - x) <= 0.25 && Math.abs(wall.y - y) <= 0.25) return true;
                 }
-                
-                // 检查墙线
                 for (const wallLine of gameState.wallLines) {
-                    // 检查线段与墙线是否接近
-                    const distance = pointToLineDistance(x, y, wallLine.start, wallLine.end);
-                    if (distance <= 0.25) {
-                        return true;
-                    }
+                    if (pointToLineDistance(x, y, wallLine.start, wallLine.end) <= 0.25) return true;
                 }
             }
-            
             return false;
         }
 
-        // 计算点到线段的距离
         function pointToLineDistance(px, py, lineStart, lineEnd) {
             const lineDx = lineEnd.x - lineStart.x;
             const lineDy = lineEnd.y - lineStart.y;
             const lineLength = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
-            
-            if (lineLength === 0) {
-                // 线段退化为点
-                const dx = px - lineStart.x;
-                const dy = py - lineStart.y;
-                return Math.sqrt(dx * dx + dy * dy);
-            }
-            
-            // 计算投影点
+            if (lineLength === 0) { const dx = px - lineStart.x; const dy = py - lineStart.y; return Math.sqrt(dx * dx + dy * dy); }
             const t = Math.max(0, Math.min(1, ((px - lineStart.x) * lineDx + (py - lineStart.y) * lineDy) / (lineLength * lineLength)));
             const projectionX = lineStart.x + t * lineDx;
             const projectionY = lineStart.y + t * lineDy;
-            
-            const dx = px - projectionX;
-            const dy = py - projectionY;
+            const dx = px - projectionX; const dy = py - projectionY;
             return Math.sqrt(dx * dx + dy * dy);
         }
 
-        // 添加墙线
         function addWallLine(point1, point2) {
-            // 计算角度
             const dx = point2.x - point1.x;
             const dy = point2.y - point1.y;
-            
-            // 检查是否为有效角度（0°, 45°, 90°, 135°）
-            let angle = null;
-            
-            if (dx === 0 && dy === 0) {
-                return false; // 同一点，不绘制
-            } else if (dx === 0) {
-                angle = 90; // 垂直线
-            } else if (dy === 0) {
-                angle = 0; // 水平线
-            } else if (Math.abs(dx) === Math.abs(dy)) {
-                angle = dx * dy > 0 ? 45 : 135; // 对角线
-            } else {
-                return false; // 不是有效角度
-            }
-            
-            // 检查直线是否穿过其他点
-            if (!isLineClear(point1, point2, true)) {
-                return false;
-            }
-            
-            // 添加新墙线
-            gameState.wallLines.push({
-                start: { x: point1.x, y: point1.y },
-                end: { x: point2.x, y: point2.y },
-                angle: angle
-            });
-            
-            // 更新墙线经过的点
+            if (dx === 0 && dy === 0) return false;
+            if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy))) return false;
+            if (!isLineClear(point1, point2, true)) return false;
+            gameState.wallLines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx===0?90:(dy===0?0:(dx*dy>0?45:135)) });
             updateWallLinePoints();
-            
             return true;
         }
 
-        // 添加直线
         function addLine(point1, point2) {
-            // 计算角度
             const dx = point2.x - point1.x;
             const dy = point2.y - point1.y;
-            
-            // 检查是否为有效角度（0°, 45°, 90°, 135°）
-            let angle = null;
-            
-            if (dx === 0 && dy === 0) {
-                return false; // 同一点，不绘制
-            } else if (dx === 0) {
-                angle = 90; // 垂直线
-            } else if (dy === 0) {
-                angle = 0; // 水平线
-            } else if (Math.abs(dx) === Math.abs(dy)) {
-                angle = dx * dy > 0 ? 45 : 135; // 对角线
-            } else {
-                return false; // 不是有效角度
-            }
-            
-            // 检查直线是否穿过其他点
-            if (!isLineClear(point1, point2, false)) {
-                return false;
-            }
-            
-            // 检查是否与墙点或墙线冲突
-            if (checkWallConflict(point1, point2)) {
-                showMessage("错误", "线段不许经过墙的四分之一格边长范围！");
-                return false;
-            }
-            
-            // 添加新直线（不再检查连接数限制）
-            gameState.lines.push({
-                start: { x: point1.x, y: point1.y },
-                end: { x: point2.x, y: point2.y },
-                angle: angle
-            });
-            
+            if (dx === 0 && dy === 0) return false;
+            if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy))) return false;
+            if (!isLineClear(point1, point2, false)) return false;
+            if (checkWallConflict(point1, point2)) { showMessage("错误","线段不许经过墙的四分之一格边长范围！"); return false; }
+            gameState.lines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx===0?90:(dy===0?0:(dx*dy>0?45:135)) });
             return true;
         }
 
-        // 检查直线是否穿过其他点
         function isLineClear(point1, point2, isWallLine = false) {
             const dx = point2.x - point1.x;
             const dy = point2.y - point1.y;
-            
-            // 计算步长
             const steps = Math.max(Math.abs(dx), Math.abs(dy));
-            
             for (let i = 1; i < steps; i++) {
                 const x = point1.x + Math.round(dx * i / steps);
                 const y = point1.y + Math.round(dy * i / steps);
-                
-                // 检查中间点是否有点（但不是起点或终点）
                 if (!isWallLine) {
-                    // 对于普通直线，检查是否穿过其他点
-                    if (gameState.points.some(p => p.x === x && p.y === y && 
-                        !(p.x === point1.x && p.y === point1.y) && 
-                        !(p.x === point2.x && p.y === point2.y))) {
-                        return false;
-                    }
+                    if (gameState.points.some(p => p.x === x && p.y === y && !(p.x === point1.x && p.y === point1.y) && !(p.x === point2.x && p.y === point2.y))) return false;
                 }
-                
-                // 检查是否穿过墙点
-                if (gameState.walls.some(w => w.x === x && w.y === y)) {
-                    return false;
-                }
+                if (gameState.walls.some(w => w.x === x && w.y === y)) return false;
             }
-            
             return true;
         }
 
-        // 检测环
         function detectCycle() {
             if (gameState.points.length === 0) return { hasCycle: false, isComplete: false };
-            
-            // 构建邻接表
             const adjList = new Map();
-            gameState.points.forEach(point => {
-                adjList.set(point.id, []);
-            });
-            
-            // 填充邻接表
+            gameState.points.forEach(point => adjList.set(point.id, []));
             gameState.lines.forEach(line => {
-                const startPoint = gameState.points.find(p => 
-                    p.x === line.start.x && p.y === line.start.y);
-                const endPoint = gameState.points.find(p => 
-                    p.x === line.end.x && p.y === line.end.y);
-                
+                const startPoint = gameState.points.find(p => p.x === line.start.x && p.y === line.start.y);
+                const endPoint = gameState.points.find(p => p.x === line.end.x && p.y === line.end.y);
                 if (startPoint && endPoint) {
                     adjList.get(startPoint.id).push(endPoint.id);
                     adjList.get(endPoint.id).push(startPoint.id);
                 }
             });
-            
-            // DFS检测环
             const visited = new Set();
-            
             for (const point of gameState.points) {
                 if (!visited.has(point.id)) {
                     const hasCycle = dfsDetectCycle(point.id, -1, visited, adjList);
                     if (hasCycle) {
-                        // 检查是否访问了所有点
                         const allVisited = gameState.points.every(p => visited.has(p.id));
                         return { hasCycle: true, isComplete: allVisited };
                     }
                 }
             }
-            
             return { hasCycle: false, isComplete: false };
         }
 
-        // DFS检测环
         function dfsDetectCycle(node, parent, visited, adjList) {
             visited.add(node);
-            
             for (const neighbor of adjList.get(node) || []) {
-                if (!visited.has(neighbor)) {
-                    if (dfsDetectCycle(neighbor, node, visited, adjList)) {
-                        return true;
-                    }
-                } else if (neighbor !== parent) {
-                    return true;
-                }
+                if (!visited.has(neighbor)) { if (dfsDetectCycle(neighbor, node, visited, adjList)) return true; }
+                else if (neighbor !== parent) return true;
             }
-            
             return false;
         }
 
-        // 确认完成放置
         function confirmFinishPlacing() {
-            if (gameState.points.length < 2) {
-                showMessage("提示", "请至少放置2个点再进入连线阶段！");
-                return;
+            if (gameState.points.length < 2) { 
+                showMessage("提示","请至少放置2个点再进入连线阶段！");
+                return; 
             }
-            
-            showConfirmMessage(
-                "确认完成出题",
-                "确定已经完成出题，要开始连线吗？",
-                () => {
-                    setPhase('connecting');
-                }
-            );
+            showConfirmMessage("确认完成出题","确定已经完成出题，要开始连线吗？",()=>{ setPhase('connecting'); });
         }
 
-        // 开始答题
         function startAnswering() {
             gameState.isAnswering = true;
             gameState.startTime = Date.now();
             gameState.timerRunning = true;
             gameState.isPaused = false;
             gameState.pausedDuration = 0;
-            
-            // 确保暂停提示隐藏
             pauseOverlay.style.display = 'none';
-            
-            // 开始计时（毫秒级）
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-            }
-            
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
             gameState.timerInterval = setInterval(() => {
                 if (!gameState.isPaused) {
                     gameState.elapsedTime = Date.now() - gameState.startTime - gameState.pausedDuration;
                     updateTimerDisplay();
                 }
-            }, 10); // 每10毫秒更新一次
-            
-            // 更新按钮
+            }, 10);
             updateSpecialButton();
             pauseContinueBtn.style.display = 'inline-block';
         }
 
-        // 更新计时器显示（毫秒级）
         function updateTimerDisplay() {
             const totalMilliseconds = gameState.elapsedTime;
             const minutes = Math.floor(totalMilliseconds / 60000);
             const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
             const milliseconds = Math.floor((totalMilliseconds % 1000) / 10);
-            
-            timerValue.textContent = 
-                `${minutes.toString().padStart(2, '0')}:` +
-                `${seconds.toString().padStart(2, '0')}.` +
-                `${milliseconds.toString().padStart(2, '0')}`;
+            timerValue.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}.${milliseconds.toString().padStart(2,'0')}`;
         }
 
-        // 检查答案
         function checkSolution() {
-            // 检查是否有超过2条线连接的点
-            const connectionCounts = gameState.points.map(point => {
-                return gameState.lines.filter(line => 
-                    (line.start.x === point.x && line.start.y === point.y) ||
-                    (line.end.x === point.x && line.end.y === point.y)
-                ).length;
-            });
-            
-            const overConnectionPoints = connectionCounts.filter(count => count > 2).length;
-            
-            if (overConnectionPoints > 0) {
-                showMessage("错误", "有的点线连多了！");
-                // 继续计时，不停止
-                return;
-            }
-            
-            // 检查是否有未连接的点
-            const zeroConnectionPoints = connectionCounts.filter(count => count === 0).length;
-            
-            if (zeroConnectionPoints > 0) {
-                showMessage("需要继续作答", `还有${zeroConnectionPoints}个点没有连接任何线！`);
-                // 继续计时，不停止
-                return;
-            }
-            
-            // 检查连接数限制
-            const singleConnectionPoints = connectionCounts.filter(count => count === 1).length;
-            
-            if (singleConnectionPoints > 2) {
-                showMessage("需要继续作答", `有${singleConnectionPoints}个点只连接了1条线，最多只能有2个这样的点！`);
-                // 继续计时，不停止
-                return;
-            }
-            
-            // 检测环
+            const connectionCounts = gameState.points.map(point => gameState.lines.filter(line => (line.start.x===point.x&&line.start.y===point.y)||(line.end.x===point.x&&line.end.y===point.y)).length);
+            const overConnectionPoints = connectionCounts.filter(c=>c>2).length;
+            if (overConnectionPoints > 0) { showMessage("错误","有的点线连多了！"); return; }
+            const zeroConnectionPoints = connectionCounts.filter(c=>c===0).length;
+            if (zeroConnectionPoints > 0) { showMessage("需要继续作答",`还有${zeroConnectionPoints}个点没有连接任何线！`); return; }
+            const singleConnectionPoints = connectionCounts.filter(c=>c===1).length;
+            if (singleConnectionPoints > 2) { showMessage("需要继续作答",`有${singleConnectionPoints}个点只连接了1条线，最多只能有2个这样的点！`); return; }
             const cycleResult = detectCycle();
-            
             if (cycleResult.hasCycle) {
-                if (cycleResult.isComplete) {
-                    // 环包含了所有点，成功
-                    completeGame();
-                } else {
-                    showMessage("错误", "成环了，但这个环没有经过所有的点！");
-                    // 继续计时，不停止
-                    return;
-                }
+                if (cycleResult.isComplete) completeGame();
+                else { showMessage("错误","成环了，但这个环没有经过所有的点！"); return; }
             } else {
-                // 没有环，检查是否所有点都连接正确
-                if (singleConnectionPoints <= 2) {
-                    completeGame();
-                } else {
-                    showMessage("需要继续作答", "请确保所有点都正确连接！");
-                    // 继续计时，不停止
-                    return;
-                }
+                if (singleConnectionPoints <= 2) completeGame();
+                else { showMessage("需要继续作答","请确保所有点都正确连接！"); return; }
             }
         }
 
-        // 完成游戏
         function completeGame() {
-            // 停止计时
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-                gameState.timerInterval = null;
-                gameState.timerRunning = false;
-            }
-            
-            // 格式化时间显示
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
             const totalMilliseconds = gameState.elapsedTime;
-            const minutes = Math.floor(totalMilliseconds / 60000);
-            const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
-            const milliseconds = Math.floor((totalMilliseconds % 1000) / 10);
-            const timeString = 
-                `${minutes.toString().padStart(2, '0')}:` +
-                `${seconds.toString().padStart(2, '0')}.` +
-                `${milliseconds.toString().padStart(2, '0')}`;
-            
-            // 计算钴系数：玩家用时(分钟)/点数*200，四舍五入到个位
-            // 注意：elapsedTime是毫秒，除以60000得到分钟
-            const cobaltCoefficient = Math.round((gameState.elapsedTime / 60000) / gameState.points.length * 200);
-            
+            const minutes = Math.floor(totalMilliseconds/60000);
+            const seconds = Math.floor((totalMilliseconds%60000)/1000);
+            const milliseconds = Math.floor((totalMilliseconds%1000)/10);
+            const timeString = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}.${milliseconds.toString().padStart(2,'0')}`;
+            const cobaltCoefficient = Math.round((gameState.elapsedTime/60000) / gameState.points.length * 200);
             gameState.isCompleted = true;
             gameState.answerLocked = true;
             gameState.isPaused = false;
-            
-            // 激活特殊烟花按钮
             gameState.specialFireworkActive = true;
-            
-            // 更新暂停按钮文本
             pauseContinueBtn.textContent = '暂停做答';
-            
-            // 禁用所有按钮（除了重新开始、退出和返回第一阶段）
-            document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => {
-                btn.disabled = true;
-            });
-            
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.disabled = true;
-            });
-            
-            // 启用返回第一阶段按钮
+            document.querySelectorAll('.control-btn:not(#restartGameBtn):not(#clearAllPointsBtn)').forEach(btn=>btn.disabled=true);
+            document.querySelectorAll('.tool-btn').forEach(btn=>btn.disabled=true);
             returnPhase1Btn.disabled = false;
-            
-            // 更新特殊按钮为烟花按钮
             updateSpecialButton();
-            
-            // 显示包含钴系数的成功消息
-            showMessageWithSuccess(
-                "恭喜！", 
-                "恭喜你！做出来了！答案正确！",
-                `用时: ${timeString}`,
-                `钴系数: ${cobaltCoefficient}`
-            );
+            showMessageWithSuccess("恭喜！","恭喜你！做出来了！答案正确！",`用时: ${timeString}`,`钴系数: ${cobaltCoefficient}`);
         }
 
-        // 清除所有点/墙/线段
         function clearAllPoints() {
-            if (gameState.phase === 'placing') {
-                // 第一阶段：清除所有点、墙点和墙线
-                if (gameState.points.length === 0 && gameState.walls.length === 0 && gameState.wallLines.length === 0) {
-                    return;
-                }
-                
-                if (confirm("确定要清除所有点、墙点和墙线吗？")) {
-                    gameState.points = [];
-                    gameState.walls = [];
-                    gameState.wallLines = [];
-                    gameState.wallLinePoints.clear();
-                    gameState.lines = [];
-                    gameState.selectedPoint = null;
-                    gameState.selectedWallLineStart = null;
-                    gameState.pointIdCounter = 1;
-                    gameState.wallIdCounter = 1;
-                    gameState.annotations.clear();
-                    saveToHistory();
-                    updateUI();
-                    drawEverything();
-                }
-            } else {
-                // 第二阶段：清除所有线段
-                if (gameState.lines.length === 0) {
-                    showMessage("提示", "已经没有可以删的线段了！！！");
-                    return;
-                }
-                
-                if (confirm("确定要清除所有线段吗？")) {
-                    gameState.lines = [];
-                    gameState.selectedPoint = null;
-                    saveToHistory();
-                    updateUI();
-                    drawEverything();
-                }
-            }
-        }
-
-        // 重新开始游戏
-        function restartGame() {
-            if (confirm("确定要重新开始游戏吗？所有进度将会丢失。")) {
-                // 重置到当前大小的初始状态
-                resetGameState();
-                setPhase('placing');
-                saveToHistory();
-                updateUI();
-                drawEverything();
-            }
-        }
-
-        // 撤销上一步操作
-        function undoLastAction() {
-            if (gameState.phase === 'connecting' && gameState.lines.length === 0 && gameState.currentMode === 'line') {
-                showMessage("提示", "已经没有可以删的线段了！！！");
+            if (gameState.isCompleted) {
+                showMessage("提示", "游戏已完成，不能修改。请点击「重新开始游戏」开始新的一局。");
                 return;
             }
-            
-            if (gameState.history.length <= 1) {
-                return; // 只有初始状态，无法撤销
+            if (gameState.phase === 'placing') {
+                if (gameState.points.length===0 && gameState.walls.length===0 && gameState.wallLines.length===0) {
+                    showMessage("提示","没有可清除的点、墙或墙线");
+                    return;
+                }
+                showConfirmMessage("清除所有", "确定要清除所有点、墙点和墙线吗？", () => {
+                    gameState.points = []; gameState.walls = []; gameState.wallLines = []; gameState.wallLinePoints.clear(); gameState.lines = [];
+                    gameState.selectedPoint = null; gameState.selectedWallLineStart = null; gameState.pointIdCounter = 1; gameState.wallIdCounter = 1;
+                    gameState.annotations.clear(); saveToHistory(); updateUI(); drawEverything();
+                });
+            } else {
+                if (gameState.lines.length===0) { 
+                    showMessage("提示","没有可清除的线段");
+                    return; 
+                }
+                showConfirmMessage("清除所有线段", "确定要清除所有线段吗？", () => {
+                    gameState.lines = []; gameState.selectedPoint = null; saveToHistory(); updateUI(); drawEverything();
+                });
             }
-            
-            // 移除当前状态
+        }
+
+        function restartGame() {
+            showConfirmMessage("重新开始游戏", "确定要重新开始游戏吗？所有进度将会丢失。", () => {
+                resetGameState(); setPhase('placing'); saveToHistory(); updateUI(); drawEverything();
+            });
+        }
+
+        function undoLastAction() {
+            if (gameState.phase === 'connecting' && gameState.lines.length === 0 && gameState.currentMode === 'line') { showMessage("提示","已经没有可以删的线段了！！！"); return; }
+            if (gameState.history.length <= 1) return;
             gameState.history.pop();
-            
-            // 恢复到上一个状态
             const prevState = gameState.history[gameState.history.length - 1];
             gameState.points = [...prevState.points];
             gameState.walls = [...prevState.walls];
@@ -3002,12 +1756,9 @@
             gameState.pointIdCounter = prevState.pointIdCounter;
             gameState.wallIdCounter = prevState.wallIdCounter;
             gameState.annotations = new Map(prevState.annotations);
-            
-            updateUI();
-            drawEverything();
+            updateUI(); drawEverything();
         }
 
-        // 保存到历史记录
         function saveToHistory() {
             gameState.history.push({
                 points: [...gameState.points],
@@ -3019,514 +1770,222 @@
                 wallIdCounter: gameState.wallIdCounter,
                 annotations: new Map(gameState.annotations)
             });
-            
-            // 限制历史记录数量
-            if (gameState.history.length > 20) {
-                gameState.history.shift();
-            }
+            if (gameState.history.length > 20) gameState.history.shift();
         }
 
-        // 显示消息
+        // 统一的弹窗管理
         function showMessage(title, content) {
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
             messageCancelBtn.style.display = 'none';
-            messageConfirmBtn.textContent = '确定';
+            messageConfirmBtn.onclick = closeMessage;
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
         }
-        
-        // 显示确认消息
         function showConfirmMessage(title, content, confirmCallback) {
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
             messageCancelBtn.style.display = 'inline-block';
-            messageConfirmBtn.textContent = '确定';
-            
-            // 保存回调函数
-            messageConfirmBtn.onclick = function() {
-                closeMessage();
-                if (confirmCallback) confirmCallback();
+            messageConfirmBtn.onclick = function() { 
+                closeMessage(); 
+                if (confirmCallback) confirmCallback(); 
             };
-            
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
         }
-        
-        // 显示成功消息（带用时和钴系数）
         function showMessageWithSuccess(title, content, timeText, cobaltText) {
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
-            
-            // 创建时间显示元素
-            successMessage.innerHTML = `
-                <div style="margin-bottom: 8px;">${timeText}</div>
-                <div class="cobalt-coefficient">${cobaltText}</div>
-            `;
-            
+            successMessage.innerHTML = `<div style="margin-bottom:8px;">${timeText}</div><div class="cobalt-coefficient">${cobaltText}</div>`;
             successMessage.style.display = 'block';
             messageCancelBtn.style.display = 'none';
-            messageConfirmBtn.textContent = '确定';
+            messageConfirmBtn.onclick = closeMessage;
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
         }
-
-        // 确认消息
-        function confirmMessage() {
-            closeMessage();
-        }
-
-        // 关闭消息
-        function closeMessage() {
-            messageBox.style.display = 'none';
+        function confirmMessage() { closeMessage(); }
+        function closeMessage() { 
+            messageBox.style.display = 'none'; 
             messageOverlay.style.display = 'none';
+            messageConfirmBtn.onclick = confirmMessage;
         }
 
-        // 绘制网格 - 改回原来的格子颜色
         function drawGrid() {
-            ctx.clearRect(0, 0, canvas.width / gameState.dpr, canvas.height / gameState.dpr);
-            
-            // 设置网格样式 - 改回原来的颜色
-            ctx.strokeStyle = '#D2B48C';
-            ctx.lineWidth = 1;
-            
-            // 计算网格起始位置
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            const gridWidth = gameState.gridSize.width * gameState.cellSize;
-            const gridHeight = gameState.gridSize.height * gameState.cellSize;
-            
-            // 绘制网格线
-            for (let i = 0; i <= gameState.gridSize.width; i++) {
-                // 垂直线
-                ctx.beginPath();
-                ctx.moveTo(gridStartX + i * gameState.cellSize, gridStartY);
-                ctx.lineTo(gridStartX + i * gameState.cellSize, gridStartY + gridHeight);
-                ctx.stroke();
+            ctx.clearRect(0,0,canvas.width/gameState.dpr,canvas.height/gameState.dpr);
+            ctx.strokeStyle = '#D2B48C'; ctx.lineWidth = 1;
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
+            // 只画0 到 width-1 的竖线，0 到 height-1 的横线
+            for (let i=0; i<gameState.gridSize.width; i++) { 
+                ctx.beginPath(); 
+                ctx.moveTo(gridStartX + i*gameState.cellSize, gridStartY); 
+                ctx.lineTo(gridStartX + i*gameState.cellSize, gridStartY + gameState.gridSize.height*gameState.cellSize); 
+                ctx.stroke(); 
             }
-            
-            for (let i = 0; i <= gameState.gridSize.height; i++) {
-                // 水平线
-                ctx.beginPath();
-                ctx.moveTo(gridStartX, gridStartY + i * gameState.cellSize);
-                ctx.lineTo(gridStartX + gridWidth, gridStartY + i * gameState.cellSize);
-                ctx.stroke();
+            for (let i=0; i<gameState.gridSize.height; i++) { 
+                ctx.beginPath(); 
+                ctx.moveTo(gridStartX, gridStartY + i*gameState.cellSize); 
+                ctx.lineTo(gridStartX + gameState.gridSize.width*gameState.cellSize, gridStartY + i*gameState.cellSize); 
+                ctx.stroke(); 
             }
-            
-            // 绘制网格标签（坐标）
-            ctx.fillStyle = '#8B5A2B';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // 只在边界显示坐标，避免过于拥挤
-            const step = Math.max(1, Math.floor(gameState.gridSize.width / 10));
-            for (let i = 0; i <= gameState.gridSize.width; i += step) {
-                const x = gridStartX + i * gameState.cellSize;
-                // 顶部坐标
-                ctx.fillText(i, x, gridStartY - 10);
-                // 底部坐标
-                ctx.fillText(i, x, gridStartY + gridHeight + 15);
+            ctx.fillStyle = '#8B5A2B'; ctx.font = '12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            const step = Math.max(1, Math.floor(gameState.gridSize.width/10));
+            // 数字标记只显示内部关键点，但保留边界标记以便参考
+            for (let i=0; i<=gameState.gridSize.width; i+=step) { 
+                const x = gridStartX + i*gameState.cellSize; 
+                ctx.fillText(i, x, gridStartY-10); 
+                ctx.fillText(i, x, gridStartY+gameState.gridSize.height*gameState.cellSize+15); 
             }
-            
-            for (let i = 0; i <= gameState.gridSize.height; i += step) {
-                const y = gridStartY + i * gameState.cellSize;
-                // 左侧坐标
-                ctx.fillText(i, gridStartX - 15, y);
-                // 右侧坐标
-                ctx.fillText(i, gridStartX + gridWidth + 15, y);
+            for (let i=0; i<=gameState.gridSize.height; i+=step) { 
+                const y = gridStartY + i*gameState.cellSize; 
+                ctx.fillText(i, gridStartX-15, y); 
+                ctx.fillText(i, gridStartX+gameState.gridSize.width*gameState.cellSize+15, y); 
             }
         }
 
-        // 绘制墙点
         function drawWalls() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
             ctx.save();
             gameState.walls.forEach(wall => {
-                const x = gridStartX + wall.x * gameState.cellSize;
-                const y = gridStartY + wall.y * gameState.cellSize;
-                const wallSize = gameState.cellSize / 2; // 墙的大小为1/2格边长
-                
-                // 绘制墙点（灰蓝色大十字）
-                ctx.strokeStyle = '#4682B4';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(x - wallSize/2, y);
-                ctx.lineTo(x + wallSize/2, y);
-                ctx.moveTo(x, y - wallSize/2);
-                ctx.lineTo(x, y + wallSize/2);
-                ctx.stroke();
+                const x = gridStartX + wall.x*gameState.cellSize, y = gridStartY + wall.y*gameState.cellSize, wallSize = gameState.cellSize/2;
+                ctx.strokeStyle = '#4682B4'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(x - wallSize/2, y); ctx.lineTo(x + wallSize/2, y);
+                ctx.moveTo(x, y - wallSize/2); ctx.lineTo(x, y + wallSize/2); ctx.stroke();
             });
             ctx.restore();
         }
 
-        // 绘制墙线和墙线点
         function drawWallLines() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            
-            // 先绘制墙线
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#87CEEB'; // 天蓝色
-            
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#87CEEB';
             gameState.wallLines.forEach(line => {
-                // 计算墙线起点和终点的屏幕坐标
-                const startX = gridStartX + line.start.x * gameState.cellSize;
-                const startY = gridStartX + line.start.y * gameState.cellSize;
-                const endX = gridStartX + line.end.x * gameState.cellSize;
-                const endY = gridStartX + line.end.y * gameState.cellSize;
-                
-                // 绘制墙线
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.stroke();
+                const startX = gridStartX + line.start.x*gameState.cellSize, startY = gridStartY + line.start.y*gameState.cellSize;
+                const endX = gridStartX + line.end.x*gameState.cellSize, endY = gridStartY + line.end.y*gameState.cellSize;
+                ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
             });
-            
-            // 绘制墙线经过的点（灰蓝色圆点，直径与墙线宽度一致）
-            ctx.fillStyle = '#A3D8F4'; // 灰蓝色
-            gameState.wallLinePoints.forEach(pointKey => {
-                const [x, y] = pointKey.split(',').map(Number);
-                const screenX = gridStartX + x * gameState.cellSize;
-                const screenY = gridStartY + y * gameState.cellSize;
-                const pointRadius = 3; // 墙线宽度
-                
-                ctx.beginPath();
-                ctx.arc(screenX, screenY, pointRadius, 0, Math.PI * 2);
-                ctx.fill();
+            ctx.fillStyle = '#A3D8F4';
+            gameState.wallLines.forEach(line => {
+                let x = gridStartX + line.start.x * gameState.cellSize;
+                let y = gridStartY + line.start.y * gameState.cellSize;
+                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+                x = gridStartX + line.end.x * gameState.cellSize;
+                y = gridStartY + line.end.y * gameState.cellSize;
+                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
             });
-            
-            // 绘制选中的墙线起点（黄色）
             if (gameState.selectedWallLineStart) {
-                const x = gridStartX + gameState.selectedWallLineStart.x * gameState.cellSize;
-                const y = gridStartY + gameState.selectedWallLineStart.y * gameState.cellSize;
-                const pointRadius = gameState.cellSize / 8;
-                
-                ctx.fillStyle = '#FFD734'; // 黄色
-                ctx.beginPath();
-                ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
-                ctx.fill();
+                const x = gridStartX + gameState.selectedWallLineStart.x*gameState.cellSize, y = gridStartY + gameState.selectedWallLineStart.y*gameState.cellSize;
+                ctx.fillStyle = '#FFD734'; ctx.beginPath(); ctx.arc(x, y, gameState.cellSize/8, 0, Math.PI*2); ctx.fill();
             }
         }
 
-        // 绘制直线
         function drawLines() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            
-            // 绘制直线
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#555555'; // 深灰色线段
-            
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#555555';
             gameState.lines.forEach(line => {
-                // 计算直线起点和终点的屏幕坐标
-                const startX = gridStartX + line.start.x * gameState.cellSize;
-                const startY = gridStartY + line.start.y * gameState.cellSize;
-                const endX = gridStartX + line.end.x * gameState.cellSize;
-                const endY = gridStartY + line.end.y * gameState.cellSize;
-                
-                // 绘制直线
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.stroke();
+                const startX = gridStartX + line.start.x*gameState.cellSize, startY = gridStartY + line.start.y*gameState.cellSize;
+                const endX = gridStartX + line.end.x*gameState.cellSize, endY = gridStartY + line.end.y*gameState.cellSize;
+                ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
             });
         }
 
-        // 绘制点
         function drawPoints() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            
-            // 先绘制圆圈标注（在点下方）
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
             drawCircleAnnotations();
-            
-            // 绘制点
             gameState.points.forEach(point => {
-                // 计算点的屏幕坐标
-                const x = gridStartX + point.x * gameState.cellSize;
-                const y = gridStartY + point.y * gameState.cellSize;
-                
-                // 检查是否有标注
+                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
                 const hasAnnotation = gameState.annotations.has(point.id);
                 const annotationType = gameState.annotations.get(point.id);
-                
-                // 如果有非圆圈标注，隐藏原始点
-                if (hasAnnotation && annotationType !== 'circle') {
-                    return; // 不绘制原始点
-                }
-                
-                // 点的大小：如果有圆圈标注，大小为正常一半；否则正常大小
-                const pointRadius = (hasAnnotation && annotationType === 'circle') ? 
-                    gameState.cellSize / 8 : // 有圆圈标注时大小为正常一半（1/4格边长的一半）
-                    gameState.cellSize / 4;  // 正常大小为1/2格边长
-                
-                // 绘制点
-                ctx.beginPath();
-                ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
-                
-                // 如果点被选中，使用红色，否则使用黑色
-                if (gameState.selectedPoint === point) {
-                    ctx.fillStyle = '#FF6B6B'; // 选中状态 - 红色
-                } else {
-                    ctx.fillStyle = '#000000'; // 正常状态 - 黑色
-                }
-                
+                if (hasAnnotation && annotationType !== 'circle') return;
+                const pointRadius = (hasAnnotation && annotationType === 'circle') ? gameState.cellSize/8 : gameState.cellSize/4;
+                ctx.beginPath(); ctx.arc(x, y, pointRadius, 0, Math.PI*2);
+                ctx.fillStyle = gameState.selectedPoint === point ? '#FF6B6B' : '#000000';
                 ctx.fill();
-                
-                // 绘制点边框 - 与普通点尺寸相同的白边
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = '#fff';
-                ctx.stroke();
+                ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
             });
-            
-            // 绘制非圆圈标注（在点上方）
             drawNonCircleAnnotations();
         }
 
-        // 在点下方绘制圆圈标注
         function drawCircleAnnotations() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            const baseSize = gameState.cellSize / 2; // 基础大小为1/2格边长
-            
-            // 只绘制圆圈标注（在点下方）
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize/2;
             gameState.annotations.forEach((type, pointId) => {
                 if (type !== 'circle') return;
-                
                 const point = gameState.points.find(p => p.id === pointId);
                 if (!point) return;
-                
-                const x = gridStartX + point.x * gameState.cellSize;
-                const y = gridStartY + point.y * gameState.cellSize;
-                
+                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
                 ctx.save();
-                
-                // 空心圆圈，直径2/3格边长
-                ctx.strokeStyle = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? 
-                    '#FF6B6B' : '#000000'; // 选中时红色，否则黑色
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(x, y, baseSize * 2/3, 0, Math.PI * 2);
-                ctx.stroke();
-                
+                ctx.strokeStyle = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? '#FF6B6B' : '#000000';
+                ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, baseSize*2/3, 0, Math.PI*2); ctx.stroke();
                 ctx.restore();
             });
         }
 
-        // 在点上方绘制非圆圈标注 - 增强白边效果
         function drawNonCircleAnnotations() {
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
-            const baseSize = gameState.cellSize / 2; // 基础大小为1/2格边长
-            
-            // 绘制除圆圈外的所有标注（在点上方）
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize/2;
             gameState.annotations.forEach((type, pointId) => {
-                if (type === 'circle') return; // 圆圈已经在下方绘制
-                
+                if (type === 'circle') return;
                 const point = gameState.points.find(p => p.id === pointId);
                 if (!point) return;
-                
-                const x = gridStartX + point.x * gameState.cellSize;
-                const y = gridStartY + point.y * gameState.cellSize;
-                
+                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
                 ctx.save();
-                
-                // 设置颜色：选中时红色，否则黑色
-                const color = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? 
-                    '#FF6B6B' : '#000000';
-                
-                // 计算普通点的尺寸（1/2格边长）
-                const normalPointSize = gameState.cellSize / 2;
-                
-                // 增强白边效果 - 增加白边大小
-                const whiteBorderSize = normalPointSize * 1.3; // 增加30%的白边大小
-                
-                // 绘制白色边框 - 增强白边效果
-                ctx.fillStyle = '#FFFFFF';
-                ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 2;
-                
+                const color = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? '#FF6B6B' : '#000000';
+                const normalPointSize = gameState.cellSize/2;
+                const whiteBorderSize = normalPointSize * 1.3;
+                ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2;
                 switch(type) {
                     case 'square':
-                        // 绘制白色方形（增强白边）
-                        ctx.beginPath();
-                        ctx.rect(x - whiteBorderSize/2, y - whiteBorderSize/2, whiteBorderSize, whiteBorderSize);
-                        ctx.fill();
-                        // 内部填充（稍小一点）
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.rect(x - baseSize/2, y - baseSize/2, baseSize, baseSize);
-                        ctx.fill();
-                        break;
-                        
+                        ctx.beginPath(); ctx.rect(x - whiteBorderSize/2, y - whiteBorderSize/2, whiteBorderSize, whiteBorderSize); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.rect(x - baseSize/2, y - baseSize/2, baseSize, baseSize); ctx.fill(); break;
                     case 'triangle':
-                        // 绘制白色三角形（增强白边）
-                        const whiteTriangleHeight = whiteBorderSize;
-                        const whiteTriangleHalfBase = whiteBorderSize/2;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y - whiteTriangleHeight/2);
-                        ctx.lineTo(x - whiteTriangleHalfBase, y + whiteTriangleHeight/2);
-                        ctx.lineTo(x + whiteTriangleHalfBase, y + whiteTriangleHeight/2);
-                        ctx.closePath();
-                        ctx.fill();
-                        // 内部填充（稍小一点）
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y - baseSize/2);
-                        ctx.lineTo(x - baseSize/2, y + baseSize/2);
-                        ctx.lineTo(x + baseSize/2, y + baseSize/2);
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                        
+                        const whiteTriangleHeight = whiteBorderSize, whiteTriangleHalfBase = whiteBorderSize/2;
+                        ctx.beginPath(); ctx.moveTo(x, y - whiteTriangleHeight/2); ctx.lineTo(x - whiteTriangleHalfBase, y + whiteTriangleHeight/2); ctx.lineTo(x + whiteTriangleHalfBase, y + whiteTriangleHeight/2); ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize/2); ctx.lineTo(x - baseSize/2, y + baseSize/2); ctx.lineTo(x + baseSize/2, y + baseSize/2); ctx.closePath(); ctx.fill(); break;
                     case 'diamond':
-                        // 绘制白色菱形（增强白边）
                         const whiteDiamondSize = whiteBorderSize;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y - whiteDiamondSize/2);
-                        ctx.lineTo(x + whiteDiamondSize/2, y);
-                        ctx.lineTo(x, y + whiteDiamondSize/2);
-                        ctx.lineTo(x - whiteDiamondSize/2, y);
-                        ctx.closePath();
-                        ctx.fill();
-                        // 内部填充（稍小一点）
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        ctx.moveTo(x, y - baseSize/2);
-                        ctx.lineTo(x + baseSize/2, y);
-                        ctx.lineTo(x, y + baseSize/2);
-                        ctx.lineTo(x - baseSize/2, y);
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                        
+                        ctx.beginPath(); ctx.moveTo(x, y - whiteDiamondSize/2); ctx.lineTo(x + whiteDiamondSize/2, y); ctx.lineTo(x, y + whiteDiamondSize/2); ctx.lineTo(x - whiteDiamondSize/2, y); ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize/2); ctx.lineTo(x + baseSize/2, y); ctx.lineTo(x, y + baseSize/2); ctx.lineTo(x - baseSize/2, y); ctx.closePath(); ctx.fill(); break;
                     case 'star':
-                        // 绘制白色五角星（增强白边，变小一点）
-                        const whiteStarOuter = whiteBorderSize/2 * 1.1;
-                        const whiteStarInner = whiteBorderSize/4 * 1.1;
-                        ctx.beginPath();
-                        drawStarShape(ctx, x, y, 5, whiteStarOuter, whiteStarInner);
-                        ctx.closePath();
-                        ctx.fill();
-                        // 内部填充（稍小一点）
-                        ctx.fillStyle = color;
-                        ctx.beginPath();
-                        drawStarShape(ctx, x, y, 5, baseSize/2 * 1.0, baseSize/4 * 1.0);
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                        
+                        const whiteStarOuter = whiteBorderSize/2 * 1.1, whiteStarInner = whiteBorderSize/4 * 1.1;
+                        ctx.beginPath(); drawStarShape(ctx, x, y, 5, whiteStarOuter, whiteStarInner); ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); drawStarShape(ctx, x, y, 5, baseSize/2 * 1.0, baseSize/4 * 1.0); ctx.closePath(); ctx.fill(); break;
                     case 'cross':
-                        // 绘制白色叉（增强白边）
                         const crossSize = whiteBorderSize/2;
-                        ctx.lineWidth = 4; // 增加白边线条宽度
-                        ctx.beginPath();
-                        ctx.moveTo(x - crossSize, y - crossSize);
-                        ctx.lineTo(x + crossSize, y + crossSize);
-                        ctx.moveTo(x + crossSize, y - crossSize);
-                        ctx.lineTo(x - crossSize, y + crossSize);
-                        ctx.stroke();
-                        
-                        // 内部线条（稍小一点）
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(x - baseSize/2, y - baseSize/2);
-                        ctx.lineTo(x + baseSize/2, y + baseSize/2);
-                        ctx.moveTo(x + baseSize/2, y - baseSize/2);
-                        ctx.lineTo(x - baseSize/2, y + baseSize/2);
-                        ctx.stroke();
-                        break;
-                        
+                        ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - crossSize, y - crossSize); ctx.lineTo(x + crossSize, y + crossSize); ctx.moveTo(x + crossSize, y - crossSize); ctx.lineTo(x - crossSize, y + crossSize); ctx.stroke();
+                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize/2, y - baseSize/2); ctx.lineTo(x + baseSize/2, y + baseSize/2); ctx.moveTo(x + baseSize/2, y - baseSize/2); ctx.lineTo(x - baseSize/2, y + baseSize/2); ctx.stroke(); break;
                     case 'check':
-                        // 绘制白色对勾（增强白边，没有实心部分）
                         const checkSize = whiteBorderSize/2;
-                        ctx.lineWidth = 4; // 增加白边线条宽度
-                        ctx.beginPath();
-                        ctx.moveTo(x - checkSize, y);
-                        ctx.lineTo(x - checkSize/3, y + checkSize);
-                        ctx.lineTo(x + checkSize, y - checkSize);
-                        ctx.stroke();
-                        
-                        // 内部线条（稍小一点）
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(x - baseSize/2, y);
-                        ctx.lineTo(x - baseSize/6, y + baseSize/2);
-                        ctx.lineTo(x + baseSize/2, y - baseSize/2);
-                        ctx.stroke();
-                        break;
+                        ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - checkSize, y); ctx.lineTo(x - checkSize/3, y + checkSize); ctx.lineTo(x + checkSize, y - checkSize); ctx.stroke();
+                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize/2, y); ctx.lineTo(x - baseSize/6, y + baseSize/2); ctx.lineTo(x + baseSize/2, y - baseSize/2); ctx.stroke(); break;
                 }
-                
                 ctx.restore();
             });
         }
 
-        // 绘制五角星形状
         function drawStarShape(ctx, cx, cy, spikes, outerRadius, innerRadius) {
             let rot = Math.PI / 2 * 3;
-            let x = cx;
-            let y = cy;
+            let x = cx, y = cy;
             const step = Math.PI / spikes;
-            
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - outerRadius);
-            
+            ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
             for (let i = 0; i < spikes; i++) {
-                x = cx + Math.cos(rot) * outerRadius;
-                y = cy + Math.sin(rot) * outerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
-                
-                x = cx + Math.cos(rot) * innerRadius;
-                y = cy + Math.sin(rot) * innerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
+                x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
             }
-            
-            ctx.lineTo(cx, cy - outerRadius);
-            ctx.closePath();
+            ctx.lineTo(cx, cy - outerRadius); ctx.closePath();
         }
 
-        // 绘制所有内容
-        function drawEverything() {
-            drawGrid();
-            drawWallLines();
-            drawWalls();
-            drawLines();
-            drawPoints();
+        function drawEverything() { 
+            drawGrid(); 
+            drawWallLines(); 
+            drawWalls(); 
+            drawLines(); 
+            drawPoints(); 
         }
 
-        // 更新UI
         function updateUI() {
-            // 更新计数
-            pointCountSpan.textContent = gameState.points.length;
-            lineCountSpan.textContent = gameState.lines.length;
             pointCountValue.textContent = gameState.points.length;
-            
-            // 计算连接1条线的点的数量
-            const singleConnectionPoints = gameState.points.filter(point => {
-                const connectionCount = gameState.lines.filter(line => 
-                    (line.start.x === point.x && line.start.y === point.y) ||
-                    (line.end.x === point.x && line.end.y === point.y)
-                ).length;
-                return connectionCount === 1;
-            }).length;
-            
-            singleConnectionCountSpan.textContent = singleConnectionPoints;
         }
 
-        // 页面加载完成后初始化游戏
         window.addEventListener('load', initGame);
     </script>
 </body>
-
 </html>
