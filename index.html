@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>点桥网页版</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="android-chrome-512x512.png">
+
     <style>
-        /* ========== 原有完整样式 ========== */
+        /* ===== 禁用下拉刷新 ===== */
+        html, body {
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +34,7 @@
             justify-content: flex-start;
             color: #4A3429;
             overflow-x: hidden;
-            padding: 10px 10px 50px; /* 底部留出固定版权空间 */
+            padding: 10px 10px 50px;
             position: relative;
             overflow-y: auto;
         }
@@ -67,8 +77,7 @@
             margin-bottom: 20px;
         }
         
-        /* 通用顶部圆形按钮 */
-        .exit-btn, .return-phase1-btn, .import-btn, .export-btn {
+        .exit-btn, .return-phase1-btn, .import-btn, .export-btn, .hint-btn {
             position: absolute;
             top: 20px;
             width: 50px;
@@ -87,12 +96,21 @@
         .return-phase1-btn { left: 80px; background: #8B5A2B; color: white; font-size: 28px; font-weight: 700; }
         .import-btn { right: 80px; left: auto; background: #B0E57C; }
         .export-btn { right: 20px; left: auto; background: #FFB347; }
+        .hint-btn {
+            right: 140px; left: auto;
+            background: #603030;
+            color: #FFFFFF;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+            display: none;
+        }
 
-        .exit-btn:hover, .return-phase1-btn:hover, .import-btn:hover, .export-btn:hover {
+        .exit-btn:hover, .return-phase1-btn:hover, .import-btn:hover, .export-btn:hover, .hint-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
-        .exit-btn:active, .return-phase1-btn:active, .import-btn:active, .export-btn:active {
+        .exit-btn:active, .return-phase1-btn:active, .import-btn:active, .export-btn:active, .hint-btn:active {
             transform: scale(0.95);
         }
         .exit-btn svg, .return-phase1-btn svg, .import-btn svg, .export-btn svg {
@@ -107,14 +125,15 @@
             .return-phase1-btn { top: 10px; left: 60px; width: 40px; height: 40px; font-size: 24px; }
             .import-btn { top: 10px; right: 60px; left: auto; width: 40px; height: 40px; }
             .export-btn { top: 10px; right: 10px; left: auto; width: 40px; height: 40px; }
+            .hint-btn { top: 10px; right: 110px; left: auto; width: 40px; height: 40px; font-size: 24px; }
             .exit-btn svg, .return-phase1-btn svg, .import-btn svg, .export-btn svg { width: 20px; height: 20px; }
         }
         @media (max-width: 480px) {
             .import-btn { right: 60px; }
             .export-btn { right: 10px; }
+            .hint-btn { right: 110px; }
         }
 
-        /* 原有其他样式 */
         .size-selection {
             display: flex;
             flex-direction: column;
@@ -229,25 +248,26 @@
         .control-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
         .phase-btn { background-color:#C19A6B; color:#4A3429; }
         .clear-btn { background-color:#B8860B; }
-        .check-btn { background-color:#2E7D32; } /* 改为与开始答题相同绿色 */
+        .check-btn { background-color:#2E7D32; }
         .start-btn { background-color:#2E7D32; }
         .pause-btn { background-color:#C19A6B; color:#4A3429; }
         .game-phase { display:inline-block; background-color:#A0542D; color:white; padding:8px 20px; border-radius:20px; font-size:16px; font-weight:600; margin-bottom:10px; }
         .grid-container { width:100%; margin-bottom:15px; position:relative; display:flex; justify-content:center; }
-        #gameCanvas { display:block; background:#F5E6D3; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.08); touch-action: auto; /* 允许滚动 */ image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; max-width:100%; }
+        #gameCanvas { display:block; background:#F5E6D3; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.08); touch-action: auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; max-width:100%; }
         .pause-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.95); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; font-size:24px; font-weight:700; color:#A0542D; text-align:center; padding:20px; display:none; }
         .pause-text { font-size:32px; margin-bottom:20px; color:#8B5A2B; }
         .pause-warning { font-size:28px; color:#FF3333; }
-        .timer, .point-counter { font-size:18px; font-weight:700; color:#2E7D32; background:white; padding:10px 20px; border-radius:10px; margin-bottom:15px; text-align:center; display:none; border:2px solid #4CAF50; font-family:'Courier New', monospace; }
+        .timer, .point-counter { font-size:18px; font-weight:700; color:#2E7D32; background:white; padding:10px 20px; border-radius:10px; margin-bottom:15px; text-align:center; display:none; border:2px solid #4CAF50; font-family:'Courier New', monospace; transition: color 0.2s, border-color 0.2s; }
         .point-counter { color:#A0542D; border:2px solid #A0542D; }
+        .timer.timer-gray { color:#999999; border-color:#BBBBBB; background:#F2F2F2; }
         .special-btn-container { margin-bottom:20px; display:flex; justify-content:center; }
         .special-btn { width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; transition:all 0.2s ease; box-shadow:0 4px 10px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
         .special-btn:hover { transform:scale(1.1); }
         .special-btn:active { transform:scale(0.95); }
         .special-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
         .start-answer-btn { background-color:#2E7D32; }
-        .check-answer-btn { background-color:#2E7D32; } /* 统一绿色 */
-        .message-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; z-index:10001; display:none; max-width:350px; width:90%; } /* 提高层级 */
+        .check-answer-btn { background-color:#2E7D32; }
+        .message-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; z-index:10001; display:none; max-width:350px; width:90%; }
         .message-title { font-size:24px; color:#4A3429; margin-bottom:15px; font-weight:700; }
         .message-content { font-size:16px; color:#8B5A2B; margin-bottom:25px; line-height:1.5; }
         .message-buttons { display:flex; gap:15px; justify-content:center; }
@@ -317,7 +337,6 @@
             color: #2E7D32;
             font-size: 32px;
         }
-        /* 统一固定版权信息 */
         .fixed-copyright {
             position: fixed;
             bottom: 0;
@@ -332,7 +351,6 @@
             z-index: 9999;
             border-top: 1px solid rgba(74, 52, 41, 0.2);
         }
-        /* 移除原来分散的copyright */
         .start-screen .copyright, .game-screen .copyright, .secret-screen .copyright, .congrats-screen .copyright, .congrats-screen2 .copyright {
             display: none;
         }
@@ -371,7 +389,6 @@
             .game-content { min-height:600px; }
         }
 
-        /* 导入模态框 */
         .import-modal {
             position: fixed;
             top: 0;
@@ -489,7 +506,6 @@
     </style>
 </head>
 <body>
-    <!-- 初始选择界面 -->
     <div id="startScreen" class="start-screen">
         <div class="header">
             <h1>点桥网页版</h1>
@@ -502,7 +518,6 @@
         </div>
     </div>
     
-    <!-- 游戏界面 -->
     <div id="gameScreen" class="game-screen">
         <button id="exitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -519,6 +534,7 @@
                 <path d="M12 19V5M5 12L12 5L19 12" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
+        <button id="hintBtn" class="hint-btn" title="查看机器答案">?</button>
 
         <div class="header">
             <h1>点桥网页版</h1>
@@ -527,7 +543,6 @@
         
         <div class="game-container">
             <div class="game-content">
-                <!-- 左侧工具面板 -->
                 <div class="left-toolbar">
                     <div class="tool-section">
                         <button id="sizeBtnS" class="tool-btn size-tool-btn active" data-size="S">S</button>
@@ -536,7 +551,6 @@
                     </div>
                 </div>
                 
-                <!-- 主游戏区域 -->
                 <div class="main-game-area">
                     <div class="controls">
                         <button id="clearAllPointsBtn" class="control-btn clear-btn">清除所有点/墙</button>
@@ -559,7 +573,6 @@
                     </div>
                 </div>
                 
-                <!-- 右侧工具面板 -->
                 <div class="right-toolbar">
                     <div id="phase2SpecialButtons" style="display:none; margin-bottom: 20px;">
                         <div class="special-btn-container">
@@ -597,7 +610,6 @@
         </div>
     </div>
     
-    <!-- 密钥输入界面 -->
     <div id="secretScreen" class="secret-screen">
         <button id="secretExitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -607,10 +619,8 @@
             <input type="password" id="secretInput" class="secret-input" placeholder="输入四位数字密钥" maxlength="4">
             <button id="secretSubmitBtn" class="secret-btn">提交</button>
         </div>
-        <!-- 原版权已移除 -->
     </div>
     
-    <!-- 祝贺界面1 (2026新年) -->
     <div id="congratsScreen" class="congrats-screen">
         <button id="congratsExitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -620,10 +630,8 @@
             <div class="congrats-content">点桥连奇思，智趣映新辰。<br>愿你2026年的每一天，都如解开巧局时——<br>一步一桥接云霞，一念一亮通星河。<br>新年启程，处处是通达的谜底！<br>2026新年快乐！</div>
             <div class="congrats-footer">——为我编写此程序的DeepSeek对话</div>
         </div>
-        <!-- 原版权已移除 -->
     </div>
 
-    <!-- 新增祝贺界面2 (点桥网站正式发布) -->
     <div id="congratsScreen2" class="congrats-screen2">
         <button id="congrats2ExitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -636,10 +644,8 @@
                 <div style="margin-top: 20px;">今天是点桥网站创立第 <span id="daysSinceWebsite" class="days-number">0</span> 天</div>
             </div>
         </div>
-        <!-- 原版权已移除 -->
     </div>
     
-    <!-- 消息弹窗 -->
     <div id="messageOverlay" class="overlay"></div>
     <div id="messageBox" class="message-box">
         <div id="messageTitle" class="message-title">提示</div>
@@ -651,7 +657,6 @@
         </div>
     </div>
 
-    <!-- 导入模态框 -->
     <div id="importModal" class="import-modal">
         <div class="import-container">
             <h2 class="import-title">输入关卡代码</h2>
@@ -671,14 +676,29 @@
         </div>
     </div>
 
-    <!-- 导出成功提示 -->
     <div id="exportToast" class="toast-message">复制成功</div>
 
-    <!-- 统一固定版权信息 (始终显示) -->
     <div class="fixed-copyright">Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, etc. All Rights Reserved.</div>
 
     <script>
-        // ========== 原游戏所有变量和函数 (恢复初始点样式，移除高亮) ==========
+        /* ========== 禁用下拉刷新 ========== */
+        (function () {
+            let startY = 0;
+            document.addEventListener('touchstart', function (e) {
+                if (e.touches.length === 1) startY = e.touches[0].clientY;
+            }, { passive: true });
+
+            document.addEventListener('touchmove', function (e) {
+                if (e.touches.length !== 1) return;
+                const dy = e.touches[0].clientY - startY;
+                const se = document.scrollingElement || document.documentElement;
+                const scrollTop = se ? se.scrollTop : (window.pageYOffset || 0);
+                if (scrollTop <= 0 && dy > 0) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        })();
+
         const gameState = {
             phase: 'placing',
             points: [],
@@ -710,7 +730,9 @@
             isPaused: false,
             pauseStartTime: 0,
             pausedDuration: 0,
-            specialFireworkActive: false
+            specialFireworkActive: false,
+            solutionPath: null,
+            hintShown: false
         };
 
         const sizeDefinitions = {
@@ -719,7 +741,6 @@
             'L': { width: 40, height: 55, color: '#FF3333', name: '大关卡' }
         };
 
-        // DOM元素获取
         const startScreen = document.getElementById('startScreen');
         const gameScreen = document.getElementById('gameScreen');
         const canvas = document.getElementById('gameCanvas');
@@ -778,8 +799,54 @@
         const congrats2ExitBtn = document.getElementById('congrats2ExitBtn');
         const daysSinceFoundingSpan = document.getElementById('daysSinceFounding');
         const daysSinceWebsiteSpan = document.getElementById('daysSinceWebsite');
+        const hintBtn = document.getElementById('hintBtn');
 
-        // ========== 原函数定义 (修改网格绘制和标注图标大小) ==========
+        // 用于查看答案确认弹窗期间暂停计时
+        let hintPauseState = null;
+
+        // ===== 弹窗提示 / 切换页面 / 窗口失焦时冻结计时器 =====
+        const timerFreezeReasons = new Set();
+        let timerFrozenAt = null;
+
+        function freezeTimer(reason) {
+            if (timerFreezeReasons.has(reason)) return;
+            timerFreezeReasons.add(reason);
+            if (timerFreezeReasons.size !== 1) return;
+            if (!gameState.timerRunning) { timerFrozenAt = null; return; }
+
+            timerFrozenAt = Date.now();
+            gameState.elapsedTime = timerFrozenAt - gameState.startTime - gameState.pausedDuration;
+            updateTimerDisplay();
+
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+                gameState.timerInterval = null;
+            }
+            gameState.timerRunning = false;
+        }
+
+        function unfreezeTimer(reason) {
+            if (!timerFreezeReasons.has(reason)) return;
+            timerFreezeReasons.delete(reason);
+            if (timerFreezeReasons.size !== 0) return;
+            if (timerFrozenAt === null) return;
+
+            // 把冻结的这段时间累加进 pausedDuration，不计入用时
+            gameState.pausedDuration += Date.now() - timerFrozenAt;
+            timerFrozenAt = null;
+
+            if (gameState.isAnswering && !gameState.isCompleted && !gameState.isPaused && !gameState.hintShown) {
+                gameState.timerRunning = true;
+                if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+                gameState.timerInterval = setInterval(() => {
+                    if (!gameState.isPaused) {
+                        gameState.elapsedTime = Date.now() - gameState.startTime - gameState.pausedDuration;
+                        updateTimerDisplay();
+                    }
+                }, 10);
+            }
+        }
+
         function initGame() {
             sizeS.addEventListener('click', () => startGame('S'));
             sizeM.addEventListener('click', () => startGame('M'));
@@ -798,6 +865,7 @@
             restartGameBtn.addEventListener('click', restartGame);
             undoBtn.addEventListener('click', undoLastAction);
             specialActionBtn.addEventListener('click', handleSpecialAction);
+            hintBtn.addEventListener('click', promptShowAnswerHint);
             toolPointBtn.addEventListener('click', () => setCurrentTool('point'));
             toolWallBtn.addEventListener('click', () => setCurrentTool('wall'));
             toolWallLineBtn.addEventListener('click', () => setCurrentTool('wallLine'));
@@ -811,8 +879,8 @@
             annotationCrossBtn.addEventListener('click', () => setCurrentAnnotation('cross'));
             annotationCheckBtn.addEventListener('click', () => setCurrentAnnotation('check'));
             createToolIcons();
-            messageCancelBtn.addEventListener('click', closeMessage);
             messageConfirmBtn.onclick = confirmMessage;
+            // 注意：messageCancelBtn 的点击处理由 showConfirmMessage 动态设置
             secretSubmitBtn.addEventListener('click', checkSecret);
             secretExitBtn.addEventListener('click', exitWithoutConfirm);
             secretInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkSecret(); });
@@ -822,7 +890,21 @@
             });
             
             canvas.addEventListener('click', handleCanvasClick);
-            // 移除touch事件，允许滚动
+
+            // 页面隐藏（切标签页、切 App、最小化）时暂停计时
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) freezeTimer('visibility');
+                else unfreezeTimer('visibility');
+            });
+
+            // 窗口失焦（如系统电量提示、其他窗口抢焦点）时暂停计时
+            window.addEventListener('blur', function () {
+                if (document.hidden) return; // 已由 visibilitychange 处理
+                freezeTimer('blur');
+            });
+            window.addEventListener('focus', function () {
+                unfreezeTimer('blur');
+            });
             
             startScreen.style.display = 'block';
             gameScreen.style.display = 'none';
@@ -835,7 +917,6 @@
             window.addEventListener('orientationchange', resizeCanvas);
             updateSizeButtonStyles();
 
-            // 导入导出相关监听
             const importBtn = document.getElementById('importBtn');
             const exportBtn = document.getElementById('exportBtn');
             const importModal = document.getElementById('importModal');
@@ -929,7 +1010,7 @@
                 }
 
                 const sizeDef = sizeDefinitions[sizeLetter];
-                const maxX = sizeDef.width, maxY = sizeDef.height;
+                const maxX = sizeDef.width - 1, maxY = sizeDef.height - 1;
                 for (const p of newPoints) if (p.x < 0 || p.x > maxX || p.y < 0 || p.y > maxY) throw new Error(`点 (${p.x},${p.y}) 超出棋盘范围`);
                 for (const w of newWalls) if (w.x < 0 || w.x > maxX || w.y < 0 || w.y > maxY) throw new Error(`墙 (${w.x},${w.y}) 超出棋盘范围`);
                 for (const line of newWallLines) {
@@ -961,8 +1042,22 @@
                 gameState.pausedDuration = 0;
                 gameState.startTime = 0;
                 gameState.elapsedTime = 0;
+                gameState.solutionPath = null;
+                gameState.hintShown = false;
+                hintPauseState = null;
+                timerFreezeReasons.clear();
+                timerFrozenAt = null;
                 timerDisplay.style.display = 'none';
+                timerDisplay.classList.remove('timer-gray');
                 pauseOverlay.style.display = 'none';
+                // 恢复所有按钮状态
+                document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
+                document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+                specialActionBtn.disabled = false;
+                hintBtn.disabled = false;
+                hintBtn.style.display = 'none';
+                returnPhase1Btn.disabled = false;
+                toolAnnotationModeBtn.style.display = '';
                 updateSpecialButton();
                 updateSizeUI();
                 updateUI();
@@ -1023,7 +1118,6 @@
                     const text = await navigator.clipboard.readText();
                     importCodeInput.value = text;
                 } catch (err) {
-                    // 移除英文错误信息
                     showMessage('粘贴失败', '无法读取剪贴板，请手动粘贴。');
                 }
             });
@@ -1039,6 +1133,9 @@
             gameState.timerInterval = null;
             pauseOverlay.style.display = 'none';
             gameState.specialFireworkActive = false;
+            hintPauseState = null;
+            timerFreezeReasons.clear();
+            timerFrozenAt = null;
             updateSpecialButton();
         }
 
@@ -1056,7 +1153,7 @@
             createWallIcon(toolWallBtn);
             createWallLineIcon(toolWallLineBtn);
             createLineIcon(toolLineBtn);
-            createAnnotationIcon(toolAnnotationModeBtn);  // 调整后的标注图标
+            createAnnotationIcon(toolAnnotationModeBtn);
             createCircleIcon(annotationCircleBtn);
             createSquareIcon(annotationSquareBtn);
             createTriangleIcon(annotationTriangleBtn);
@@ -1078,7 +1175,6 @@
         function createLineIcon(button) {
             button.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 6L14 14" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>';
         }
-        // 标注图标大小改为0.7倍 (相对于放大后的36x36, 0.7 ≈ 25)
         function createAnnotationIcon(button) {
             button.innerHTML = '<svg width="25" height="25" viewBox="0 0 20 20" fill="none"><path d="M10 2.5L11.9 7.2L17 7.8L13.2 11.2L14.2 16.3L10 13.7L5.8 16.3L6.8 11.2L3 7.8L8.1 7.2L10 2.5Z" fill="white"/></svg>';
         }
@@ -1123,12 +1219,19 @@
                     if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
                     gameState.startTime = 0; gameState.elapsedTime = 0; gameState.isAnswering = false; gameState.timerRunning = false;
                     gameState.isPaused = false; gameState.pauseStartTime = 0; gameState.pausedDuration = 0;
+                    gameState.hintShown = false;
+                    gameState.solutionPath = null;
+                    hintPauseState = null;
+                    timerFreezeReasons.clear();
+                    timerFrozenAt = null;
                     timerDisplay.style.display = 'none'; timerValue.textContent = '00:00.00';
+                    timerDisplay.classList.remove('timer-gray');
                     setPhase('placing');
                     gameState.isCompleted = false; gameState.answerLocked = false; gameState.specialFireworkActive = false; updateSpecialButton();
                     document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
                     document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
                     specialActionBtn.disabled = false; returnPhase1Btn.disabled = false;
+                    hintBtn.disabled = false;
                     updateUI(); drawEverything(); saveToHistory();
                 });
             }
@@ -1171,12 +1274,22 @@
             gameState.currentMode = 'line'; gameState.currentAnnotation = 'none'; gameState.annotations.clear(); gameState.isCompleted = false;
             gameState.answerLocked = false; gameState.timerRunning = false; gameState.isPaused = false; gameState.pauseStartTime = 0; gameState.pausedDuration = 0;
             gameState.specialFireworkActive = false;
+            gameState.solutionPath = null;
+            gameState.hintShown = false;
+            hintPauseState = null;
+            timerFreezeReasons.clear();
+            timerFrozenAt = null;
             if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
             timerDisplay.style.display = 'none'; timerValue.textContent = '00:00.00'; pauseOverlay.style.display = 'none'; updateSpecialButton();
+            timerDisplay.classList.remove('timer-gray');
+            toolAnnotationModeBtn.style.display = '';
             setCurrentTool('point'); setCurrentMode('line'); setCurrentAnnotation('none');
             document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
             document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
             specialActionBtn.disabled = false; returnPhase1Btn.style.display = 'none';
+            hintBtn.disabled = false;
+            hintBtn.style.display = 'none';
+            toolAnnotationModeBtn.style.display = '';
         }
 
         function resizeCanvas() {
@@ -1196,9 +1309,8 @@
                 baseCellSize = Math.max(18, Math.min(28, Math.min(widthBasedSize, heightBasedSize)));
             }
             gameState.cellSize = baseCellSize;
-            // canvas宽度保持不变，但内部格子只画到 width-1 和 height-1
-            const canvasWidth = (gameState.gridSize.width + 1) * gameState.cellSize;
-            const canvasHeight = (gameState.gridSize.height + 1) * gameState.cellSize;
+            const canvasWidth = (gameState.gridSize.width - 1) * gameState.cellSize + 2 * gameState.canvasPadding;
+            const canvasHeight = (gameState.gridSize.height - 1) * gameState.cellSize + 2 * gameState.canvasPadding;
             canvas.style.width = canvasWidth + 'px';
             canvas.style.height = canvasHeight + 'px';
             const scaledWidth = canvasWidth * gameState.dpr;
@@ -1224,8 +1336,12 @@
                 phase2Tools.style.display = 'none';
                 phase2SpecialButtons.style.display = 'none';
                 returnPhase1Btn.style.display = 'none';
+                hintBtn.style.display = 'none';
                 if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
                 pauseOverlay.style.display = 'none';
+                timerDisplay.classList.remove('timer-gray');
+                toolAnnotationModeBtn.style.display = '';
+                annotationTypesSection.style.display = 'none';
             } else {
                 phaseIndicator.textContent = '第二阶段：连线';
                 finishPlacingBtn.style.display = 'none';
@@ -1236,6 +1352,7 @@
                 phase2Tools.style.display = 'flex';
                 phase2SpecialButtons.style.display = 'block';
                 returnPhase1Btn.style.display = 'flex';
+                hintBtn.style.display = 'flex';
                 updateSpecialButton();
                 setCurrentMode('line');
             }
@@ -1341,6 +1458,7 @@
         }
 
         function togglePauseContinue() {
+            if (gameState.hintShown) return;
             if (gameState.isPaused) continueAnswering();
             else pauseAnswering();
         }
@@ -1387,9 +1505,10 @@
             specialActionBtn.disabled = false;
             document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = false);
             if (gameState.isCompleted) {
-                document.querySelectorAll('.control-btn:not(#restartGameBtn):not(#clearAllPointsBtn)').forEach(btn => btn.disabled = true);
+                document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
                 document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
                 specialActionBtn.disabled = true;
+                hintBtn.disabled = true;
             }
         }
 
@@ -1398,7 +1517,7 @@
         }
 
         function handleCanvasClick(event) {
-            if (gameState.answerLocked || gameState.isPaused) return;
+            if (gameState.answerLocked || gameState.isPaused || gameState.hintShown) return;
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / canvas.clientWidth;
             const scaleY = canvas.height / canvas.clientHeight;
@@ -1415,8 +1534,6 @@
             }
         }
 
-        // 移除了handleTouch函数
-
         function screenToGrid(screenX, screenY) {
             const gridStartX = gameState.canvasPadding;
             const gridStartY = gameState.canvasPadding;
@@ -1425,7 +1542,6 @@
             const nearestX = Math.round(gridX);
             const nearestY = Math.round(gridY);
             const distance = Math.sqrt(Math.pow(gridX - nearestX, 2) + Math.pow(gridY - nearestY, 2));
-            // 边界限制：最大索引为 gridSize.width-1 和 gridSize.height-1
             if (distance <= 0.6 && nearestX >= 0 && nearestX <= gameState.gridSize.width-1 && nearestY >= 0 && nearestY <= gameState.gridSize.height-1) {
                 return { x: nearestX, y: nearestY };
             }
@@ -1637,15 +1753,229 @@
             return false;
         }
 
+        /* ========== 求解器 ========== */
+        function findSolutionPath() {
+            const pts = gameState.points;
+            const n = pts.length;
+            if (n < 2) return { path: null, timeout: false };
+
+            const pointSet = new Set(pts.map(p => `${p.x},${p.y}`));
+            const wallSet = new Set(gameState.walls.map(w => `${w.x},${w.y}`));
+
+            function canConnect(p1, p2) {
+                const dx = p2.x - p1.x, dy = p2.y - p1.y;
+                if (dx === 0 && dy === 0) return false;
+                if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy))) return false;
+                const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                for (let i = 1; i < steps; i++) {
+                    const x = p1.x + Math.round(dx * i / steps);
+                    const y = p1.y + Math.round(dy * i / steps);
+                    if (pointSet.has(`${x},${y}`)) return false;
+                    if (wallSet.has(`${x},${y}`)) return false;
+                }
+                for (let i = 0; i <= steps; i++) {
+                    const x = p1.x + Math.round(dx * i / steps);
+                    const y = p1.y + Math.round(dy * i / steps);
+                    for (const wall of gameState.walls) {
+                        if (Math.abs(wall.x - x) <= 0.25 && Math.abs(wall.y - y) <= 0.25) return false;
+                    }
+                    for (const wl of gameState.wallLines) {
+                        if (pointToLineDistance(x, y, wl.start, wl.end) <= 0.25) return false;
+                    }
+                }
+                return true;
+            }
+
+            const adj = Array.from({ length: n }, () => []);
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    if (canConnect(pts[i], pts[j])) { adj[i].push(j); adj[j].push(i); }
+                }
+            }
+
+            const visited = new Array(n).fill(false);
+            const pathStack = [];
+            let ops = 0;
+            const OPS_LIMIT = 800000;
+            let aborted = false;
+
+            function reachableUnvisited(cur) {
+                const seen = new Array(n).fill(false);
+                const stack = [];
+                for (const v of adj[cur]) {
+                    if (!visited[v] && !seen[v]) { seen[v] = true; stack.push(v); }
+                }
+                while (stack.length) {
+                    const u = stack.pop();
+                    for (const v of adj[u]) {
+                        if (!visited[v] && !seen[v]) { seen[v] = true; stack.push(v); }
+                    }
+                }
+                let c = 0;
+                for (let i = 0; i < n; i++) if (seen[i]) c++;
+                return c;
+            }
+
+            function unvisitedDegree(v) {
+                let d = 0;
+                for (const u of adj[v]) if (!visited[u]) d++;
+                return d;
+            }
+
+            function dfs(cur, count) {
+                if (count === n) return true;
+                if (++ops > OPS_LIMIT) { aborted = true; return false; }
+                if (reachableUnvisited(cur) < n - count) return false;
+
+                const cands = adj[cur].filter(v => !visited[v]);
+                cands.sort((a, b) => unvisitedDegree(a) - unvisitedDegree(b));
+                for (const v of cands) {
+                    visited[v] = true;
+                    pathStack.push(v);
+                    if (dfs(v, count + 1)) return true;
+                    pathStack.pop();
+                    visited[v] = false;
+                    if (aborted) return false;
+                }
+                return false;
+            }
+
+            const order = Array.from({ length: n }, (_, i) => i).sort((a, b) => adj[a].length - adj[b].length);
+            for (const s of order) {
+                if (aborted) break;
+                visited.fill(false);
+                pathStack.length = 0;
+                visited[s] = true;
+                pathStack.push(s);
+                if (dfs(s, 1)) {
+                    return { path: pathStack.slice(), timeout: false };
+                }
+            }
+            return { path: null, timeout: aborted };
+        }
+
+        /* ========== 查看答案相关 ========== */
+        function pauseTimerForHint() {
+            hintPauseState = {
+                wasRunning: gameState.timerRunning && gameState.isAnswering && !gameState.isCompleted,
+                pauseStart: Date.now()
+            };
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+                gameState.timerInterval = null;
+            }
+            if (hintPauseState.wasRunning) {
+                gameState.elapsedTime = Date.now() - gameState.startTime - gameState.pausedDuration;
+                updateTimerDisplay();
+            }
+            gameState.timerRunning = false;
+        }
+
+        function resumeTimerForHint() {
+            if (!hintPauseState) return;
+            if (hintPauseState.wasRunning && gameState.isAnswering && !gameState.isCompleted && !gameState.isPaused) {
+                gameState.pausedDuration += Date.now() - hintPauseState.pauseStart;
+                gameState.timerRunning = true;
+                gameState.timerInterval = setInterval(() => {
+                    if (!gameState.isPaused) {
+                        gameState.elapsedTime = Date.now() - gameState.startTime - gameState.pausedDuration;
+                        updateTimerDisplay();
+                    }
+                }, 10);
+            }
+            hintPauseState = null;
+        }
+
+        function promptShowAnswerHint() {
+            if (gameState.phase !== 'connecting') return;
+            if (gameState.hintShown) return;
+            if (gameState.isPaused) return;
+            if (gameState.isCompleted) return;
+            if (gameState.answerLocked) return;
+
+            pauseTimerForHint();
+            showConfirmMessage(
+                "查看答案",
+                "确定要看机器答案吗？<br>看答案后计时将停止，且不能继续作答。",
+                function () {
+                    const ok = revealAnswer();
+                    if (!ok) {
+                        resumeTimerForHint();
+                    } else {
+                        hintPauseState = null;
+                    }
+                },
+                function () {
+                    resumeTimerForHint();
+                }
+            );
+        }
+
+        function revealAnswer() {
+            let path = gameState.solutionPath;
+            if (!path) {
+                const result = findSolutionPath();
+                if (result.path) {
+                    path = result.path;
+                    gameState.solutionPath = path;
+                } else if (result.timeout) {
+                    showMessage("提示", "计算超时，暂时无法给出机器答案。");
+                    return false;
+                } else {
+                    showMessage("提示", "当前题目没有解法。");
+                    return false;
+                }
+            }
+
+            gameState.hintShown = true;
+            gameState.isAnswering = true;
+            gameState.selectedPoint = null;
+            gameState.selectedWallLineStart = null;
+
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+            gameState.timerRunning = false;
+            updateTimerDisplay();
+            timerDisplay.classList.add('timer-gray');
+
+            toolAnnotationModeBtn.style.display = 'none';
+            annotationTypesSection.style.display = 'none';
+            if (gameState.currentMode === 'annotation') {
+                setCurrentMode('line');
+            }
+
+            document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = true);
+            specialActionBtn.disabled = false;
+            hintBtn.style.display = 'none';   // 看答案后隐藏问号按钮
+            returnPhase1Btn.disabled = false;
+
+            updateSpecialButton();
+            drawEverything();
+            return true;
+        }
+
         function confirmFinishPlacing() {
             if (gameState.points.length < 2) { 
                 showMessage("提示","请至少放置2个点再进入连线阶段！");
                 return; 
             }
+            // 先检测是否有解
+            const result = findSolutionPath();
+            if (result.timeout) {
+                gameState.solutionPath = null;
+                // 搜索超时，保守放行，仍然弹确认
+            } else if (!result.path) {
+                showMessage("题目无解", "当前题目没有解法，请继续修改后再试！");
+                return;
+            } else {
+                gameState.solutionPath = result.path;
+            }
             showConfirmMessage("确认完成出题","确定已经完成出题，要开始连线吗？",()=>{ setPhase('connecting'); });
         }
 
         function startAnswering() {
+            if (gameState.hintShown) return;
             gameState.isAnswering = true;
             gameState.startTime = Date.now();
             gameState.timerRunning = true;
@@ -1672,6 +2002,10 @@
         }
 
         function checkSolution() {
+            if (gameState.hintShown) {
+                showMessage("提示", "你看了答案，不算数哦。");
+                return;
+            }
             const connectionCounts = gameState.points.map(point => gameState.lines.filter(line => (line.start.x===point.x&&line.start.y===point.y)||(line.end.x===point.x&&line.end.y===point.y)).length);
             const overConnectionPoints = connectionCounts.filter(c=>c>2).length;
             if (overConnectionPoints > 0) { showMessage("错误","有的点线连多了！"); return; }
@@ -1701,19 +2035,20 @@
             gameState.answerLocked = true;
             gameState.isPaused = false;
             gameState.specialFireworkActive = true;
+            gameState.selectedPoint = null;
+            gameState.selectedWallLineStart = null;
             pauseContinueBtn.textContent = '暂停做答';
-            document.querySelectorAll('.control-btn:not(#restartGameBtn):not(#clearAllPointsBtn)').forEach(btn=>btn.disabled=true);
+            document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn=>btn.disabled=true);
             document.querySelectorAll('.tool-btn').forEach(btn=>btn.disabled=true);
+            document.querySelectorAll('.tool-annotation-type').forEach(btn=>btn.disabled=true);
             returnPhase1Btn.disabled = false;
+            hintBtn.disabled = true;
             updateSpecialButton();
             showMessageWithSuccess("恭喜！","恭喜你！做出来了！答案正确！",`用时: ${timeString}`,`钴系数: ${cobaltCoefficient}`);
         }
 
         function clearAllPoints() {
-            if (gameState.isCompleted) {
-                showMessage("提示", "游戏已完成，不能修改。请点击「重新开始游戏」开始新的一局。");
-                return;
-            }
+            // 完成或看答案后按钮已禁用，此处无需再检查 isCompleted
             if (gameState.phase === 'placing') {
                 if (gameState.points.length===0 && gameState.walls.length===0 && gameState.wallLines.length===0) {
                     showMessage("提示","没有可清除的点、墙或墙线");
@@ -1773,21 +2108,27 @@
             if (gameState.history.length > 20) gameState.history.shift();
         }
 
-        // 统一的弹窗管理
         function showMessage(title, content) {
+            freezeTimer('message');
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
             messageCancelBtn.style.display = 'none';
+            messageCancelBtn.onclick = closeMessage;
             messageConfirmBtn.onclick = closeMessage;
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
         }
-        function showConfirmMessage(title, content, confirmCallback) {
+        function showConfirmMessage(title, content, confirmCallback, cancelCallback) {
+            freezeTimer('message');
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
             messageCancelBtn.style.display = 'inline-block';
+            messageCancelBtn.onclick = function() {
+                closeMessage();
+                if (cancelCallback) cancelCallback();
+            };
             messageConfirmBtn.onclick = function() { 
                 closeMessage(); 
                 if (confirmCallback) confirmCallback(); 
@@ -1796,11 +2137,13 @@
             messageOverlay.style.display = 'block';
         }
         function showMessageWithSuccess(title, content, timeText, cobaltText) {
+            freezeTimer('message');
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.innerHTML = `<div style="margin-bottom:8px;">${timeText}</div><div class="cobalt-coefficient">${cobaltText}</div>`;
             successMessage.style.display = 'block';
             messageCancelBtn.style.display = 'none';
+            messageCancelBtn.onclick = closeMessage;
             messageConfirmBtn.onclick = closeMessage;
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
@@ -1810,37 +2153,49 @@
             messageBox.style.display = 'none'; 
             messageOverlay.style.display = 'none';
             messageConfirmBtn.onclick = confirmMessage;
+            messageCancelBtn.onclick = closeMessage;
+            unfreezeTimer('message');
         }
 
+        /* ========== 绘制 ========== */
         function drawGrid() {
-            ctx.clearRect(0,0,canvas.width/gameState.dpr,canvas.height/gameState.dpr);
-            ctx.strokeStyle = '#D2B48C'; ctx.lineWidth = 1;
-            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
-            // 只画0 到 width-1 的竖线，0 到 height-1 的横线
-            for (let i=0; i<gameState.gridSize.width; i++) { 
-                ctx.beginPath(); 
-                ctx.moveTo(gridStartX + i*gameState.cellSize, gridStartY); 
-                ctx.lineTo(gridStartX + i*gameState.cellSize, gridStartY + gameState.gridSize.height*gameState.cellSize); 
-                ctx.stroke(); 
+            ctx.clearRect(0, 0, canvas.width / gameState.dpr, canvas.height / gameState.dpr);
+            ctx.strokeStyle = '#D2B48C';
+            ctx.lineWidth = 1;
+
+            const gridStartX = gameState.canvasPadding;
+            const gridStartY = gameState.canvasPadding;
+            const w = gameState.gridSize.width;
+            const h = gameState.gridSize.height;
+            const cs = gameState.cellSize;
+
+            for (let i = 0; i < w; i++) {
+                ctx.beginPath();
+                ctx.moveTo(gridStartX + i * cs, gridStartY);
+                ctx.lineTo(gridStartX + i * cs, gridStartY + (h - 1) * cs);
+                ctx.stroke();
             }
-            for (let i=0; i<gameState.gridSize.height; i++) { 
-                ctx.beginPath(); 
-                ctx.moveTo(gridStartX, gridStartY + i*gameState.cellSize); 
-                ctx.lineTo(gridStartX + gameState.gridSize.width*gameState.cellSize, gridStartY + i*gameState.cellSize); 
-                ctx.stroke(); 
+            for (let i = 0; i < h; i++) {
+                ctx.beginPath();
+                ctx.moveTo(gridStartX, gridStartY + i * cs);
+                ctx.lineTo(gridStartX + (w - 1) * cs, gridStartY + i * cs);
+                ctx.stroke();
             }
-            ctx.fillStyle = '#8B5A2B'; ctx.font = '12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            const step = Math.max(1, Math.floor(gameState.gridSize.width/10));
-            // 数字标记只显示内部关键点，但保留边界标记以便参考
-            for (let i=0; i<=gameState.gridSize.width; i+=step) { 
-                const x = gridStartX + i*gameState.cellSize; 
-                ctx.fillText(i, x, gridStartY-10); 
-                ctx.fillText(i, x, gridStartY+gameState.gridSize.height*gameState.cellSize+15); 
+
+            ctx.fillStyle = '#8B5A2B';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 0; i < w; i += 5) {
+                const x = gridStartX + i * cs;
+                ctx.fillText(i, x, gridStartY - 12);
+                ctx.fillText(i, x, gridStartY + (h - 1) * cs + 14);
             }
-            for (let i=0; i<=gameState.gridSize.height; i+=step) { 
-                const y = gridStartY + i*gameState.cellSize; 
-                ctx.fillText(i, gridStartX-15, y); 
-                ctx.fillText(i, gridStartX+gameState.gridSize.width*gameState.cellSize+15, y); 
+            for (let i = 0; i < h; i += 5) {
+                const y = gridStartY + i * cs;
+                ctx.fillText(i, gridStartX - 16, y);
+                ctx.fillText(i, gridStartX + (w - 1) * cs + 14, y);
             }
         }
 
@@ -1887,6 +2242,25 @@
                 const endX = gridStartX + line.end.x*gameState.cellSize, endY = gridStartY + line.end.y*gameState.cellSize;
                 ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
             });
+        }
+
+        function drawSolutionLines() {
+            if (!gameState.hintShown || !gameState.solutionPath || gameState.solutionPath.length < 2) return;
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
+            ctx.save();
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#FF6B6B';
+            for (let i = 0; i < gameState.solutionPath.length - 1; i++) {
+                const p1 = gameState.points[gameState.solutionPath[i]];
+                const p2 = gameState.points[gameState.solutionPath[i + 1]];
+                if (!p1 || !p2) continue;
+                ctx.beginPath();
+                ctx.moveTo(gridStartX + p1.x * gameState.cellSize, gridStartY + p1.y * gameState.cellSize);
+                ctx.lineTo(gridStartX + p2.x * gameState.cellSize, gridStartY + p2.y * gameState.cellSize);
+                ctx.stroke();
+            }
+            ctx.restore();
         }
 
         function drawPoints() {
@@ -1978,6 +2352,7 @@
             drawWallLines(); 
             drawWalls(); 
             drawLines(); 
+            drawSolutionLines();
             drawPoints(); 
         }
 
