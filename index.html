@@ -10,10 +10,49 @@
     <link rel="apple-touch-icon" sizes="512x512" href="android-chrome-512x512.png">
 
     <style>
-        /* ===== 禁用下拉刷新 ===== */
+        /* ===== 主题变量（默认：黄昏 / 18:00-24:00 原版配色） ===== */
+        :root {
+            --c-bg: #BE9178;
+            --c-text: #4A3429;
+            --c-text-sub: #5C4033;
+            --c-panel: rgba(255, 255, 255, 0.734);
+            --c-surface: #FFFFFF;
+            --c-accent: #A0542D;
+            --c-accent-soft: #C19A6B;
+            --c-accent-deep: #8B5A2B;
+            --c-clear: #B8860B;
+            --c-green: #2E7D32;
+            --c-green2: #4CAF50;
+            --c-on-green: #FFFFFF;
+            --c-grid-bg: #F5E6D3;
+            --c-grid-line: #D2B48C;
+            --c-grid-num: #8B5A2B;
+            --c-level-bg: #E8D5C0;
+            --c-level-hover: #D2B48C;
+            --c-menu-a: #BE9178;
+            --c-shadow: rgba(74, 52, 41, 0.2);
+            --c-shadow-soft: rgba(74, 52, 41, 0.12);
+            --c-footer-bg: rgba(139, 90, 43, 0.1);
+            --c-footer-border: rgba(74, 52, 41, 0.2);
+            --c-footer-text: #5C4033;
+            --c-canvas-point: #000000;
+            --c-canvas-line: #555555;
+            --c-canvas-wall: #4682B4;
+            --c-canvas-wallline: #87CEEB;
+            --c-canvas-wallline-dot: #A3D8F4;
+            --c-canvas-select: #FF6B6B;
+            --c-best-bg: rgba(255, 255, 255, 0.72);
+            --c-best-text: #8B5A2B;
+            /* 主菜单缝隙宽度：iPad Pro 2020 横屏下约 5mm */
+            --menu-gap: clamp(12px, 2.4vmin, 26px);
+        }
+
+        /* ===== 禁用下拉刷新 & 防止字体自动缩放 ===== */
         html, body {
             overscroll-behavior: none;
             overscroll-behavior-y: none;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         * {
@@ -23,71 +62,140 @@
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-            background-color: #BE9178;
+            background-color: var(--c-bg);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            color: #4A3429;
+            color: var(--c-text);
             overflow-x: hidden;
-            padding: 10px 10px 50px;
-            position: relative;
+            padding: 8px 10px 46px;
             overflow-y: auto;
+            transition: background-color 0.8s ease, color 0.8s ease;
         }
-        
-        /* ===== 主菜单底板（与做题界面同宽，平板横屏比例） ===== */
-        .start-screen {
-            background: rgba(255, 255, 255, 0.734);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(74, 52, 41, 0.2);
+
+        /* ===== 主菜单外框（标题在框外） ===== */
+        .start-wrapper {
             width: 100%;
             max-width: 1000px;
-            aspect-ratio: 16 / 10;
-            padding: 3% 4%;
-            text-align: center;
+            margin: 10px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 主题色胶囊：选择功能以开始（在底板之外） */
+        .menu-pill {
+            background: var(--c-accent);
+            color: #FFFFFF;
+            padding: 8px 28px;
+            border-radius: 999px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px var(--c-shadow-soft);
+            transition: background-color 0.8s ease;
+        }
+
+        /* ===== 主菜单底板：宽度接近原版，高度按屏幕微调 ===== */
+        .start-panel {
+            width: 100%;
+            max-width: 1000px;
+            height: clamp(300px, calc(100vh - 220px), 620px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== 内容框（与答题界面同风格的“棕色框”） ===== */
+        .menu-inner {
+            background: var(--c-panel);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--c-shadow);
+            width: 100%;
+            height: 100%;
+            padding: var(--menu-gap);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 3%;
-            margin: 20px auto;
+            gap: var(--menu-gap);
+            transition: background-color 0.8s ease;
         }
-        
+
         .game-screen {
             display: none;
             width: 100%;
             max-width: 1000px;
-            margin: 20px auto;
+            margin: 16px auto;
         }
 
-        /* 关卡选择界面宽度与原版主页面相同 */
+        /* ===== 关卡选择界面 ===== */
         #levelSelectScreen {
-            max-width: 500px;
+            max-width: 560px;
+            width: 100%;
+            height: calc(100vh - 140px);
+            height: calc(100dvh - 140px);
+            max-height: calc(100vh - 140px);
+            max-height: calc(100dvh - 140px);
+            min-height: 340px;
+            margin: 16px auto;
+            flex-direction: column;
         }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
+        #levelSelectScreen .header {
+            flex: 0 0 auto;
+        }
+        #levelSelectScreen .game-container {
+            flex: 1 1 auto;
+            min-height: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #levelSelectScreen .game-content {
+            flex: 1 1 auto;
+            min-height: 0;
+            min-width: 0;
             width: 100%;
         }
-        
+        #levelSelectScreen .main-game-area {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #levelSelectScreen .level-grid {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
         h1 {
             font-size: 28px;
-            color: #4A3429;
+            color: var(--c-text);
             margin-bottom: 5px;
             font-weight: 700;
+            transition: color 0.8s ease;
         }
-        
+
         .subtitle {
             font-size: 16px;
-            color: #5C4033;
-            margin-bottom: 10px;
+            color: var(--c-text-sub);
+            font-weight: 600;
+            transition: color 0.8s ease;
         }
-        
+
         .exit-btn, .return-phase1-btn, .import-btn, .export-btn, .hint-btn {
             position: absolute;
             top: 20px;
@@ -104,7 +212,7 @@
             z-index: 100;
         }
         .exit-btn { left: 20px; background: white; }
-        .return-phase1-btn { left: 80px; background: #8B5A2B; color: white; font-size: 28px; font-weight: 700; }
+        .return-phase1-btn { left: 80px; background: var(--c-accent); color: white; font-size: 28px; font-weight: 700; }
         .import-btn { right: 80px; left: auto; background: #B0E57C; }
         .export-btn { right: 20px; left: auto; background: #FFB347; }
         .hint-btn {
@@ -116,10 +224,29 @@
             line-height: 1;
             display: none;
         }
+        /* “看答案”禁用时：蒙上一层雾，而非直接变灰 */
+        .hint-btn.hint-locked {
+            background: #603030;
+            color: #FFFFFF;
+            position: relative;
+            overflow: hidden;
+        }
+        .hint-btn.hint-locked::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.28));
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
 
-        .exit-btn:hover, .return-phase1-btn:hover, .import-btn:hover, .export-btn:hover, .hint-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        /* 悬停放大只在支持悬停的鼠标设备上生效，触摸设备点按松开后不残留 */
+        @media (hover: hover) and (pointer: fine) {
+            .exit-btn:hover, .return-phase1-btn:hover, .import-btn:hover, .export-btn:hover, .hint-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+            }
         }
         .exit-btn:active, .return-phase1-btn:active, .import-btn:active, .export-btn:active, .hint-btn:active {
             transform: scale(0.95);
@@ -149,18 +276,20 @@
         .main-menu-row {
             display: grid;
             width: 100%;
-            gap: 2.5%;
+            gap: var(--menu-gap);
+            flex: 1 1 0;
+            min-height: 0;
         }
         .main-menu-row-top {
             grid-template-columns: repeat(3, 1fr);
-            flex: 0 0 auto;
         }
         .main-menu-row-bottom {
             grid-template-columns: repeat(4, 1fr);
-            flex: 0 0 auto;
         }
         .menu-btn {
-            aspect-ratio: 3 / 2;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
             border: none;
             border-radius: 15px;
             cursor: pointer;
@@ -175,10 +304,12 @@
             font-family: inherit;
             padding: 3%;
         }
-        .menu-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+        @media (hover: hover) and (pointer: fine) {
+            .menu-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+        }
         .menu-btn:active { transform: translateY(-1px); }
         .menu-btn > span {
-            font-size: clamp(30px, 4.2vw, 46px);
+            font-size: clamp(28px, 4vw, 46px);
             line-height: 1;
             font-weight: 800;
         }
@@ -187,20 +318,33 @@
             margin-top: 6%;
             font-weight: 600;
             opacity: 0.85;
+            line-height: 1.25;
         }
+        /* 主页按钮颜色固定（A 按钮除外，随主题变化） */
         .menu-btn-s { background-color: #FFA500; }
         .menu-btn-m { background-color: #C0C0C0; }
         .menu-btn-l { background-color: #FF3333; }
         .menu-btn-g { background-color: #87CEEB; }
         .menu-btn-r { background-color: #4CAF50; color: white; }
         .menu-btn-x { background-color: #999999; color: white; }
-        .menu-btn-a { background-color: #BE9178; }
+        .menu-btn-a { background-color: var(--c-menu-a); transition: background-color 0.8s ease; }
 
         @media (max-width: 768px) {
-            .start-screen {
-                aspect-ratio: auto;
-                padding: 20px 16px;
-                gap: 15px;
+            .start-panel {
+                height: auto;
+            }
+            .menu-inner {
+                height: auto;
+                padding: var(--menu-gap);
+                gap: var(--menu-gap);
+            }
+            .main-menu-row {
+                flex: 0 0 auto;
+                gap: var(--menu-gap);
+            }
+            .menu-btn {
+                height: auto;
+                aspect-ratio: 3 / 2;
             }
         }
 
@@ -213,35 +357,61 @@
             padding: 12px;
             align-content: start;
             overflow-y: auto;
-            max-height: calc(70vh);
-            min-height: 200px;
+            min-height: 0;
         }
         .level-item {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1 / 1.16;
             border: none;
             border-radius: 12px;
-            background: #E8D5C0;
-            color: #4A3429;
-            font-size: clamp(22px, 3.5vw, 32px);
-            font-weight: 700;
+            background: var(--c-level-bg);
+            color: var(--c-text);
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
             transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 4px;
+            padding: 6px 5px 5px;
             font-family: inherit;
+            overflow: hidden;
         }
-        .level-item:hover {
-            transform: translateY(-3px);
-            background: #D2B48C;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+        @media (hover: hover) and (pointer: fine) {
+            .level-item:hover {
+                transform: translateY(-3px);
+                background: var(--c-level-hover);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+            }
         }
         .level-item:active { transform: translateY(0); }
+        .level-num {
+            font-size: clamp(20px, 3.2vw, 30px);
+            font-weight: 700;
+            line-height: 1;
+            color: var(--c-text);
+        }
+        .level-best {
+            display: block;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(9px, 1.1vw, 11px);
+            font-weight: 700;
+            line-height: 1.25;
+            text-align: center;
+            padding: 2px 3px;
+            border-radius: 6px;
+            background: var(--c-best-bg);
+            color: var(--c-best-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
         .level-status {
             grid-column: 1 / -1;
             text-align: center;
-            color: #8B5A2B;
+            color: var(--c-accent-deep);
             font-size: 16px;
             padding: 30px 0;
             font-weight: 600;
@@ -250,17 +420,22 @@
         #levelSizeS { --color: #FFA500; }
         #levelSizeM { --color: #C0C0C0; }
         #levelSizeL { --color: #FF3333; }
-        
+
+        #levelSelectScreen .game-container {
+            padding: 16px;
+        }
+
         .game-container {
-            background: rgba(255, 255, 255, 0.734);
+            background: var(--c-panel);
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(74, 52, 41, 0.2);
+            box-shadow: 0 10px 30px var(--c-shadow);
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
+            transition: background-color 0.8s ease;
         }
         .game-content {
             display: flex;
@@ -294,7 +469,7 @@
         .tool-divider {
             width: 60px;
             height: 2px;
-            background: #D2B48C;
+            background: var(--c-grid-line);
             margin: 10px 0;
         }
         .tool-btn {
@@ -310,65 +485,81 @@
             justify-content: center;
             position: relative;
         }
-        .tool-btn:hover { transform: scale(1.1); }
+        @media (hover: hover) and (pointer: fine) {
+            .tool-btn:hover { transform: scale(1.1); }
+        }
         .tool-btn.active { transform: scale(1.1); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); }
         .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
         .special-firework-btn { background-color: #FF3333 !important; animation: firework-pulse 2s infinite; }
         @keyframes firework-pulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,51,51,0.7);} 50%{transform:scale(1.1);box-shadow:0 0 0 10px rgba(255,51,51,0);} }
         .size-tool-btn { font-size:24px; font-weight:700; color:white; background-color:var(--color); width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
         .size-tool-btn.active { transform:scale(1.1); box-shadow:0 6px 15px rgba(0,0,0,0.25); }
+        /* 墙 / 墙线 / 看答案 工具颜色固定，不随主题变化 */
         .tool-point { background-color:#777777; }
         .tool-wall { background-color:#5A9BD4; }
         .tool-wall-line { background-color:#A3D8F4; }
         .tool-line { background-color:#777777; }
-        .tool-annotation { background-color:#4CAF50; }
-        .tool-annotation-type { background-color:#FFFFFF; border:2px solid #D2B48C; }
-        .tool-annotation-type.active { background-color:#4CAF50; border-color:#2E8B57; }
+        .tool-annotation { background-color: var(--c-green2); transition: background-color 0.8s ease; }
+        .tool-annotation-type { background-color:#FFFFFF; border:2px solid var(--c-grid-line); }
+        .tool-annotation-type.active { background-color: var(--c-green2); border-color: var(--c-green); }
         .tool-annotation-type.active svg { filter: brightness(0) invert(1); }
         .tool-annotation-type svg { color:#000000; fill:#000000; stroke:#000000; }
-        .main-game-area { flex:1; display:flex; flex-direction:column; min-width: 0; }
+        .main-game-area { flex:1; display:flex; flex-direction:column; min-width: 0; min-height: 0; }
+
         .controls { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; justify-content:center; width:100%; }
-        .control-btn { background-color:#A0542D; color:white; border:none; padding:12px 15px; border-radius:10px; font-size:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; box-shadow:0 4px 10px rgba(139,90,43,0.3); flex:1; min-width:120px; text-align:center; }
-        .control-btn:hover, .control-btn.active { transform:translateY(-2px); box-shadow:0 6px 15px rgba(139,90,43,0.4); }
+        .control-btn { background-color: var(--c-accent); color:white; border:none; padding:12px 15px; border-radius:10px; font-size:14px; cursor:pointer; transition:all 0.25s ease; font-weight:600; box-shadow:0 4px 10px var(--c-shadow-soft); flex:1; min-width:120px; text-align:center; }
+        .control-btn.active { transform:translateY(-2px); box-shadow:0 6px 15px var(--c-shadow); }
+        @media (hover: hover) and (pointer: fine) {
+            .control-btn:hover { transform:translateY(-2px); box-shadow:0 6px 15px var(--c-shadow); }
+        }
         .control-btn:active { transform:translateY(0); }
         .control-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-        .phase-btn { background-color:#C19A6B; color:#4A3429; }
-        .clear-btn { background-color:#B8860B; }
-        .check-btn { background-color:#2E7D32; }
-        .start-btn { background-color:#2E7D32; }
-        .pause-btn { background-color:#C19A6B; color:#4A3429; }
-        .game-phase { display:inline-block; background-color:#A0542D; color:white; padding:8px 20px; border-radius:20px; font-size:16px; font-weight:600; margin-bottom:10px; }
+        .phase-btn { background-color: var(--c-accent-soft); color: var(--c-text); }
+        .clear-btn { background-color: var(--c-clear); color: white; }
+        .check-btn { background-color: var(--c-green); color: var(--c-on-green); }
+        .start-btn { background-color: var(--c-green); color: var(--c-on-green); }
+        .pause-btn { background-color: var(--c-accent-soft); color: var(--c-text); }
+        .game-phase { display:inline-block; background-color: var(--c-accent); color:white; padding:8px 20px; border-radius:20px; font-size:16px; font-weight:600; margin-bottom:10px; transition: background-color 0.8s ease; }
         .grid-container { width:100%; margin-bottom:15px; position:relative; display:flex; justify-content:center; }
-        #gameCanvas { display:block; background:#F5E6D3; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.08); touch-action: auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; max-width:100%; }
-        .pause-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.95); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; font-size:24px; font-weight:700; color:#A0542D; text-align:center; padding:20px; display:none; }
-        .pause-text { font-size:32px; margin-bottom:20px; color:#8B5A2B; }
+        #gameCanvas { display:block; background: var(--c-grid-bg); border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.08); touch-action: auto; image-rendering:-webkit-optimize-contrast; image-rendering:crisp-edges; max-width:100%; transition: background-color 0.8s ease; }
+        .pause-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:var(--c-surface); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; font-size:24px; font-weight:700; color: var(--c-accent-deep); text-align:center; padding:20px; display:none; }
+        .pause-text { font-size:32px; margin-bottom:20px; color: var(--c-accent-deep); }
         .pause-warning { font-size:28px; color:#FF3333; }
-        .timer, .point-counter { font-size:18px; font-weight:700; color:#2E7D32; background:white; padding:10px 20px; border-radius:10px; margin-bottom:15px; text-align:center; display:none; border:2px solid #4CAF50; font-family:'Courier New', monospace; transition: color 0.2s, border-color 0.2s; }
-        .point-counter { color:#A0542D; border:2px solid #A0542D; }
+        .timer, .point-counter { font-size:18px; font-weight:700; color: var(--c-green); background:var(--c-surface); padding:10px 20px; border-radius:10px; margin-bottom:15px; text-align:center; display:none; border:2px solid var(--c-green2); font-family:'Courier New', monospace; transition: color 0.2s, border-color 0.2s, background-color 0.8s ease; }
+        .point-counter { color: var(--c-accent); border:2px solid var(--c-accent); }
         .timer.timer-gray { color:#999999; border-color:#BBBBBB; background:#F2F2F2; }
         .special-btn-container { margin-bottom:20px; display:flex; justify-content:center; }
         .special-btn { width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; transition:all 0.2s ease; box-shadow:0 4px 10px rgba(0,0,0,0.15); display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
-        .special-btn:hover { transform:scale(1.1); }
+        @media (hover: hover) and (pointer: fine) {
+            .special-btn:hover { transform:scale(1.1); }
+        }
         .special-btn:active { transform:scale(0.95); }
         .special-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
-        .start-answer-btn { background-color:#2E7D32; }
-        .check-answer-btn { background-color:#2E7D32; }
-        .message-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; z-index:10001; display:none; max-width:350px; width:90%; }
-        .message-title { font-size:24px; color:#4A3429; margin-bottom:15px; font-weight:700; }
-        .message-content { font-size:16px; color:#8B5A2B; margin-bottom:25px; line-height:1.5; }
+        .start-answer-btn { background-color: var(--c-green); }
+        .check-answer-btn { background-color: var(--c-green); }
+        .start-answer-btn svg path { fill: var(--c-on-green); }
+        .check-answer-btn svg path { stroke: var(--c-on-green); }
+        .message-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:var(--c-surface); padding:30px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; z-index:10001; display:none; max-width:350px; width:90%; transition: background-color 0.8s ease; }
+        .message-title { font-size:24px; color: var(--c-text); margin-bottom:15px; font-weight:700; }
+        .message-content { font-size:16px; color: var(--c-text-sub); margin-bottom:25px; line-height:1.5; }
+        .message-content.clickable-text { cursor: pointer; }
         .message-buttons { display:flex; gap:15px; justify-content:center; }
-        .message-btn { background-color:#A0542D; color:white; border:none; padding:12px 25px; border-radius:50px; font-size:16px; cursor:pointer; font-weight:600; min-width:100px; }
-        .message-btn.cancel { background-color:#C19A6B; color:#4A3429; }
-        .message-btn.confirm { background-color:#2E7D32; }
+        .message-btn { background-color: var(--c-accent); color:white; border:none; padding:12px 25px; border-radius:50px; font-size:16px; cursor:pointer; font-weight:600; min-width:100px; }
+        .message-btn.cancel { background-color: var(--c-accent-soft); color: var(--c-text); }
+        .message-btn.confirm { background-color: var(--c-green); color: var(--c-on-green); }
         .overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:10000; display:none; }
-        .success-message { font-size:18px; color:#2E7D32; font-weight:700; margin-top:10px; }
-        .cobalt-coefficient { color:#1E3A5F; font-size:16px; font-weight:700; margin-top:8px; }
-        .secret-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.98); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
-        .secret-container { background:white; padding:40px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); max-width:500px; width:90%; text-align:center; }
-        .secret-title { font-size:28px; color:#4A3429; margin-bottom:20px; font-weight:700; }
-        .secret-input { width:100%; padding:15px; font-size:18px; border:2px solid #A0542D; border-radius:10px; margin-bottom:20px; text-align:center; font-family:'Courier New', monospace; }
-        .secret-btn { background-color:#A0542D; color:white; border:none; padding:12px 30px; border-radius:10px; font-size:18px; cursor:pointer; font-weight:600; margin-top:10px; }
-        .secret-btn:hover { background-color:#8B4513; }
+        .success-message { font-size:18px; color: var(--c-green); font-weight:700; margin-top:10px; }
+        /* 钴系数：跟随主题，保证可读性 */
+        .cobalt-coefficient { color: var(--c-accent-deep); font-size:16px; font-weight:700; margin-top:8px; transition: color 0.8s ease; }
+        .record-note { margin-top:10px; font-size:13px; color: var(--c-accent); font-weight:600; line-height:1.4; transition: color 0.8s ease; }
+        .secret-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:var(--c-surface); z-index:2000; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+        .secret-container { background:var(--c-surface); padding:40px; border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,0.3); max-width:500px; width:90%; text-align:center; }
+        .secret-title { font-size:28px; color: var(--c-text); margin-bottom:20px; font-weight:700; }
+        .secret-input { width:100%; padding:15px; font-size:18px; color:#222; background:#FFFFFF; border:2px solid var(--c-accent); border-radius:10px; margin-bottom:20px; text-align:center; font-family:'Courier New', monospace; }
+        .secret-btn { background-color: var(--c-accent); color:white; border:none; padding:12px 30px; border-radius:10px; font-size:18px; cursor:pointer; font-weight:600; margin-top:10px; }
+        @media (hover: hover) and (pointer: fine) {
+            .secret-btn:hover { filter: brightness(0.9); }
+        }
         .congrats-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:#EB4E3C; z-index:2001; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; color:#FFD734; text-align:center; }
         .congrats-container { max-width:800px; width:90%; padding:40px; }
         .congrats-title { font-size:36px; margin-bottom:30px; font-weight:700; color:#FFD734; }
@@ -380,49 +571,29 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--c-surface);
             z-index: 2002;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            color: #4A3429;
+            color: var(--c-text);
             text-align: center;
+            transition: background-color 0.8s ease;
         }
         .congrats-container2 {
-            background: rgba(255, 255, 255, 0.8);
+            background: var(--c-panel);
             border-radius: 30px;
             max-width: 700px;
             width: 90%;
             padding: 40px 30px;
-            box-shadow: 0 15px 40px rgba(74, 52, 41, 0.2);
+            box-shadow: 0 15px 40px var(--c-shadow);
         }
-        .congrats-title2 {
-            font-size: 40px;
-            margin-bottom: 10px;
-            font-weight: 800;
-        }
-        .congrats-subtitle2 {
-            font-size: 28px;
-            color: #8B5A2B;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-        .congrats-body2 {
-            font-size: 24px;
-            line-height: 1.5;
-            background: #F5F0E9;
-            padding: 30px;
-            border-radius: 20px;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-        .days-number {
-            font-weight: 800;
-            color: #2E7D32;
-            font-size: 32px;
-        }
+        .congrats-title2 { font-size: 40px; margin-bottom: 10px; font-weight: 800; }
+        .congrats-subtitle2 { font-size: 28px; color: var(--c-accent-deep); margin-bottom: 30px; font-weight: 600; }
+        .congrats-body2 { font-size: 24px; line-height: 1.5; background: var(--c-grid-bg); padding: 30px; border-radius: 20px; margin: 20px 0; font-family: 'Courier New', monospace; }
+        .days-number { font-weight: 800; color: var(--c-green); font-size: 32px; }
         .fixed-copyright {
             position: fixed;
             bottom: 0;
@@ -430,19 +601,20 @@
             width: 100%;
             text-align: center;
             font-size: 12px;
-            color: #5C4033;
+            color: var(--c-footer-text);
             padding: 8px;
-            background: rgba(139, 90, 43, 0.1);
-            backdrop-filter: blur(2px);
+            background: var(--c-footer-bg);
             z-index: 9999;
-            border-top: 1px solid rgba(74, 52, 41, 0.2);
+            border-top: 1px solid var(--c-footer-border);
+            transition: color 0.8s ease, background-color 0.8s ease;
+            transform: translateZ(0);
         }
-        .start-screen .copyright, .game-screen .copyright, .secret-screen .copyright, .congrats-screen .copyright, .congrats-screen2 .copyright {
+        .start-panel .copyright, .game-screen .copyright, .secret-screen .copyright, .congrats-screen .copyright, .congrats-screen2 .copyright {
             display: none;
         }
 
         @media (max-width:768px) {
-            .game-content { flex-direction:column; }
+            .game-content { flex-direction:column; min-height: 0; }
             .left-toolbar, .right-toolbar { flex-direction:row; width:100%; padding-top:10px; justify-content:center; gap:10px; }
             .tool-section { flex-direction:row; gap:10px; }
             .tool-divider { width:2px; height:60px; }
@@ -450,7 +622,7 @@
             .size-tool-btn { width:50px; height:50px; font-size:20px; }
             .game-container { padding:15px; }
             .control-btn { min-width:calc(50% - 5px); padding:10px 15px; font-size:14px; }
-            h1 { font-size:24px; }
+            h1 { font-size:22px; }
             .special-btn { width:50px; height:50px; }
             .secret-container { padding:20px; }
             .secret-title { font-size:24px; }
@@ -462,18 +634,22 @@
             .congrats-body2 { font-size:20px; padding:20px; }
             .days-number { font-size:26px; }
             .level-grid { gap: 8px; padding: 8px; }
+            #levelSelectScreen { height: calc(100vh - 120px); height: calc(100dvh - 120px); max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); }
         }
         @media (max-width:480px) {
             .control-btn { min-width:100%; }
             .level-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 4px; }
-            .level-item { border-radius: 8px; }
+            .level-item { border-radius: 8px; padding: 4px 3px 3px; gap: 3px; }
+            .level-best { font-size: 8px; padding: 1px 2px; border-radius: 4px; }
+            .level-num { font-size: 17px; }
         }
         @media (-webkit-min-device-pixel-ratio:2),(min-resolution:192dpi) {
             .tool-btn { background-size:28px 28px; }
         }
         @media (min-width:769px) {
             body { justify-content:flex-start; }
-            .game-content { min-height:600px; }
+            .game-content { min-height:560px; }
+            #levelSelectScreen .game-content { min-height: 0; }
         }
 
         .import-modal {
@@ -490,17 +666,18 @@
             padding: 20px;
         }
         .import-container {
-            background: white;
+            background: var(--c-surface);
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             max-width: 400px;
             width: 100%;
             text-align: center;
+            transition: background-color 0.8s ease;
         }
         .import-title {
             font-size: 24px;
-            color: #4A3429;
+            color: var(--c-text);
             margin-bottom: 20px;
             font-weight: 700;
         }
@@ -508,13 +685,15 @@
             width: 100%;
             padding: 12px 15px;
             font-size: 16px;
-            border: 2px solid #A0542D;
+            color: #222;
+            background: #FFFFFF;
+            border: 2px solid var(--c-accent);
             border-radius: 10px;
             font-family: 'Courier New', monospace;
             outline: none;
         }
         .import-input:focus {
-            border-color: #8B5A2B;
+            border-color: var(--c-accent-deep);
         }
         .import-buttons {
             display: flex;
@@ -523,7 +702,7 @@
             margin-top: 10px;
         }
         .import-btn-confirm, .import-btn-cancel {
-            background-color: #A0542D;
+            background-color: var(--c-accent);
             color: white;
             border: none;
             padding: 12px 30px;
@@ -532,19 +711,25 @@
             cursor: pointer;
             font-weight: 600;
             min-width: 120px;
-            transition: background 0.2s;
+            transition: filter 0.2s;
         }
-        .import-btn-confirm:hover { background-color: #8B4513; }
+        @media (hover: hover) and (pointer: fine) {
+            .import-btn-confirm:hover { filter: brightness(0.88); }
+        }
         .import-btn-cancel {
-            background-color: #C19A6B;
-            color: #4A3429;
+            background-color: var(--c-accent-soft);
+            color: var(--c-text);
         }
-        .import-btn-cancel:hover { background-color: #B0885C; }
+        @media (hover: hover) and (pointer: fine) {
+            .import-btn-cancel:hover { filter: brightness(0.94); }
+        }
+        /* 粘贴按钮：随主题的副色 */
         .paste-btn {
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background-color: #4CAF50;
+            background-color: var(--c-accent-soft);
+            color: var(--c-text);
             border: none;
             cursor: pointer;
             display: flex;
@@ -552,14 +737,16 @@
             justify-content: center;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s, background 0.2s;
+            transition: transform 0.2s, background-color 0.5s ease, color 0.5s ease;
         }
-        .paste-btn:hover { transform: scale(1.05); background-color: #3e9c45; }
+        @media (hover: hover) and (pointer: fine) {
+            .paste-btn:hover { transform: scale(1.05); background-color: var(--c-accent); color: #FFFFFF; }
+        }
         .paste-btn:active { transform: scale(0.95); }
         .paste-btn svg {
             width: 22px;
             height: 22px;
-            stroke: white;
+            stroke: currentColor;
             stroke-width: 2;
             fill: none;
         }
@@ -579,8 +766,8 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #2E7D32;
-            color: white;
+            background: var(--c-green);
+            color: var(--c-on-green);
             padding: 12px 24px;
             border-radius: 40px;
             font-size: 16px;
@@ -589,26 +776,104 @@
             z-index: 10002;
             display: none;
             white-space: nowrap;
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        /* ===== 设置面板 ===== */
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 10px 4px;
+            border-bottom: 1px solid var(--c-grid-line);
+        }
+        .settings-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--c-text);
+        }
+        /* 开关按钮：关=浅主题色，开=主题绿色 */
+        .toggle-btn {
+            min-width: 70px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 2px solid var(--c-accent-soft);
+            background: var(--c-level-bg);
+            color: var(--c-text);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+        .toggle-btn.on {
+            background: var(--c-green);
+            color: var(--c-on-green);
+            border-color: var(--c-green);
+        }
+        .settings-themes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+        /* 主题选择按钮：随主题变色 */
+        .theme-choice {
+            padding: 12px 4px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            background: var(--c-level-bg);
+            color: var(--c-text);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.15s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease, opacity 0.2s ease;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .theme-choice:hover { transform: translateY(-2px); }
+        }
+        .theme-choice.active {
+            border-color: var(--c-accent);
+            background: var(--c-level-hover);
+            color: var(--c-text);
+        }
+        .theme-choice:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .settings-hint {
+            font-size: 12px;
+            color: var(--c-text-sub);
+            line-height: 1.5;
+            margin-top: -12px;
+            margin-bottom: 18px;
         }
     </style>
 </head>
 <body>
-    <!-- ===== 主菜单 ===== -->
-    <div id="startScreen" class="start-screen">
+    <!-- ===== 主菜单（标题在框外） ===== -->
+    <div id="startScreen" class="start-wrapper">
         <div class="header">
-            <h1>点桥网页版</h1>
-            <p class="subtitle">选择模式开始</p>
+            <h1>欢迎来到点桥网页版！</h1>
         </div>
-        <div class="main-menu-row main-menu-row-top">
-            <button id="sizeS" class="menu-btn menu-btn-s"><span>S</span><small>小关卡</small></button>
-            <button id="sizeM" class="menu-btn menu-btn-m"><span>M</span><small>中等关卡</small></button>
-            <button id="sizeL" class="menu-btn menu-btn-l"><span>L</span><small>大关卡</small></button>
-        </div>
-        <div class="main-menu-row main-menu-row-bottom">
-            <button id="menuLevelsBtn" class="menu-btn menu-btn-g"><span>G</span><small>关卡</small></button>
-            <button id="menuTutorialBtn" class="menu-btn menu-btn-r"><span>R</span><small>教程</small></button>
-            <button id="menuSettingsBtn" class="menu-btn menu-btn-x"><span>X</span><small>设置</small></button>
-            <button id="menuAboutBtn" class="menu-btn menu-btn-a"><span>A</span><small>关于</small></button>
+        <div class="menu-pill">选择功能以开始</div>
+        <div class="start-panel">
+            <div class="menu-inner">
+                <div class="main-menu-row main-menu-row-top">
+                    <button id="sizeS" class="menu-btn menu-btn-s"><span>S</span><small>小关卡<br>20x30</small></button>
+                    <button id="sizeM" class="menu-btn menu-btn-m"><span>M</span><small>中等关卡<br>40x30</small></button>
+                    <button id="sizeL" class="menu-btn menu-btn-l"><span>L</span><small>大关卡<br>40x55</small></button>
+                </div>
+                <div class="main-menu-row main-menu-row-bottom">
+                    <button id="menuLevelsBtn" class="menu-btn menu-btn-g"><span>G</span><small>关卡</small></button>
+                    <button id="menuTutorialBtn" class="menu-btn menu-btn-r"><span>R</span><small>教程</small></button>
+                    <button id="menuSettingsBtn" class="menu-btn menu-btn-x"><span>X</span><small>设置</small></button>
+                    <button id="menuAboutBtn" class="menu-btn menu-btn-a"><span>A</span><small>关于</small></button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -618,6 +883,7 @@
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="header">
+            <h1>选择关卡</h1>
             <div id="levelTitle" class="game-phase">关卡：大，40x55</div>
         </div>
         <div class="game-container">
@@ -637,7 +903,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- ===== 游戏界面 ===== -->
     <div id="gameScreen" class="game-screen">
         <button id="exitBtn" class="exit-btn" title="返回主界面">
@@ -661,7 +927,7 @@
             <h1>点桥网页版</h1>
             <div id="phaseIndicator" class="game-phase">第一阶段：放置点</div>
         </div>
-        
+
         <div class="game-container">
             <div class="game-content">
                 <div class="left-toolbar">
@@ -671,7 +937,7 @@
                         <button id="sizeBtnL" class="tool-btn size-tool-btn" data-size="L">L</button>
                     </div>
                 </div>
-                
+
                 <div class="main-game-area">
                     <div class="controls">
                         <button id="clearAllPointsBtn" class="control-btn clear-btn">清除所有点/墙</button>
@@ -681,19 +947,19 @@
                         <button id="restartGameBtn" class="control-btn clear-btn">重新开始游戏</button>
                         <button id="undoBtn" class="control-btn">撤销上一步</button>
                     </div>
-                    
+
                     <div id="pointCounter" class="point-counter">点数: <span id="pointCountValue">0</span></div>
                     <div id="timerDisplay" class="timer">用时: <span id="timerValue">00:00.00</span></div>
-                    
+
                     <div class="grid-container">
                         <canvas id="gameCanvas"></canvas>
                         <div id="pauseOverlay" class="pause-overlay">
                             <div class="pause-text">暂停的时候</div>
-                            <div class="pause-warning">不许看!!>-<</div>
+                            <div class="pause-warning">不许看!!>-&lt;</div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="right-toolbar">
                     <div id="phase2SpecialButtons" style="display:none; margin-bottom: 20px;">
                         <div class="special-btn-container">
@@ -702,17 +968,17 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div id="phase1Tools" class="tool-section">
                         <button id="toolPointBtn" class="tool-btn tool-point active" data-tool="point"></button>
                         <button id="toolWallBtn" class="tool-btn tool-wall" data-tool="wall"></button>
                         <button id="toolWallLineBtn" class="tool-btn tool-wall-line" data-tool="wallLine"></button>
                     </div>
-                    
+
                     <div id="phase2Tools" class="tool-section" style="display:none;">
                         <button id="toolLineBtn" class="tool-btn tool-line active" data-mode="line"></button>
                         <button id="toolAnnotationModeBtn" class="tool-btn tool-annotation" data-mode="annotation"></button>
-                        
+
                         <div id="annotationTypesSection" style="display:none; width:100%;">
                             <div class="tool-divider"></div>
                             <div class="tool-section">
@@ -730,7 +996,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="secretScreen" class="secret-screen">
         <button id="secretExitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -741,7 +1007,7 @@
             <button id="secretSubmitBtn" class="secret-btn">提交</button>
         </div>
     </div>
-    
+
     <div id="congratsScreen" class="congrats-screen">
         <button id="congratsExitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -766,7 +1032,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="messageOverlay" class="overlay"></div>
     <div id="messageBox" class="message-box">
         <div id="messageTitle" class="message-title">提示</div>
@@ -785,8 +1051,8 @@
                 <input type="text" id="importCodeInput" class="import-input" placeholder="例如 S;0,0|1,1; ;0,0-1,1" spellcheck="false">
                 <button id="pasteClipboardBtn" class="paste-btn" title="粘贴剪贴板内容">
                     <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="white" stroke-width="2"/>
-                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke-width="2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke-width="2" fill="none"/>
                     </svg>
                 </button>
             </div>
@@ -797,16 +1063,294 @@
         </div>
     </div>
 
+    <!-- 查看答案：已移除时间限制，此处保留旧密码弹窗结构但不再使用（隐藏） -->
+    <div id="answerPasswordModal" class="import-modal" style="display:none;">
+        <div class="import-container">
+            <h2 class="import-title">输入密码</h2>
+            <div class="import-input-row">
+                <input type="password" id="answerPasswordInput" class="import-input" placeholder="输入四位数字密码" maxlength="4" spellcheck="false" autocomplete="off">
+            </div>
+            <div class="import-buttons">
+                <button id="answerPasswordCancelBtn" class="import-btn-cancel">取消</button>
+                <button id="answerPasswordConfirmBtn" class="import-btn-confirm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div id="settingsModal" class="import-modal">
+        <div class="import-container">
+            <h2 class="import-title">设置</h2>
+            <div class="settings-row">
+                <span class="settings-label">自动按时间切换主题</span>
+                <button id="autoThemeToggle" class="toggle-btn on">开</button>
+            </div>
+            <div class="settings-themes" id="themeChoices">
+                <button class="theme-choice" data-theme="night">夜阑</button>
+                <button class="theme-choice" data-theme="morning">清晨</button>
+                <button class="theme-choice" data-theme="noon">亭午</button>
+                <button class="theme-choice" data-theme="dusk">黄昏</button>
+            </div>
+            <div class="settings-hint">
+                夜阑 0:00–6:00 · 清晨 6:00–12:00 · 亭午 12:00–18:00 · 黄昏 18:00–24:00<br>
+                关闭自动切换后，可手动选择想要的主题。设置会保存在本设备上。
+            </div>
+            <div class="import-buttons">
+                <button id="settingsCloseBtn" class="import-btn-confirm">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <div id="exportToast" class="toast-message">复制成功</div>
 
     <div class="fixed-copyright">Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, etc. All Rights Reserved.</div>
 
     <script>
         /* ========== 关卡资源位置配置 ========== */
-        // 关卡文件与网页部署在同一 GitHub Pages 站点，直接使用相对路径
-        const LEVEL_FOLDERS = { S: 'Small', M: 'Medium', L: 'Large' };
+        const LEVEL_FOLDERS = { S: 'levels/small', M: 'levels/medium', L: 'levels/large' };
         const SIZE_NAMES = { S: '小', M: '中', L: '大' };
         const LEVEL_INDEX_CACHE_KEY = 'dotlink_level_index_v1';
+        const BEST_RECORD_KEY = 'dotlink_level_best_v1';
+
+        /* ========== 主题系统 ========== */
+        const THEME_STORAGE_KEY = 'dotlink_theme_settings_v1';
+
+        const THEMES = {
+            night: {
+                label: '夜阑',
+                vars: {
+                    '--c-bg': '#2A1F44',
+                    '--c-text': '#F0E9FF',
+                    '--c-text-sub': '#C9BCE8',
+                    '--c-panel': 'rgba(58, 44, 94, 0.9)',
+                    '--c-surface': '#3A2C5E',
+                    '--c-accent': '#8B6FD4',
+                    '--c-accent-soft': '#5D4791',
+                    '--c-accent-deep': '#B9A3EE',
+                    '--c-clear': '#6B52A8',
+                    '--c-green': '#D9A23C',
+                    '--c-green2': '#E9BB62',
+                    '--c-on-green': '#3B2A08',
+                    '--c-grid-bg': '#3D2F63',
+                    '--c-grid-line': '#5A4A85',
+                    '--c-grid-num': '#BFAEE8',
+                    '--c-level-bg': '#4A3A73',
+                    '--c-level-hover': '#5E4B8C',
+                    '--c-menu-a': '#8B6FD4',
+                    '--c-shadow': 'rgba(10, 5, 25, 0.45)',
+                    '--c-shadow-soft': 'rgba(10, 5, 25, 0.3)',
+                    '--c-footer-bg': 'rgba(15, 10, 35, 0.55)',
+                    '--c-footer-border': 'rgba(185, 163, 238, 0.25)',
+                    '--c-footer-text': '#C9BCE8',
+                    '--c-canvas-point': '#F2ECFF',
+                    '--c-canvas-line': '#D9CFF2',
+                    '--c-canvas-wall': '#4682B4',
+                    '--c-canvas-wallline': '#87CEEB',
+                    '--c-canvas-wallline-dot': '#A3D8F4',
+                    '--c-canvas-select': '#E8B54A',
+                    '--c-best-bg': 'rgba(20, 12, 40, 0.6)',
+                    '--c-best-text': '#E9BB62'
+                }
+            },
+            morning: {
+                label: '清晨',
+                vars: {
+                    '--c-bg': '#5FC2B4',
+                    '--c-text': '#0E3A34',
+                    '--c-text-sub': '#1B5A52',
+                    '--c-panel': 'rgba(255, 255, 255, 0.78)',
+                    '--c-surface': '#FFFFFF',
+                    '--c-accent': '#1C7B6D',
+                    '--c-accent-soft': '#8DD9C9',
+                    '--c-accent-deep': '#12604F',
+                    '--c-clear': '#12604F',
+                    '--c-green': '#237A5B',
+                    '--c-green2': '#48B57A',
+                    '--c-on-green': '#FFFFFF',
+                    '--c-grid-bg': '#E0F4F0',
+                    '--c-grid-line': '#A9DCD2',
+                    '--c-grid-num': '#2C7A6E',
+                    '--c-level-bg': '#D6F0EA',
+                    '--c-level-hover': '#B4E3D8',
+                    '--c-menu-a': '#4FB3A4',
+                    '--c-shadow': 'rgba(10, 55, 48, 0.22)',
+                    '--c-shadow-soft': 'rgba(10, 55, 48, 0.12)',
+                    '--c-footer-bg': 'rgba(20, 80, 70, 0.12)',
+                    '--c-footer-border': 'rgba(14, 58, 52, 0.2)',
+                    '--c-footer-text': '#0E3A34',
+                    '--c-canvas-point': '#000000',
+                    '--c-canvas-line': '#555555',
+                    '--c-canvas-wall': '#4682B4',
+                    '--c-canvas-wallline': '#87CEEB',
+                    '--c-canvas-wallline-dot': '#A3D8F4',
+                    '--c-canvas-select': '#FF6B6B',
+                    '--c-best-bg': 'rgba(255, 255, 255, 0.8)',
+                    '--c-best-text': '#12604F'
+                }
+            },
+            noon: {
+                label: '亭午',
+                vars: {
+                    '--c-bg': '#5AA6F0',
+                    '--c-text': '#0D2E52',
+                    '--c-text-sub': '#1C4570',
+                    '--c-panel': 'rgba(255, 255, 255, 0.8)',
+                    '--c-surface': '#FFFFFF',
+                    '--c-accent': '#1C6BC0',
+                    '--c-accent-soft': '#9CCBF2',
+                    '--c-accent-deep': '#14508F',
+                    '--c-clear': '#14508F',
+                    '--c-green': '#E0A030',
+                    '--c-green2': '#F0B84D',
+                    '--c-on-green': '#3B2A08',
+                    '--c-grid-bg': '#E3F0FC',
+                    '--c-grid-line': '#B3D4F0',
+                    '--c-grid-num': '#2B5F8F',
+                    '--c-level-bg': '#DBEBFA',
+                    '--c-level-hover': '#BCD8F3',
+                    '--c-menu-a': '#4C97E0',
+                    '--c-shadow': 'rgba(10, 40, 80, 0.22)',
+                    '--c-shadow-soft': 'rgba(10, 40, 80, 0.12)',
+                    '--c-footer-bg': 'rgba(20, 60, 110, 0.12)',
+                    '--c-footer-border': 'rgba(13, 46, 82, 0.2)',
+                    '--c-footer-text': '#0D2E52',
+                    '--c-canvas-point': '#000000',
+                    '--c-canvas-line': '#555555',
+                    '--c-canvas-wall': '#4682B4',
+                    '--c-canvas-wallline': '#87CEEB',
+                    '--c-canvas-wallline-dot': '#A3D8F4',
+                    '--c-canvas-select': '#E8B54A',
+                    '--c-best-bg': 'rgba(255, 255, 255, 0.8)',
+                    '--c-best-text': '#14508F'
+                }
+            },
+            dusk: {
+                label: '黄昏',
+                vars: {
+                    '--c-bg': '#BE9178',
+                    '--c-text': '#4A3429',
+                    '--c-text-sub': '#5C4033',
+                    '--c-panel': 'rgba(255, 255, 255, 0.734)',
+                    '--c-surface': '#FFFFFF',
+                    '--c-accent': '#A0542D',
+                    '--c-accent-soft': '#C19A6B',
+                    '--c-accent-deep': '#8B5A2B',
+                    '--c-clear': '#B8860B',
+                    '--c-green': '#2E7D32',
+                    '--c-green2': '#4CAF50',
+                    '--c-on-green': '#FFFFFF',
+                    '--c-grid-bg': '#F5E6D3',
+                    '--c-grid-line': '#D2B48C',
+                    '--c-grid-num': '#8B5A2B',
+                    '--c-level-bg': '#E8D5C0',
+                    '--c-level-hover': '#D2B48C',
+                    '--c-menu-a': '#BE9178',
+                    '--c-shadow': 'rgba(74, 52, 41, 0.2)',
+                    '--c-shadow-soft': 'rgba(74, 52, 41, 0.12)',
+                    '--c-footer-bg': 'rgba(139, 90, 43, 0.1)',
+                    '--c-footer-border': 'rgba(74, 52, 41, 0.2)',
+                    '--c-footer-text': '#5C4033',
+                    '--c-canvas-point': '#000000',
+                    '--c-canvas-line': '#555555',
+                    '--c-canvas-wall': '#4682B4',
+                    '--c-canvas-wallline': '#87CEEB',
+                    '--c-canvas-wallline-dot': '#A3D8F4',
+                    '--c-canvas-select': '#FF6B6B',
+                    '--c-best-bg': 'rgba(255, 255, 255, 0.75)',
+                    '--c-best-text': '#8B5A2B'
+                }
+            }
+        };
+
+        const ALL_THEME_VAR_KEYS = new Set();
+        Object.values(THEMES).forEach(t => Object.keys(t.vars).forEach(k => ALL_THEME_VAR_KEYS.add(k)));
+
+        const THEME_COLOR_VARS = [
+            '--c-grid-bg', '--c-grid-line', '--c-grid-num',
+            '--c-canvas-point', '--c-canvas-line', '--c-canvas-wall',
+            '--c-canvas-wallline', '--c-canvas-wallline-dot', '--c-canvas-select'
+        ];
+
+        let themeSettings = { auto: true, manual: 'dusk' };
+        let currentThemeKey = 'dusk';
+        let themeColors = {
+            '--c-grid-bg': '#F5E6D3',
+            '--c-grid-line': '#D2B48C',
+            '--c-grid-num': '#8B5A2B',
+            '--c-canvas-point': '#000000',
+            '--c-canvas-line': '#555555',
+            '--c-canvas-wall': '#4682B4',
+            '--c-canvas-wallline': '#87CEEB',
+            '--c-canvas-wallline-dot': '#A3D8F4',
+            '--c-canvas-select': '#FF6B6B'
+        };
+
+        function getAutoThemeKey() {
+            const h = new Date().getHours();
+            if (h < 6) return 'night';
+            if (h < 12) return 'morning';
+            if (h < 18) return 'noon';
+            return 'dusk';
+        }
+
+        function getActiveThemeKey() {
+            return themeSettings.auto ? getAutoThemeKey() : themeSettings.manual;
+        }
+
+        function loadThemeSettings() {
+            try {
+                const raw = localStorage.getItem(THEME_STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        if (typeof parsed.auto === 'boolean') themeSettings.auto = parsed.auto;
+                        if (THEMES[parsed.manual]) themeSettings.manual = parsed.manual;
+                    }
+                }
+            } catch (e) { /* 忽略 */ }
+        }
+
+        function saveThemeSettings() {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themeSettings));
+            } catch (e) { /* 忽略 */ }
+        }
+
+        function refreshThemeColors() {
+            const cs = getComputedStyle(document.documentElement);
+            THEME_COLOR_VARS.forEach(v => {
+                const val = cs.getPropertyValue(v).trim();
+                if (val) themeColors[v] = val;
+            });
+        }
+
+        function applyTheme() {
+            const root = document.documentElement;
+            ALL_THEME_VAR_KEYS.forEach(k => root.style.removeProperty(k));
+            const key = getActiveThemeKey();
+            const theme = THEMES[key] || THEMES.dusk;
+            currentThemeKey = key;
+            Object.keys(theme.vars).forEach(k => root.style.setProperty(k, theme.vars[k]));
+            refreshThemeColors();
+            updateThemeUI();
+            if (typeof canvas !== 'undefined' && canvas && gameState.cellSize > 0) {
+                drawEverything();
+            }
+        }
+
+        function updateThemeUI() {
+            const toggle = document.getElementById('autoThemeToggle');
+            if (toggle) {
+                toggle.textContent = themeSettings.auto ? '开' : '关';
+                toggle.classList.toggle('on', themeSettings.auto);
+            }
+            const activeKey = getActiveThemeKey();
+            document.querySelectorAll('.theme-choice').forEach(btn => {
+                const t = btn.getAttribute('data-theme');
+                btn.classList.toggle('active', t === activeKey);
+                btn.disabled = themeSettings.auto;
+            });
+        }
 
         /* ========== 禁用下拉刷新 ========== */
         (function () {
@@ -860,10 +1404,16 @@
             specialFireworkActive: false,
             solutionPath: null,
             hintShown: false,
+            hintUsedAt: null,
             fromLevel: false,
             levelSize: 'L',
-            levelSelectSize: 'L'
+            levelSelectSize: 'L',
+            levelKey: null
         };
+
+        /* 查看答案后的记录屏蔽窗口（6小时） */
+        const HINT_RECORD_KEY = 'dotlink_hint_records_v1';
+        const HINT_RECORD_WINDOW = 6 * 60 * 60 * 1000;
 
         const sizeDefinitions = {
             'S': { width: 20, height: 30, color: '#FFA500', name: '小关卡' },
@@ -942,6 +1492,12 @@
         const menuSettingsBtn = document.getElementById('menuSettingsBtn');
         const menuAboutBtn = document.getElementById('menuAboutBtn');
 
+        // 旧的密码弹窗（已不再使用，仅保留元素避免引用报错）
+        const answerPasswordModal = document.getElementById('answerPasswordModal');
+        const answerPasswordInput = document.getElementById('answerPasswordInput');
+        const answerPasswordConfirmBtn = document.getElementById('answerPasswordConfirmBtn');
+        const answerPasswordCancelBtn = document.getElementById('answerPasswordCancelBtn');
+
         // 用于查看答案确认弹窗期间暂停计时
         let hintPauseState = null;
 
@@ -972,7 +1528,6 @@
             if (timerFreezeReasons.size !== 0) return;
             if (timerFrozenAt === null) return;
 
-            // 把冻结的这段时间累加进 pausedDuration，不计入用时
             gameState.pausedDuration += Date.now() - timerFrozenAt;
             timerFrozenAt = null;
 
@@ -988,6 +1543,35 @@
             }
         }
 
+        /* ========== 个人最好成绩记录（按设备本地保存） ========== */
+        function loadBestRecords() {
+            try {
+                const raw = localStorage.getItem(BEST_RECORD_KEY);
+                const obj = raw ? JSON.parse(raw) : {};
+                return (obj && typeof obj === 'object' && !Array.isArray(obj)) ? obj : {};
+            } catch (e) { return {}; }
+        }
+
+        function saveBestRecord(levelKey, ms) {
+            if (!levelKey || !isFinite(ms) || ms <= 0) return;
+            try {
+                const rec = loadBestRecords();
+                const prev = rec[levelKey];
+                if (typeof prev !== 'number' || ms < prev) {
+                    rec[levelKey] = Math.round(ms);
+                    localStorage.setItem(BEST_RECORD_KEY, JSON.stringify(rec));
+                }
+            } catch (e) { /* 忽略 */ }
+        }
+
+        function formatBestTime(ms) {
+            if (typeof ms !== 'number' || !isFinite(ms) || ms < 0) return '—';
+            const m = Math.floor(ms / 60000);
+            const s = Math.floor((ms % 60000) / 1000);
+            const c = Math.floor((ms % 1000) / 10);
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(c).padStart(2, '0')}`;
+        }
+
         /* ========== 关卡数据的编码与解码 ========== */
         function encodeLevel() {
             const size = gameState.currentSize;
@@ -1001,7 +1585,7 @@
             const parts = code.split(';');
             if (parts.length !== 4) throw new Error('格式错误：必须包含4个部分（尺寸;点;墙;墙线）');
             const [sizeLetter, pointsPart, wallsPart, wallLinesPart] = parts;
-            if (!['S','M','L'].includes(sizeLetter)) throw new Error('尺寸必须是 S, M, 或 L');
+            if (!['S', 'M', 'L'].includes(sizeLetter)) throw new Error('尺寸必须是 S, M, 或 L');
 
             const newPoints = [];
             if (pointsPart.trim() !== '') {
@@ -1096,18 +1680,20 @@
             gameState.elapsedTime = 0;
             gameState.solutionPath = null;
             gameState.hintShown = false;
+            gameState.hintUsedAt = null;
+            gameState.levelKey = null;
             hintPauseState = null;
             timerFreezeReasons.clear();
             timerFrozenAt = null;
             timerDisplay.style.display = 'none';
             timerDisplay.classList.remove('timer-gray');
             pauseOverlay.style.display = 'none';
-            // 恢复所有按钮状态
-            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = false);
             specialActionBtn.disabled = false;
             hintBtn.disabled = false;
             hintBtn.style.display = 'none';
+            hintBtn.classList.remove('hint-locked');
             returnPhase1Btn.disabled = false;
             toolAnnotationModeBtn.style.display = '';
             updateSpecialButton();
@@ -1119,14 +1705,17 @@
         }
 
         function initGame() {
+            loadThemeSettings();
+            applyTheme();
+
             sizeS.addEventListener('click', () => startGame('S'));
             sizeM.addEventListener('click', () => startGame('M'));
             sizeL.addEventListener('click', () => startGame('L'));
-            
+
             sizeBtnS.addEventListener('click', () => changeSize('S'));
             sizeBtnM.addEventListener('click', () => changeSize('M'));
             sizeBtnL.addEventListener('click', () => changeSize('L'));
-            
+
             exitBtn.addEventListener('click', exitToStartScreen);
             returnPhase1Btn.addEventListener('click', returnToPhase1);
             clearAllPointsBtn.addEventListener('click', clearAllPoints);
@@ -1151,53 +1740,83 @@
             annotationCheckBtn.addEventListener('click', () => setCurrentAnnotation('check'));
             createToolIcons();
             messageConfirmBtn.onclick = confirmMessage;
-            // 注意：messageCancelBtn 的点击处理由 showConfirmMessage 动态设置
             secretSubmitBtn.addEventListener('click', checkSecret);
             secretExitBtn.addEventListener('click', exitWithoutConfirm);
-            secretInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkSecret(); });
+            secretInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') checkSecret(); });
             congratsExitBtn.addEventListener('click', exitWithoutConfirm);
-            congrats2ExitBtn.addEventListener('click', function() {
+            congrats2ExitBtn.addEventListener('click', function () {
                 showConfirmMessage('返回主界面', '确定要返回主界面吗？', exitWithoutConfirm);
             });
 
             /* ===== 主菜单按钮 ===== */
             menuLevelsBtn.addEventListener('click', enterLevelSelect);
             menuTutorialBtn.addEventListener('click', () => showMessage('教程', '教程功能正在建设中，敬请期待！'));
-            menuSettingsBtn.addEventListener('click', () => showMessage('设置', '设置功能正在建设中，敬请期待！'));
+            menuSettingsBtn.addEventListener('click', openSettingsModal);
             menuAboutBtn.addEventListener('click', () => showMessage('关于', '点桥网页版<br>DotLink Association'));
             levelExitBtn.addEventListener('click', exitLevelSelectToMenu);
             levelSizeS.addEventListener('click', () => switchLevelSize('S'));
             levelSizeM.addEventListener('click', () => switchLevelSize('M'));
             levelSizeL.addEventListener('click', () => switchLevelSize('L'));
-            
+
             canvas.addEventListener('click', handleCanvasClick);
 
-            // 页面隐藏（切标签页、切 App、最小化）时暂停计时
+            // 设置面板事件
+            document.getElementById('autoThemeToggle').addEventListener('click', function () {
+                themeSettings.auto = !themeSettings.auto;
+                saveThemeSettings();
+                applyTheme();
+            });
+            document.querySelectorAll('.theme-choice').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    if (themeSettings.auto) return;
+                    const t = this.getAttribute('data-theme');
+                    if (!THEMES[t]) return;
+                    themeSettings.manual = t;
+                    saveThemeSettings();
+                    applyTheme();
+                });
+            });
+            document.getElementById('settingsCloseBtn').addEventListener('click', closeSettingsModal);
+            document.getElementById('settingsModal').addEventListener('click', function (e) {
+                if (e.target === this) closeSettingsModal();
+            });
+
+            // 旧密码弹窗（保留引用，防止报错）
+            if (answerPasswordConfirmBtn) answerPasswordConfirmBtn.addEventListener('click', closeAnswerPasswordModal);
+            if (answerPasswordCancelBtn) answerPasswordCancelBtn.addEventListener('click', closeAnswerPasswordModal);
+
+            // 页面隐藏时暂停计时
             document.addEventListener('visibilitychange', function () {
                 if (document.hidden) freezeTimer('visibility');
                 else unfreezeTimer('visibility');
             });
 
-            // 窗口失焦（如系统电量提示、其他窗口抢焦点）时暂停计时
             window.addEventListener('blur', function () {
-                if (document.hidden) return; // 已由 visibilitychange 处理
+                if (document.hidden) return;
                 freezeTimer('blur');
             });
             window.addEventListener('focus', function () {
                 unfreezeTimer('blur');
             });
-            
+
             startScreen.style.display = 'flex';
             gameScreen.style.display = 'none';
             levelSelectScreen.style.display = 'none';
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
             congratsScreen2.style.display = 'none';
-            
+
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             window.addEventListener('orientationchange', resizeCanvas);
             updateSizeButtonStyles();
+
+            // 自动主题：定时检查（每30秒一次）
+            setInterval(function () {
+                if (!themeSettings.auto) return;
+                const k = getAutoThemeKey();
+                if (k !== currentThemeKey) applyTheme();
+            }, 30000);
 
             const importBtn = document.getElementById('importBtn');
             const exportBtn = document.getElementById('exportBtn');
@@ -1220,9 +1839,9 @@
             }
 
             exportBtn.addEventListener('click', async () => {
-                if (!gameScreen.style.display || gameScreen.style.display === 'none') { 
-                    showMessage('提示', '请先进入游戏'); 
-                    return; 
+                if (!gameScreen.style.display || gameScreen.style.display === 'none') {
+                    showMessage('提示', '请先进入游戏');
+                    return;
                 }
                 const code = encodeLevel();
                 try {
@@ -1240,9 +1859,9 @@
             });
 
             importBtn.addEventListener('click', () => {
-                if (!gameScreen.style.display || gameScreen.style.display === 'none') { 
-                    showMessage('提示', '请先进入游戏'); 
-                    return; 
+                if (!gameScreen.style.display || gameScreen.style.display === 'none') {
+                    showMessage('提示', '请先进入游戏');
+                    return;
                 }
                 importModal.style.display = 'flex';
                 importCodeInput.value = '';
@@ -1251,15 +1870,15 @@
 
             importConfirm.addEventListener('click', () => {
                 const code = importCodeInput.value.trim();
-                if (!code) { 
-                    showMessage('提示', '请输入关卡代码'); 
-                    return; 
+                if (!code) {
+                    showMessage('提示', '请输入关卡代码');
+                    return;
                 }
                 try {
                     decodeAndLoad(code);
                     closeImportModal();
-                } catch (e) { 
-                    showMessage('导入失败', e.message); 
+                } catch (e) {
+                    showMessage('导入失败', e.message);
                 }
             });
 
@@ -1267,23 +1886,45 @@
             importModal.addEventListener('click', (e) => { if (e.target === importModal) closeImportModal(); });
 
             pasteBtn.addEventListener('click', async () => {
+                let text = '';
                 try {
-                    const text = await navigator.clipboard.readText();
-                    importCodeInput.value = text;
+                    if (navigator.clipboard && navigator.clipboard.readText) {
+                        text = await navigator.clipboard.readText();
+                    }
                 } catch (err) {
-                    showMessage('粘贴失败', '无法读取剪贴板，请手动粘贴。');
+                    text = '';
+                }
+                if (text && text.trim()) {
+                    importCodeInput.value = text.trim();
+                    importCodeInput.focus();
+                } else {
+                    importCodeInput.focus();
+                    showMessage('提示', '无法直接读取剪贴板，请长按输入框后选择“粘贴”。');
                 }
             });
+        }
+
+        /* ========== 设置面板 ========== */
+        function openSettingsModal() {
+            updateThemeUI();
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
         }
 
         /* ========== 主菜单 / 关卡选择逻辑 ========== */
         function enterLevelSelect() {
             startScreen.style.display = 'none';
             gameScreen.style.display = 'none';
-            levelSelectScreen.style.display = 'block';
+            levelSelectScreen.style.display = 'flex';
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
             congratsScreen2.style.display = 'none';
+            // 确保选关页的大小按钮始终可用
+            levelSizeS.disabled = false;
+            levelSizeM.disabled = false;
+            levelSizeL.disabled = false;
             switchLevelSize(gameState.levelSelectSize || 'L');
         }
 
@@ -1295,6 +1936,10 @@
 
         function switchLevelSize(sizeLetter) {
             gameState.levelSelectSize = sizeLetter;
+            // 显式确保大小按钮可用（防止被其他逻辑误禁用）
+            levelSizeS.disabled = false;
+            levelSizeM.disabled = false;
+            levelSizeL.disabled = false;
             levelSizeS.classList.toggle('active', sizeLetter === 'S');
             levelSizeM.classList.toggle('active', sizeLetter === 'M');
             levelSizeL.classList.toggle('active', sizeLetter === 'L');
@@ -1307,7 +1952,7 @@
             levelTitle.textContent = `关卡：${SIZE_NAMES[sizeLetter]}，${def.width}x${def.height}`;
         }
 
-        /* ========== 关卡资源加载（相对路径 + 超时 + 缓存） ========== */
+        /* ========== 关卡资源加载 ========== */
         let levelIndexCache = null;
 
         function fetchWithTimeout(url, timeoutMs = 8000) {
@@ -1326,19 +1971,17 @@
         async function getLevelIndex() {
             if (levelIndexCache) return levelIndexCache;
 
-            // 先看本地缓存
             try {
                 const cached = localStorage.getItem(LEVEL_INDEX_CACHE_KEY);
                 if (cached) {
                     const parsed = JSON.parse(cached);
                     if (Array.isArray(parsed) && parsed.length > 0) {
                         levelIndexCache = parsed;
-                        // 后台静默刷新
                         refreshLevelIndex().catch(() => {});
                         return levelIndexCache;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { /* 忽略 */ }
 
             return await refreshLevelIndex();
         }
@@ -1348,7 +1991,7 @@
             const data = JSON.parse(text);
             if (!Array.isArray(data)) throw new Error('index.json 格式错误');
             levelIndexCache = data;
-            try { localStorage.setItem(LEVEL_INDEX_CACHE_KEY, text); } catch (e) {}
+            try { localStorage.setItem(LEVEL_INDEX_CACHE_KEY, text); } catch (e) { /* 忽略 */ }
             return data;
         }
 
@@ -1370,12 +2013,26 @@
                     levelGrid.innerHTML = '<div class="level-status">此大小暂无关卡</div>';
                     return;
                 }
+
+                const bestRecords = loadBestRecords();
                 levelGrid.innerHTML = '';
                 items.forEach(item => {
                     const btn = document.createElement('button');
                     btn.className = 'level-item';
-                    btn.textContent = item.num;
                     btn.title = item.name || item.filename;
+
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'level-num';
+                    numSpan.textContent = item.num;
+
+                    const bestSpan = document.createElement('span');
+                    bestSpan.className = 'level-best';
+                    const recordKey = sizeLetter + ':' + item.filename;
+                    const best = bestRecords[recordKey];
+                    bestSpan.textContent = (typeof best === 'number') ? formatBestTime(best) : '—';
+
+                    btn.appendChild(numSpan);
+                    btn.appendChild(bestSpan);
                     btn.addEventListener('click', () => openLevel(item, sizeLetter));
                     levelGrid.appendChild(btn);
                 });
@@ -1395,13 +2052,13 @@
             try {
                 const text = (await fetchTextSmart(path)).trim();
                 if (!text) throw new Error('关卡文件为空');
-                // 先切到游戏界面，再解码
                 levelSelectScreen.style.display = 'none';
                 gameScreen.style.display = 'block';
                 startScreen.style.display = 'none';
                 decodeAndLoad(text);
                 gameState.fromLevel = true;
                 gameState.levelSize = sizeLetter;
+                gameState.levelKey = sizeLetter + ':' + item.filename;
             } catch (e) {
                 levelGrid.innerHTML = '<div class="level-status">关卡加载失败：' + escapeHtml(e.message) + '</div>';
                 setTimeout(() => renderLevelList(sizeLetter), 2000);
@@ -1415,7 +2072,7 @@
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
             congratsScreen2.style.display = 'none';
-            if(gameState.timerInterval) clearInterval(gameState.timerInterval);
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
             gameState.timerInterval = null;
             pauseOverlay.style.display = 'none';
             gameState.specialFireworkActive = false;
@@ -1429,7 +2086,7 @@
         function returnToLevelSelect() {
             gameScreen.style.display = 'none';
             startScreen.style.display = 'none';
-            levelSelectScreen.style.display = 'block';
+            levelSelectScreen.style.display = 'flex';
             if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
             gameState.timerRunning = false;
             gameState.isPaused = false;
@@ -1437,6 +2094,10 @@
             hintPauseState = null;
             timerFreezeReasons.clear();
             timerFrozenAt = null;
+            // 确保选关页大小按钮可用
+            levelSizeS.disabled = false;
+            levelSizeM.disabled = false;
+            levelSizeL.disabled = false;
             const sz = gameState.levelSize || 'L';
             gameState.levelSelectSize = sz;
             levelSizeS.classList.toggle('active', sz === 'S');
@@ -1447,12 +2108,9 @@
         }
 
         function updateSizeButtonStyles() {
-            const sDef = sizeDefinitions['S'];
-            sizeBtnS.style.setProperty('--color', sDef.color);
-            const mDef = sizeDefinitions['M'];
-            sizeBtnM.style.setProperty('--color', mDef.color);
-            const lDef = sizeDefinitions['L'];
-            sizeBtnL.style.setProperty('--color', lDef.color);
+            sizeBtnS.style.setProperty('--color', sizeDefinitions['S'].color);
+            sizeBtnM.style.setProperty('--color', sizeDefinitions['M'].color);
+            sizeBtnL.style.setProperty('--color', sizeDefinitions['L'].color);
         }
 
         function createToolIcons() {
@@ -1515,11 +2173,11 @@
                 return;
             }
             if (gameState.phase === 'connecting' && gameState.isAnswering && !gameState.isCompleted) {
-                showConfirmMessage("返回主界面","确定要返回主界面吗？当前游戏进度将会丢失！",()=>{
+                showConfirmMessage("返回主界面", "确定要返回主界面吗？当前游戏进度将会丢失！", () => {
                     exitWithoutConfirm();
                 });
             } else {
-                showConfirmMessage("返回主界面","确定要返回主界面吗？",()=>{
+                showConfirmMessage("返回主界面", "确定要返回主界面吗？", () => {
                     exitWithoutConfirm();
                 });
             }
@@ -1527,22 +2185,24 @@
 
         function returnToPhase1() {
             if (gameState.phase === 'connecting') {
-                showConfirmMessage("返回第一阶段","确定要返回第一阶段吗？所有标记和线段将被清除，但点和墙会保留。",()=>{
+                showConfirmMessage("返回第一阶段", "确定要返回第一阶段吗？所有标记和线段将被清除，但点和墙会保留。", () => {
                     gameState.lines = []; gameState.annotations.clear(); gameState.selectedPoint = null; gameState.selectedWallLineStart = null;
                     if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
                     gameState.startTime = 0; gameState.elapsedTime = 0; gameState.isAnswering = false; gameState.timerRunning = false;
                     gameState.isPaused = false; gameState.pauseStartTime = 0; gameState.pausedDuration = 0;
                     gameState.hintShown = false;
+                    gameState.hintUsedAt = null;
                     gameState.solutionPath = null;
                     hintPauseState = null;
                     timerFreezeReasons.clear();
                     timerFrozenAt = null;
                     timerDisplay.style.display = 'none'; timerValue.textContent = '00:00.00';
                     timerDisplay.classList.remove('timer-gray');
+                    hintBtn.classList.remove('hint-locked');
                     setPhase('placing');
                     gameState.isCompleted = false; gameState.answerLocked = false; gameState.specialFireworkActive = false; updateSpecialButton();
-                    document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
-                    document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+                    document.querySelectorAll('#gameScreen .control-btn').forEach(btn => btn.disabled = false);
+                    document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = false);
                     specialActionBtn.disabled = false; returnPhase1Btn.disabled = false;
                     hintBtn.disabled = false;
                     updateUI(); drawEverything(); saveToHistory();
@@ -1552,6 +2212,7 @@
 
         function startGame(size) {
             gameState.fromLevel = false;
+            gameState.levelKey = null;
             gameState.currentSize = size;
             const sizeDef = sizeDefinitions[size];
             gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
@@ -1562,18 +2223,18 @@
 
         function changeSize(newSize) {
             if (gameState.currentSize === newSize) return;
-            if (gameState.points.length>0 || gameState.walls.length>0 || gameState.wallLines.length>0) {
-                showConfirmMessage("更换关卡大小","确定更换关卡大小吗？<br>更换后所有已放置的点将被清除，需要重新出题。",()=>{
+            if (gameState.points.length > 0 || gameState.walls.length > 0 || gameState.wallLines.length > 0) {
+                showConfirmMessage("更换关卡大小", "确定更换关卡大小吗？<br>更换后所有已放置的点将被清除，需要重新出题。", () => {
                     gameState.currentSize = newSize;
                     const sizeDef = sizeDefinitions[newSize];
                     gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-                    resetGameState(); setPhase('placing'); updateSizeUI(); updateUI(); resizeCanvas(); drawEverything(); saveToHistory(); pauseOverlay.style.display='none';
+                    resetGameState(); setPhase('placing'); updateSizeUI(); updateUI(); resizeCanvas(); drawEverything(); saveToHistory(); pauseOverlay.style.display = 'none';
                 });
             } else {
                 gameState.currentSize = newSize;
                 const sizeDef = sizeDefinitions[newSize];
                 gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-                updateSizeUI(); resizeCanvas(); drawEverything(); pauseOverlay.style.display='none';
+                updateSizeUI(); resizeCanvas(); drawEverything(); pauseOverlay.style.display = 'none';
             }
         }
 
@@ -1591,6 +2252,7 @@
             gameState.specialFireworkActive = false;
             gameState.solutionPath = null;
             gameState.hintShown = false;
+            gameState.hintUsedAt = null;
             hintPauseState = null;
             timerFreezeReasons.clear();
             timerFrozenAt = null;
@@ -1599,16 +2261,18 @@
             timerDisplay.classList.remove('timer-gray');
             toolAnnotationModeBtn.style.display = '';
             setCurrentTool('point'); setCurrentMode('line'); setCurrentAnnotation('none');
-            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = false);
             specialActionBtn.disabled = false; returnPhase1Btn.style.display = 'none';
             hintBtn.disabled = false;
             hintBtn.style.display = 'none';
+            hintBtn.classList.remove('hint-locked');
             toolAnnotationModeBtn.style.display = '';
         }
 
         function resizeCanvas() {
             const container = document.querySelector('.grid-container');
+            if (!container) return;
             const containerWidth = container.clientWidth;
             const maxGridWidth = gameState.gridSize.width;
             const maxGridHeight = gameState.gridSize.height;
@@ -1632,6 +2296,7 @@
             const scaledHeight = canvasHeight * gameState.dpr;
             canvas.width = scaledWidth;
             canvas.height = scaledHeight;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(gameState.dpr, gameState.dpr);
             drawEverything();
         }
@@ -1668,6 +2333,7 @@
                 phase2SpecialButtons.style.display = 'block';
                 returnPhase1Btn.style.display = 'flex';
                 hintBtn.style.display = 'flex';
+                hintBtn.classList.remove('hint-locked');
                 updateSpecialButton();
                 setCurrentMode('line');
             }
@@ -1745,7 +2411,7 @@
         }
 
         function daysBetweenInclusive(startYear, startMonth, startDay, endDate = new Date()) {
-            const start = new Date(Date.UTC(startYear, startMonth-1, startDay, 0, 0, 0));
+            const start = new Date(Date.UTC(startYear, startMonth - 1, startDay, 0, 0, 0));
             const end = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 0, 0, 0));
             const diffMs = end - start;
             const diffDays = Math.floor(diffMs / 86400000);
@@ -1766,7 +2432,7 @@
                 secretScreen.style.display = 'none';
                 congratsScreen2.style.display = 'flex';
             } else {
-                showMessage("密钥错误","请输入正确的密钥！");
+                showMessage("密钥错误", "请输入正确的密钥！");
                 secretInput.value = '';
                 secretInput.focus();
             }
@@ -1786,7 +2452,7 @@
             pauseOverlay.style.display = 'flex';
             if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
             disableButtonsInPauseMode();
-            showMessage("暂停","游戏已暂停，计时器已停止。");
+            showMessage("暂停", "游戏已暂停，计时器已停止。");
         }
 
         function continueAnswering() {
@@ -1808,20 +2474,20 @@
         }
 
         function disableButtonsInPauseMode() {
-            document.querySelectorAll('.control-btn').forEach(btn => { if (btn.id !== 'clearAllPointsBtn' && btn.id !== 'restartGameBtn' && btn.id !== 'pauseContinueBtn') btn.disabled = true; });
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .control-btn').forEach(btn => { if (btn.id !== 'clearAllPointsBtn' && btn.id !== 'restartGameBtn' && btn.id !== 'pauseContinueBtn') btn.disabled = true; });
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = true);
             specialActionBtn.disabled = true;
-            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .tool-annotation-type').forEach(btn => btn.disabled = true);
         }
 
         function enableButtonsAfterPause() {
-            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = false);
             specialActionBtn.disabled = false;
-            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('#gameScreen .tool-annotation-type').forEach(btn => btn.disabled = false);
             if (gameState.isCompleted) {
-                document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
-                document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
+                document.querySelectorAll('#gameScreen .control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
+                document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = true);
                 specialActionBtn.disabled = true;
                 hintBtn.disabled = true;
             }
@@ -1842,7 +2508,7 @@
             if (gridPos) {
                 if (gameState.phase === 'placing') handlePlacingPhase(gridPos.x, gridPos.y);
                 else if (gameState.phase === 'connecting') {
-                    if (!gameState.isAnswering && gameState.currentMode === 'line') { showMessage("提示","请先点击'开始做答'按钮才能开始连线！"); return; }
+                    if (!gameState.isAnswering && gameState.currentMode === 'line') { showMessage("提示", "请先点击'开始做答'按钮才能开始连线！"); return; }
                     if (gameState.currentMode === 'line') handleConnectingPhase(gridPos.x, gridPos.y);
                     else handleAnnotationPhase(gridPos.x, gridPos.y);
                 }
@@ -1857,24 +2523,24 @@
             const nearestX = Math.round(gridX);
             const nearestY = Math.round(gridY);
             const distance = Math.sqrt(Math.pow(gridX - nearestX, 2) + Math.pow(gridY - nearestY, 2));
-            if (distance <= 0.6 && nearestX >= 0 && nearestX <= gameState.gridSize.width-1 && nearestY >= 0 && nearestY <= gameState.gridSize.height-1) {
+            if (distance <= 0.6 && nearestX >= 0 && nearestX <= gameState.gridSize.width - 1 && nearestY >= 0 && nearestY <= gameState.gridSize.height - 1) {
                 return { x: nearestX, y: nearestY };
             }
             return null;
         }
 
         function handlePlacingPhase(x, y) {
-            if (gameState.currentTool === 'point' && isPointOnWallLine(x, y)) { showMessage("提示","该位置有墙线，请先移除墙线或选择其他位置！"); return; }
+            if (gameState.currentTool === 'point' && isPointOnWallLine(x, y)) { showMessage("提示", "该位置有墙线，请先移除墙线或选择其他位置！"); return; }
             if (gameState.currentTool === 'point') {
                 const existingPoint = gameState.points.find(p => p.x === x && p.y === y);
                 const existingWall = gameState.walls.find(w => w.x === x && w.y === y);
-                if (existingWall) { showMessage("提示","该位置已有墙，请先移除墙或选择其他位置！"); return; }
+                if (existingWall) { showMessage("提示", "该位置已有墙，请先移除墙或选择其他位置！"); return; }
                 if (existingPoint) removePoint(existingPoint);
                 else addPoint(x, y);
             } else if (gameState.currentTool === 'wall') {
                 const existingPoint = gameState.points.find(p => p.x === x && p.y === y);
                 const existingWall = gameState.walls.find(w => w.x === x && w.y === y);
-                if (existingPoint) { showMessage("提示","该位置已有点，请先移除点或选择其他位置！"); return; }
+                if (existingPoint) { showMessage("提示", "该位置已有点，请先移除点或选择其他位置！"); return; }
                 if (existingWall) removeWall(existingWall);
                 else addWall(x, y);
             } else handleWallLinePhase(x, y);
@@ -1887,14 +2553,14 @@
             if (!gameState.selectedWallLineStart) gameState.selectedWallLineStart = { x, y };
             else {
                 if (gameState.selectedWallLineStart.x !== x || gameState.selectedWallLineStart.y !== y) {
-                    const existingLineIndex = findWallLineIndex(gameState.selectedWallLineStart, {x, y});
+                    const existingLineIndex = findWallLineIndex(gameState.selectedWallLineStart, { x, y });
                     if (existingLineIndex !== -1) {
                         gameState.wallLines.splice(existingLineIndex, 1);
                         updateWallLinePoints();
                         gameState.selectedWallLineStart = null;
                     } else {
-                        const lineAdded = addWallLine(gameState.selectedWallLineStart, {x, y});
-                        if (lineAdded) gameState.selectedWallLineStart = {x, y};
+                        const lineAdded = addWallLine(gameState.selectedWallLineStart, { x, y });
+                        if (lineAdded) gameState.selectedWallLineStart = { x, y };
                         else gameState.selectedWallLineStart = null;
                     }
                 } else gameState.selectedWallLineStart = null;
@@ -1930,13 +2596,13 @@
         }
 
         function findWallLineIndex(point1, point2) {
-            return gameState.wallLines.findIndex(line => 
+            return gameState.wallLines.findIndex(line =>
                 (line.start.x === point1.x && line.start.y === point1.y && line.end.x === point2.x && line.end.y === point2.y) ||
                 (line.start.x === point2.x && line.start.y === point2.y && line.end.x === point1.x && line.end.y === point1.y));
         }
 
         function findLineIndex(point1, point2) {
-            return gameState.lines.findIndex(line => 
+            return gameState.lines.findIndex(line =>
                 (line.start.x === point1.x && line.start.y === point1.y && line.end.x === point2.x && line.end.y === point2.y) ||
                 (line.start.x === point2.x && line.start.y === point2.y && line.end.x === point1.x && line.end.y === point1.y));
         }
@@ -2003,7 +2669,7 @@
             if (dx === 0 && dy === 0) return false;
             if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy))) return false;
             if (!isLineClear(point1, point2, true)) return false;
-            gameState.wallLines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx===0?90:(dy===0?0:(dx*dy>0?45:135)) });
+            gameState.wallLines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx === 0 ? 90 : (dy === 0 ? 0 : (dx * dy > 0 ? 45 : 135)) });
             updateWallLinePoints();
             return true;
         }
@@ -2014,8 +2680,8 @@
             if (dx === 0 && dy === 0) return false;
             if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy))) return false;
             if (!isLineClear(point1, point2, false)) return false;
-            if (checkWallConflict(point1, point2)) { showMessage("错误","线段不许经过墙的四分之一格边长范围！"); return false; }
-            gameState.lines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx===0?90:(dy===0?0:(dx*dy>0?45:135)) });
+            if (checkWallConflict(point1, point2)) { showMessage("错误", "线段不许经过墙的四分之一格边长范围！"); return false; }
+            gameState.lines.push({ start: { x: point1.x, y: point1.y }, end: { x: point2.x, y: point2.y }, angle: dx === 0 ? 90 : (dy === 0 ? 0 : (dx * dy > 0 ? 45 : 135)) });
             return true;
         }
 
@@ -2169,7 +2835,32 @@
             return { path: null, timeout: aborted };
         }
 
-        /* ========== 查看答案相关 ========== */
+        /* ========== 查看答案：记录（6小时内不计入个人记录） ========== */
+        function getLevelKey() {
+            if (gameState.fromLevel && gameState.levelKey) return 'L:' + gameState.levelKey;
+            try { return 'C:' + encodeLevel(); } catch (e) { return 'C:unknown'; }
+        }
+
+        function markHintUsed() {
+            gameState.hintUsedAt = Date.now();
+            try {
+                const rec = JSON.parse(localStorage.getItem(HINT_RECORD_KEY) || '{}');
+                rec[getLevelKey()] = Date.now();
+                localStorage.setItem(HINT_RECORD_KEY, JSON.stringify(rec));
+            } catch (e) { /* 忽略 */ }
+        }
+
+        function isHintWithinWindow() {
+            if (gameState.hintUsedAt && Date.now() - gameState.hintUsedAt < HINT_RECORD_WINDOW) return true;
+            try {
+                const rec = JSON.parse(localStorage.getItem(HINT_RECORD_KEY) || '{}');
+                const t = rec[getLevelKey()];
+                if (t && Date.now() - t < HINT_RECORD_WINDOW) return true;
+            } catch (e) { /* 忽略 */ }
+            return false;
+        }
+
+        /* ========== 查看答案相关（已取消时间限制） ========== */
         function pauseTimerForHint() {
             hintPauseState = {
                 wasRunning: gameState.timerRunning && gameState.isAnswering && !gameState.isCompleted,
@@ -2211,19 +2902,22 @@
             pauseTimerForHint();
             showConfirmMessage(
                 "查看答案",
-                "确定要看机器答案吗？<br>看答案后计时将停止，且不能继续作答。",
+                "确定要看机器答案吗？<br>看答案后计时将停止，且不能继续作答。<br>之后 6 小时内本关的成绩将不计入个人记录。",
                 function () {
                     const ok = revealAnswer();
-                    if (!ok) {
-                        resumeTimerForHint();
-                    } else {
-                        hintPauseState = null;
-                    }
+                    if (!ok) resumeTimerForHint();
+                    else hintPauseState = null;
                 },
                 function () {
                     resumeTimerForHint();
                 }
             );
+        }
+
+        function closeAnswerPasswordModal() {
+            if (answerPasswordModal) answerPasswordModal.style.display = 'none';
+            if (answerPasswordInput) answerPasswordInput.value = '';
+            unfreezeTimer('answerPassword');
         }
 
         function revealAnswer() {
@@ -2246,6 +2940,7 @@
             gameState.isAnswering = true;
             gameState.selectedPoint = null;
             gameState.selectedWallLineStart = null;
+            markHintUsed();
 
             if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
             gameState.timerRunning = false;
@@ -2258,12 +2953,13 @@
                 setCurrentMode('line');
             }
 
-            document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = true);
-            document.querySelectorAll('.tool-annotation-type').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .tool-annotation-type').forEach(btn => btn.disabled = true);
             specialActionBtn.disabled = false;
-            hintBtn.style.display = 'none';   // 看答案后隐藏问号按钮
+            hintBtn.style.display = 'none';
             returnPhase1Btn.disabled = false;
+            hintBtn.classList.remove('hint-locked');
 
             updateSpecialButton();
             drawEverything();
@@ -2271,22 +2967,20 @@
         }
 
         function confirmFinishPlacing() {
-            if (gameState.points.length < 2) { 
-                showMessage("提示","请至少放置2个点再进入连线阶段！");
-                return; 
+            if (gameState.points.length < 2) {
+                showMessage("提示", "请至少放置2个点再进入连线阶段！");
+                return;
             }
-            // 先检测是否有解
             const result = findSolutionPath();
             if (result.timeout) {
                 gameState.solutionPath = null;
-                // 搜索超时，保守放行，仍然弹确认
             } else if (!result.path) {
                 showMessage("题目无解", "当前题目没有解法，请继续修改后再试！");
                 return;
             } else {
                 gameState.solutionPath = result.path;
             }
-            showConfirmMessage("确认完成出题","确定已经完成出题，要开始连线吗？",()=>{ setPhase('connecting'); });
+            showConfirmMessage("确认完成出题", "确定已经完成出题，要开始连线吗？", () => { setPhase('connecting'); });
         }
 
         function startAnswering() {
@@ -2313,7 +3007,7 @@
             const minutes = Math.floor(totalMilliseconds / 60000);
             const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
             const milliseconds = Math.floor((totalMilliseconds % 1000) / 10);
-            timerValue.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}.${milliseconds.toString().padStart(2,'0')}`;
+            timerValue.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
         }
 
         function checkSolution() {
@@ -2321,31 +3015,38 @@
                 showMessage("提示", "你看了答案，不算数哦。");
                 return;
             }
-            const connectionCounts = gameState.points.map(point => gameState.lines.filter(line => (line.start.x===point.x&&line.start.y===point.y)||(line.end.x===point.x&&line.end.y===point.y)).length);
-            const overConnectionPoints = connectionCounts.filter(c=>c>2).length;
-            if (overConnectionPoints > 0) { showMessage("错误","有的点线连多了！"); return; }
-            const zeroConnectionPoints = connectionCounts.filter(c=>c===0).length;
-            if (zeroConnectionPoints > 0) { showMessage("需要继续作答",`还有${zeroConnectionPoints}个点没有连接任何线！`); return; }
-            const singleConnectionPoints = connectionCounts.filter(c=>c===1).length;
-            if (singleConnectionPoints > 2) { showMessage("需要继续作答",`有${singleConnectionPoints}个点只连接了1条线，最多只能有2个这样的点！`); return; }
+            const connectionCounts = gameState.points.map(point => gameState.lines.filter(line => (line.start.x === point.x && line.start.y === point.y) || (line.end.x === point.x && line.end.y === point.y)).length);
+            const overConnectionPoints = connectionCounts.filter(c => c > 2).length;
+            if (overConnectionPoints > 0) { showMessage("错误", "有的点线连多了！"); return; }
+            const zeroConnectionPoints = connectionCounts.filter(c => c === 0).length;
+            if (zeroConnectionPoints > 0) { showMessage("需要继续作答", `还有${zeroConnectionPoints}个点没有连接任何线！`); return; }
+            const singleConnectionPoints = connectionCounts.filter(c => c === 1).length;
+            if (singleConnectionPoints > 2) { showMessage("需要继续作答", `有${singleConnectionPoints}个点只连接了1条线，最多只能有2个这样的点！`); return; }
             const cycleResult = detectCycle();
             if (cycleResult.hasCycle) {
                 if (cycleResult.isComplete) completeGame();
-                else { showMessage("错误","成环了，但这个环没有经过所有的点！"); return; }
+                else { showMessage("错误", "成环了，但这个环没有经过所有的点！"); return; }
             } else {
                 if (singleConnectionPoints <= 2) completeGame();
-                else { showMessage("需要继续作答","请确保所有点都正确连接！"); return; }
+                else { showMessage("需要继续作答", "请确保所有点都正确连接！"); return; }
             }
         }
 
         function completeGame() {
             if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; gameState.timerRunning = false; }
             const totalMilliseconds = gameState.elapsedTime;
-            const minutes = Math.floor(totalMilliseconds/60000);
-            const seconds = Math.floor((totalMilliseconds%60000)/1000);
-            const milliseconds = Math.floor((totalMilliseconds%1000)/10);
-            const timeString = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}.${milliseconds.toString().padStart(2,'0')}`;
-            const cobaltCoefficient = Math.round((gameState.elapsedTime/60000) / gameState.points.length * 200);
+            const minutes = Math.floor(totalMilliseconds / 60000);
+            const seconds = Math.floor((totalMilliseconds % 60000) / 1000);
+            const milliseconds = Math.floor((totalMilliseconds % 1000) / 10);
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
+            const cobaltCoefficient = Math.round((gameState.elapsedTime / 60000) / gameState.points.length * 200);
+            const noRecord = isHintWithinWindow();
+
+            // 保存本关个人最好成绩（按设备本地记录）
+            if (gameState.fromLevel && gameState.levelKey && !noRecord) {
+                saveBestRecord(gameState.levelKey, gameState.elapsedTime);
+            }
+
             gameState.isCompleted = true;
             gameState.answerLocked = true;
             gameState.isPaused = false;
@@ -2353,20 +3054,19 @@
             gameState.selectedPoint = null;
             gameState.selectedWallLineStart = null;
             pauseContinueBtn.textContent = '暂停做答';
-            document.querySelectorAll('.control-btn:not(#restartGameBtn)').forEach(btn=>btn.disabled=true);
-            document.querySelectorAll('.tool-btn').forEach(btn=>btn.disabled=true);
-            document.querySelectorAll('.tool-annotation-type').forEach(btn=>btn.disabled=true);
+            document.querySelectorAll('#gameScreen .control-btn:not(#restartGameBtn)').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .tool-btn').forEach(btn => btn.disabled = true);
+            document.querySelectorAll('#gameScreen .tool-annotation-type').forEach(btn => btn.disabled = true);
             returnPhase1Btn.disabled = false;
             hintBtn.disabled = true;
             updateSpecialButton();
-            showMessageWithSuccess("恭喜！","恭喜你！做出来了！答案正确！",`用时: ${timeString}`,`钴系数: ${cobaltCoefficient}`);
+            showMessageWithSuccess("恭喜！", "恭喜你！做出来了！答案正确！", `用时: ${timeString}`, `钴系数: ${cobaltCoefficient}`, noRecord);
         }
 
         function clearAllPoints() {
-            // 完成或看答案后按钮已禁用，此处无需再检查 isCompleted
             if (gameState.phase === 'placing') {
-                if (gameState.points.length===0 && gameState.walls.length===0 && gameState.wallLines.length===0) {
-                    showMessage("提示","没有可清除的点、墙或墙线");
+                if (gameState.points.length === 0 && gameState.walls.length === 0 && gameState.wallLines.length === 0) {
+                    showMessage("提示", "没有可清除的点、墙或墙线");
                     return;
                 }
                 showConfirmMessage("清除所有", "确定要清除所有点、墙点和墙线吗？", () => {
@@ -2375,9 +3075,9 @@
                     gameState.annotations.clear(); saveToHistory(); updateUI(); drawEverything();
                 });
             } else {
-                if (gameState.lines.length===0) { 
-                    showMessage("提示","没有可清除的线段");
-                    return; 
+                if (gameState.lines.length === 0) {
+                    showMessage("提示", "没有可清除的线段");
+                    return;
                 }
                 showConfirmMessage("清除所有线段", "确定要清除所有线段吗？", () => {
                     gameState.lines = []; gameState.selectedPoint = null; saveToHistory(); updateUI(); drawEverything();
@@ -2392,7 +3092,7 @@
         }
 
         function undoLastAction() {
-            if (gameState.phase === 'connecting' && gameState.lines.length === 0 && gameState.currentMode === 'line') { showMessage("提示","已经没有可以删的线段了！！！"); return; }
+            if (gameState.phase === 'connecting' && gameState.lines.length === 0 && gameState.currentMode === 'line') { showMessage("提示", "已经没有可以删的线段了！！！"); return; }
             if (gameState.history.length <= 1) return;
             gameState.history.pop();
             const prevState = gameState.history[gameState.history.length - 1];
@@ -2423,8 +3123,14 @@
             if (gameState.history.length > 20) gameState.history.shift();
         }
 
+        function resetMessageContentClick() {
+            messageContent.onclick = null;
+            messageContent.classList.remove('clickable-text');
+        }
+
         function showMessage(title, content) {
             freezeTimer('message');
+            resetMessageContentClick();
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
@@ -2436,26 +3142,32 @@
         }
         function showConfirmMessage(title, content, confirmCallback, cancelCallback) {
             freezeTimer('message');
+            resetMessageContentClick();
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
             successMessage.style.display = 'none';
             messageCancelBtn.style.display = 'inline-block';
-            messageCancelBtn.onclick = function() {
+            messageCancelBtn.onclick = function () {
                 closeMessage();
                 if (cancelCallback) cancelCallback();
             };
-            messageConfirmBtn.onclick = function() { 
-                closeMessage(); 
-                if (confirmCallback) confirmCallback(); 
+            messageConfirmBtn.onclick = function () {
+                closeMessage();
+                if (confirmCallback) confirmCallback();
             };
             messageBox.style.display = 'block';
             messageOverlay.style.display = 'block';
         }
-        function showMessageWithSuccess(title, content, timeText, cobaltText) {
+        function showMessageWithSuccess(title, content, timeText, cobaltText, noRecord) {
             freezeTimer('message');
+            resetMessageContentClick();
             messageTitle.textContent = title;
             messageContent.innerHTML = content;
-            successMessage.innerHTML = `<div style="margin-bottom:8px;">${timeText}</div><div class="cobalt-coefficient">${cobaltText}</div>`;
+            let html = `<div style="margin-bottom:8px;">${timeText}</div><div class="cobalt-coefficient">${cobaltText}</div>`;
+            if (noRecord) {
+                html += `<div class="record-note">本关近期查看过答案，本次成绩不计入个人记录</div>`;
+            }
+            successMessage.innerHTML = html;
             successMessage.style.display = 'block';
             messageCancelBtn.style.display = 'none';
             messageCancelBtn.onclick = closeMessage;
@@ -2464,9 +3176,10 @@
             messageOverlay.style.display = 'block';
         }
         function confirmMessage() { closeMessage(); }
-        function closeMessage() { 
-            messageBox.style.display = 'none'; 
+        function closeMessage() {
+            messageBox.style.display = 'none';
             messageOverlay.style.display = 'none';
+            resetMessageContentClick();
             messageConfirmBtn.onclick = confirmMessage;
             messageCancelBtn.onclick = closeMessage;
             unfreezeTimer('message');
@@ -2474,15 +3187,20 @@
 
         /* ========== 绘制 ========== */
         function drawGrid() {
-            ctx.clearRect(0, 0, canvas.width / gameState.dpr, canvas.height / gameState.dpr);
-            ctx.strokeStyle = '#D2B48C';
-            ctx.lineWidth = 1;
-
-            const gridStartX = gameState.canvasPadding;
-            const gridStartY = gameState.canvasPadding;
             const w = gameState.gridSize.width;
             const h = gameState.gridSize.height;
             const cs = gameState.cellSize;
+            const gridStartX = gameState.canvasPadding;
+            const gridStartY = gameState.canvasPadding;
+            const totalW = canvas.width / gameState.dpr;
+            const totalH = canvas.height / gameState.dpr;
+
+            ctx.clearRect(0, 0, totalW, totalH);
+            ctx.fillStyle = themeColors['--c-grid-bg'];
+            ctx.fillRect(0, 0, totalW, totalH);
+
+            ctx.strokeStyle = themeColors['--c-grid-line'];
+            ctx.lineWidth = 1;
 
             for (let i = 0; i < w; i++) {
                 ctx.beginPath();
@@ -2497,7 +3215,7 @@
                 ctx.stroke();
             }
 
-            ctx.fillStyle = '#8B5A2B';
+            ctx.fillStyle = themeColors['--c-grid-num'];
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -2518,43 +3236,45 @@
             const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
             ctx.save();
             gameState.walls.forEach(wall => {
-                const x = gridStartX + wall.x*gameState.cellSize, y = gridStartY + wall.y*gameState.cellSize, wallSize = gameState.cellSize/2;
-                ctx.strokeStyle = '#4682B4'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(x - wallSize/2, y); ctx.lineTo(x + wallSize/2, y);
-                ctx.moveTo(x, y - wallSize/2); ctx.lineTo(x, y + wallSize/2); ctx.stroke();
+                const x = gridStartX + wall.x * gameState.cellSize, y = gridStartY + wall.y * gameState.cellSize, wallSize = gameState.cellSize / 2;
+                ctx.strokeStyle = themeColors['--c-canvas-wall']; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(x - wallSize / 2, y); ctx.lineTo(x + wallSize / 2, y);
+                ctx.moveTo(x, y - wallSize / 2); ctx.lineTo(x, y + wallSize / 2); ctx.stroke();
             });
             ctx.restore();
         }
 
         function drawWallLines() {
             const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
-            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#87CEEB';
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = themeColors['--c-canvas-wallline'];
             gameState.wallLines.forEach(line => {
-                const startX = gridStartX + line.start.x*gameState.cellSize, startY = gridStartY + line.start.y*gameState.cellSize;
-                const endX = gridStartX + line.end.x*gameState.cellSize, endY = gridStartY + line.end.y*gameState.cellSize;
+                const startX = gridStartX + line.start.x * gameState.cellSize, startY = gridStartY + line.start.y * gameState.cellSize;
+                const endX = gridStartX + line.end.x * gameState.cellSize, endY = gridStartY + line.end.y * gameState.cellSize;
                 ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
             });
-            ctx.fillStyle = '#A3D8F4';
+            ctx.fillStyle = themeColors['--c-canvas-wallline-dot'];
             gameState.wallLines.forEach(line => {
                 let x = gridStartX + line.start.x * gameState.cellSize;
                 let y = gridStartY + line.start.y * gameState.cellSize;
-                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
                 x = gridStartX + line.end.x * gameState.cellSize;
                 y = gridStartY + line.end.y * gameState.cellSize;
-                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
             });
+            // 选中墙线标记点：与墙点相同的蓝色
             if (gameState.selectedWallLineStart) {
-                const x = gridStartX + gameState.selectedWallLineStart.x*gameState.cellSize, y = gridStartY + gameState.selectedWallLineStart.y*gameState.cellSize;
-                ctx.fillStyle = '#FFD734'; ctx.beginPath(); ctx.arc(x, y, gameState.cellSize/8, 0, Math.PI*2); ctx.fill();
+                const x = gridStartX + gameState.selectedWallLineStart.x * gameState.cellSize, y = gridStartY + gameState.selectedWallLineStart.y * gameState.cellSize;
+                ctx.fillStyle = themeColors['--c-canvas-wall'];
+                ctx.beginPath(); ctx.arc(x, y, gameState.cellSize / 8, 0, Math.PI * 2); ctx.fill();
             }
         }
 
         function drawLines() {
             const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
-            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#555555';
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = themeColors['--c-canvas-line'];
             gameState.lines.forEach(line => {
-                const startX = gridStartX + line.start.x*gameState.cellSize, startY = gridStartY + line.start.y*gameState.cellSize;
-                const endX = gridStartX + line.end.x*gameState.cellSize, endY = gridStartY + line.end.y*gameState.cellSize;
+                const startX = gridStartX + line.start.x * gameState.cellSize, startY = gridStartY + line.start.y * gameState.cellSize;
+                const endX = gridStartX + line.end.x * gameState.cellSize, endY = gridStartY + line.end.y * gameState.cellSize;
                 ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
             });
         }
@@ -2582,13 +3302,13 @@
             const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding;
             drawCircleAnnotations();
             gameState.points.forEach(point => {
-                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
+                const x = gridStartX + point.x * gameState.cellSize, y = gridStartY + point.y * gameState.cellSize;
                 const hasAnnotation = gameState.annotations.has(point.id);
                 const annotationType = gameState.annotations.get(point.id);
                 if (hasAnnotation && annotationType !== 'circle') return;
-                const pointRadius = (hasAnnotation && annotationType === 'circle') ? gameState.cellSize/8 : gameState.cellSize/4;
-                ctx.beginPath(); ctx.arc(x, y, pointRadius, 0, Math.PI*2);
-                ctx.fillStyle = gameState.selectedPoint === point ? '#FF6B6B' : '#000000';
+                const pointRadius = (hasAnnotation && annotationType === 'circle') ? gameState.cellSize / 8 : gameState.cellSize / 4;
+                ctx.beginPath(); ctx.arc(x, y, pointRadius, 0, Math.PI * 2);
+                ctx.fillStyle = gameState.selectedPoint === point ? themeColors['--c-canvas-select'] : themeColors['--c-canvas-point'];
                 ctx.fill();
                 ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
             });
@@ -2596,55 +3316,60 @@
         }
 
         function drawCircleAnnotations() {
-            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize/2;
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize / 2;
             gameState.annotations.forEach((type, pointId) => {
                 if (type !== 'circle') return;
                 const point = gameState.points.find(p => p.id === pointId);
                 if (!point) return;
-                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
+                const x = gridStartX + point.x * gameState.cellSize, y = gridStartY + point.y * gameState.cellSize;
                 ctx.save();
-                ctx.strokeStyle = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? '#FF6B6B' : '#000000';
-                ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, baseSize*2/3, 0, Math.PI*2); ctx.stroke();
+                ctx.strokeStyle = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? themeColors['--c-canvas-select'] : themeColors['--c-canvas-point'];
+                ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, baseSize * 2 / 3, 0, Math.PI * 2); ctx.stroke();
                 ctx.restore();
             });
         }
 
         function drawNonCircleAnnotations() {
-            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize/2;
+            const gridStartX = gameState.canvasPadding, gridStartY = gameState.canvasPadding, baseSize = gameState.cellSize / 2;
             gameState.annotations.forEach((type, pointId) => {
                 if (type === 'circle') return;
                 const point = gameState.points.find(p => p.id === pointId);
                 if (!point) return;
-                const x = gridStartX + point.x*gameState.cellSize, y = gridStartY + point.y*gameState.cellSize;
+                const x = gridStartX + point.x * gameState.cellSize, y = gridStartY + point.y * gameState.cellSize;
                 ctx.save();
-                const color = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? '#FF6B6B' : '#000000';
-                const normalPointSize = gameState.cellSize/2;
+                const color = gameState.selectedPoint && gameState.selectedPoint.id === pointId ? themeColors['--c-canvas-select'] : themeColors['--c-canvas-point'];
+                const normalPointSize = gameState.cellSize / 2;
                 const whiteBorderSize = normalPointSize * 1.3;
                 ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2;
-                switch(type) {
+                switch (type) {
                     case 'square':
-                        ctx.beginPath(); ctx.rect(x - whiteBorderSize/2, y - whiteBorderSize/2, whiteBorderSize, whiteBorderSize); ctx.fill();
-                        ctx.fillStyle = color; ctx.beginPath(); ctx.rect(x - baseSize/2, y - baseSize/2, baseSize, baseSize); ctx.fill(); break;
-                    case 'triangle':
-                        const whiteTriangleHeight = whiteBorderSize, whiteTriangleHalfBase = whiteBorderSize/2;
-                        ctx.beginPath(); ctx.moveTo(x, y - whiteTriangleHeight/2); ctx.lineTo(x - whiteTriangleHalfBase, y + whiteTriangleHeight/2); ctx.lineTo(x + whiteTriangleHalfBase, y + whiteTriangleHeight/2); ctx.closePath(); ctx.fill();
-                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize/2); ctx.lineTo(x - baseSize/2, y + baseSize/2); ctx.lineTo(x + baseSize/2, y + baseSize/2); ctx.closePath(); ctx.fill(); break;
-                    case 'diamond':
+                        ctx.beginPath(); ctx.rect(x - whiteBorderSize / 2, y - whiteBorderSize / 2, whiteBorderSize, whiteBorderSize); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.rect(x - baseSize / 2, y - baseSize / 2, baseSize, baseSize); ctx.fill(); break;
+                    case 'triangle': {
+                        const whiteTriangleHeight = whiteBorderSize, whiteTriangleHalfBase = whiteBorderSize / 2;
+                        ctx.beginPath(); ctx.moveTo(x, y - whiteTriangleHeight / 2); ctx.lineTo(x - whiteTriangleHalfBase, y + whiteTriangleHeight / 2); ctx.lineTo(x + whiteTriangleHalfBase, y + whiteTriangleHeight / 2); ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize / 2); ctx.lineTo(x - baseSize / 2, y + baseSize / 2); ctx.lineTo(x + baseSize / 2, y + baseSize / 2); ctx.closePath(); ctx.fill(); break;
+                    }
+                    case 'diamond': {
                         const whiteDiamondSize = whiteBorderSize;
-                        ctx.beginPath(); ctx.moveTo(x, y - whiteDiamondSize/2); ctx.lineTo(x + whiteDiamondSize/2, y); ctx.lineTo(x, y + whiteDiamondSize/2); ctx.lineTo(x - whiteDiamondSize/2, y); ctx.closePath(); ctx.fill();
-                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize/2); ctx.lineTo(x + baseSize/2, y); ctx.lineTo(x, y + baseSize/2); ctx.lineTo(x - baseSize/2, y); ctx.closePath(); ctx.fill(); break;
-                    case 'star':
-                        const whiteStarOuter = whiteBorderSize/2 * 1.1, whiteStarInner = whiteBorderSize/4 * 1.1;
+                        ctx.beginPath(); ctx.moveTo(x, y - whiteDiamondSize / 2); ctx.lineTo(x + whiteDiamondSize / 2, y); ctx.lineTo(x, y + whiteDiamondSize / 2); ctx.lineTo(x - whiteDiamondSize / 2, y); ctx.closePath(); ctx.fill();
+                        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, y - baseSize / 2); ctx.lineTo(x + baseSize / 2, y); ctx.lineTo(x, y + baseSize / 2); ctx.lineTo(x - baseSize / 2, y); ctx.closePath(); ctx.fill(); break;
+                    }
+                    case 'star': {
+                        const whiteStarOuter = whiteBorderSize / 2 * 1.1, whiteStarInner = whiteBorderSize / 4 * 1.1;
                         ctx.beginPath(); drawStarShape(ctx, x, y, 5, whiteStarOuter, whiteStarInner); ctx.closePath(); ctx.fill();
-                        ctx.fillStyle = color; ctx.beginPath(); drawStarShape(ctx, x, y, 5, baseSize/2 * 1.0, baseSize/4 * 1.0); ctx.closePath(); ctx.fill(); break;
-                    case 'cross':
-                        const crossSize = whiteBorderSize/2;
+                        ctx.fillStyle = color; ctx.beginPath(); drawStarShape(ctx, x, y, 5, baseSize / 2 * 1.0, baseSize / 4 * 1.0); ctx.closePath(); ctx.fill(); break;
+                    }
+                    case 'cross': {
+                        const crossSize = whiteBorderSize / 2;
                         ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - crossSize, y - crossSize); ctx.lineTo(x + crossSize, y + crossSize); ctx.moveTo(x + crossSize, y - crossSize); ctx.lineTo(x - crossSize, y + crossSize); ctx.stroke();
-                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize/2, y - baseSize/2); ctx.lineTo(x + baseSize/2, y + baseSize/2); ctx.moveTo(x + baseSize/2, y - baseSize/2); ctx.lineTo(x - baseSize/2, y + baseSize/2); ctx.stroke(); break;
-                    case 'check':
-                        const checkSize = whiteBorderSize/2;
-                        ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - checkSize, y); ctx.lineTo(x - checkSize/3, y + checkSize); ctx.lineTo(x + checkSize, y - checkSize); ctx.stroke();
-                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize/2, y); ctx.lineTo(x - baseSize/6, y + baseSize/2); ctx.lineTo(x + baseSize/2, y - baseSize/2); ctx.stroke(); break;
+                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize / 2, y - baseSize / 2); ctx.lineTo(x + baseSize / 2, y + baseSize / 2); ctx.moveTo(x + baseSize / 2, y - baseSize / 2); ctx.lineTo(x - baseSize / 2, y + baseSize / 2); ctx.stroke(); break;
+                    }
+                    case 'check': {
+                        const checkSize = whiteBorderSize / 2;
+                        ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x - checkSize, y); ctx.lineTo(x - checkSize / 3, y + checkSize); ctx.lineTo(x + checkSize, y - checkSize); ctx.stroke();
+                        ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - baseSize / 2, y); ctx.lineTo(x - baseSize / 6, y + baseSize / 2); ctx.lineTo(x + baseSize / 2, y - baseSize / 2); ctx.stroke(); break;
+                    }
                 }
                 ctx.restore();
             });
@@ -2662,13 +3387,13 @@
             ctx.lineTo(cx, cy - outerRadius); ctx.closePath();
         }
 
-        function drawEverything() { 
-            drawGrid(); 
-            drawWallLines(); 
-            drawWalls(); 
-            drawLines(); 
+        function drawEverything() {
+            drawGrid();
+            drawWallLines();
+            drawWalls();
+            drawLines();
             drawSolutionLines();
-            drawPoints(); 
+            drawPoints();
         }
 
         function updateUI() {
