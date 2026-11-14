@@ -39,15 +39,21 @@
             overflow-y: auto;
         }
         
+        /* ===== 主菜单底板（与做题界面同宽，平板横屏比例） ===== */
         .start-screen {
             background: rgba(255, 255, 255, 0.734);
             border-radius: 20px;
-            padding: 25px;
             box-shadow: 0 10px 30px rgba(74, 52, 41, 0.2);
             width: 100%;
-            max-width: 500px;
+            max-width: 1000px;
+            aspect-ratio: 16 / 10;
+            padding: 3% 4%;
             text-align: center;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3%;
             margin: 20px auto;
         }
         
@@ -56,6 +62,11 @@
             width: 100%;
             max-width: 1000px;
             margin: 20px auto;
+        }
+
+        /* 关卡选择界面宽度与原版主页面相同 */
+        #levelSelectScreen {
+            max-width: 500px;
         }
         
         .header {
@@ -74,7 +85,7 @@
         .subtitle {
             font-size: 16px;
             color: #5C4033;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         
         .exit-btn, .return-phase1-btn, .import-btn, .export-btn, .hint-btn {
@@ -134,36 +145,111 @@
             .hint-btn { right: 110px; }
         }
 
-        .size-selection {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 25px 0;
+        /* ===== 主菜单按钮布局 ===== */
+        .main-menu-row {
+            display: grid;
+            width: 100%;
+            gap: 2.5%;
         }
-        .size-btn {
+        .main-menu-row-top {
+            grid-template-columns: repeat(3, 1fr);
+            flex: 0 0 auto;
+        }
+        .main-menu-row-bottom {
+            grid-template-columns: repeat(4, 1fr);
+            flex: 0 0 auto;
+        }
+        .menu-btn {
+            aspect-ratio: 3 / 2;
             border: none;
-            padding: 22px 20px;
             border-radius: 15px;
-            font-size: 22px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: 700;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            color: black;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: black;
-            position: relative;
-            min-height: 120px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+            padding: 3%;
         }
-        .size-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
-        .size-btn:active { transform: translateY(-2px); }
-        .size-symbol { font-size: 36px; margin-bottom: 8px; font-weight: 800; z-index: 1; }
-        .size-desc { font-size: 16px; font-weight: 600; z-index: 1; }
-        .size-s { background-color: #FFA500; }
-        .size-m { background-color: #C0C0C0; }
-        .size-l { background-color: #FF3333; }
+        .menu-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+        .menu-btn:active { transform: translateY(-1px); }
+        .menu-btn > span {
+            font-size: clamp(30px, 4.2vw, 46px);
+            line-height: 1;
+            font-weight: 800;
+        }
+        .menu-btn > small {
+            font-size: clamp(13px, 1.6vw, 18px);
+            margin-top: 6%;
+            font-weight: 600;
+            opacity: 0.85;
+        }
+        .menu-btn-s { background-color: #FFA500; }
+        .menu-btn-m { background-color: #C0C0C0; }
+        .menu-btn-l { background-color: #FF3333; }
+        .menu-btn-g { background-color: #87CEEB; }
+        .menu-btn-r { background-color: #4CAF50; color: white; }
+        .menu-btn-x { background-color: #999999; color: white; }
+        .menu-btn-a { background-color: #BE9178; }
+
+        @media (max-width: 768px) {
+            .start-screen {
+                aspect-ratio: auto;
+                padding: 20px 16px;
+                gap: 15px;
+            }
+        }
+
+        /* ===== 关卡选择 ===== */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            align-content: start;
+            overflow-y: auto;
+            max-height: calc(70vh);
+            min-height: 200px;
+        }
+        .level-item {
+            aspect-ratio: 1 / 1;
+            border: none;
+            border-radius: 12px;
+            background: #E8D5C0;
+            color: #4A3429;
+            font-size: clamp(22px, 3.5vw, 32px);
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+            transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+        .level-item:hover {
+            transform: translateY(-3px);
+            background: #D2B48C;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+        }
+        .level-item:active { transform: translateY(0); }
+        .level-status {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #8B5A2B;
+            font-size: 16px;
+            padding: 30px 0;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+        #levelSizeS { --color: #FFA500; }
+        #levelSizeM { --color: #C0C0C0; }
+        #levelSizeL { --color: #FF3333; }
         
         .game-container {
             background: rgba(255, 255, 255, 0.734);
@@ -240,7 +326,7 @@
         .tool-annotation-type.active { background-color:#4CAF50; border-color:#2E8B57; }
         .tool-annotation-type.active svg { filter: brightness(0) invert(1); }
         .tool-annotation-type svg { color:#000000; fill:#000000; stroke:#000000; }
-        .main-game-area { flex:1; display:flex; flex-direction:column; }
+        .main-game-area { flex:1; display:flex; flex-direction:column; min-width: 0; }
         .controls { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; justify-content:center; width:100%; }
         .control-btn { background-color:#A0542D; color:white; border:none; padding:12px 15px; border-radius:10px; font-size:14px; cursor:pointer; transition:all 0.2s ease; font-weight:600; box-shadow:0 4px 10px rgba(139,90,43,0.3); flex:1; min-width:120px; text-align:center; }
         .control-btn:hover, .control-btn.active { transform:translateY(-2px); box-shadow:0 6px 15px rgba(139,90,43,0.4); }
@@ -375,11 +461,12 @@
             .congrats-subtitle2 { font-size:24px; }
             .congrats-body2 { font-size:20px; padding:20px; }
             .days-number { font-size:26px; }
+            .level-grid { gap: 8px; padding: 8px; }
         }
         @media (max-width:480px) {
             .control-btn { min-width:100%; }
-            .size-btn { padding:18px 15px; font-size:20px; }
-            .size-symbol { font-size:32px; }
+            .level-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 4px; }
+            .level-item { border-radius: 8px; }
         }
         @media (-webkit-min-device-pixel-ratio:2),(min-resolution:192dpi) {
             .tool-btn { background-size:28px 28px; }
@@ -506,18 +593,52 @@
     </style>
 </head>
 <body>
+    <!-- ===== 主菜单 ===== -->
     <div id="startScreen" class="start-screen">
         <div class="header">
             <h1>点桥网页版</h1>
-            <p class="subtitle">选择关卡大小开始游戏</p>
+            <p class="subtitle">选择模式开始</p>
         </div>
-        <div class="size-selection">
-            <button id="sizeS" class="size-btn size-s"><div class="size-symbol">S</div><div class="size-desc">小关卡</div><div style="font-size: 14px; margin-top: 5px;">宽20 × 高30</div></button>
-            <button id="sizeM" class="size-btn size-m"><div class="size-symbol">M</div><div class="size-desc">中等关卡</div><div style="font-size: 14px; margin-top: 5px;">宽40 × 高30</div></button>
-            <button id="sizeL" class="size-btn size-l"><div class="size-symbol">L</div><div class="size-desc">大关卡</div><div style="font-size: 14px; margin-top: 5px;">宽40 × 高55</div></button>
+        <div class="main-menu-row main-menu-row-top">
+            <button id="sizeS" class="menu-btn menu-btn-s"><span>S</span><small>小关卡</small></button>
+            <button id="sizeM" class="menu-btn menu-btn-m"><span>M</span><small>中等关卡</small></button>
+            <button id="sizeL" class="menu-btn menu-btn-l"><span>L</span><small>大关卡</small></button>
+        </div>
+        <div class="main-menu-row main-menu-row-bottom">
+            <button id="menuLevelsBtn" class="menu-btn menu-btn-g"><span>G</span><small>关卡</small></button>
+            <button id="menuTutorialBtn" class="menu-btn menu-btn-r"><span>R</span><small>教程</small></button>
+            <button id="menuSettingsBtn" class="menu-btn menu-btn-x"><span>X</span><small>设置</small></button>
+            <button id="menuAboutBtn" class="menu-btn menu-btn-a"><span>A</span><small>关于</small></button>
+        </div>
+    </div>
+
+    <!-- ===== 关卡选择 ===== -->
+    <div id="levelSelectScreen" class="game-screen" style="display:none;">
+        <button id="levelExitBtn" class="exit-btn" title="返回主界面">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="header">
+            <div id="levelTitle" class="game-phase">关卡：大，40x55</div>
+        </div>
+        <div class="game-container">
+            <div class="game-content">
+                <div class="left-toolbar">
+                    <div class="tool-section">
+                        <button id="levelSizeS" class="tool-btn size-tool-btn" data-size="S">S</button>
+                        <button id="levelSizeM" class="tool-btn size-tool-btn" data-size="M">M</button>
+                        <button id="levelSizeL" class="tool-btn size-tool-btn active" data-size="L">L</button>
+                    </div>
+                </div>
+                <div class="main-game-area">
+                    <div id="levelGrid" class="level-grid">
+                        <div class="level-status">加载中…</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
+    <!-- ===== 游戏界面 ===== -->
     <div id="gameScreen" class="game-screen">
         <button id="exitBtn" class="exit-btn" title="返回主界面">
             <svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#4A3429" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -681,6 +802,12 @@
     <div class="fixed-copyright">Website Copyright—DotLink Association, Bj8z, Class 29, Jirui, Junzi, etc. All Rights Reserved.</div>
 
     <script>
+        /* ========== 关卡资源位置配置 ========== */
+        // 关卡文件与网页部署在同一 GitHub Pages 站点，直接使用相对路径
+        const LEVEL_FOLDERS = { S: 'Small', M: 'Medium', L: 'Large' };
+        const SIZE_NAMES = { S: '小', M: '中', L: '大' };
+        const LEVEL_INDEX_CACHE_KEY = 'dotlink_level_index_v1';
+
         /* ========== 禁用下拉刷新 ========== */
         (function () {
             let startY = 0;
@@ -732,7 +859,10 @@
             pausedDuration: 0,
             specialFireworkActive: false,
             solutionPath: null,
-            hintShown: false
+            hintShown: false,
+            fromLevel: false,
+            levelSize: 'L',
+            levelSelectSize: 'L'
         };
 
         const sizeDefinitions = {
@@ -742,6 +872,7 @@
         };
 
         const startScreen = document.getElementById('startScreen');
+        const levelSelectScreen = document.getElementById('levelSelectScreen');
         const gameScreen = document.getElementById('gameScreen');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -800,6 +931,16 @@
         const daysSinceFoundingSpan = document.getElementById('daysSinceFounding');
         const daysSinceWebsiteSpan = document.getElementById('daysSinceWebsite');
         const hintBtn = document.getElementById('hintBtn');
+        const levelTitle = document.getElementById('levelTitle');
+        const levelGrid = document.getElementById('levelGrid');
+        const levelExitBtn = document.getElementById('levelExitBtn');
+        const levelSizeS = document.getElementById('levelSizeS');
+        const levelSizeM = document.getElementById('levelSizeM');
+        const levelSizeL = document.getElementById('levelSizeL');
+        const menuLevelsBtn = document.getElementById('menuLevelsBtn');
+        const menuTutorialBtn = document.getElementById('menuTutorialBtn');
+        const menuSettingsBtn = document.getElementById('menuSettingsBtn');
+        const menuAboutBtn = document.getElementById('menuAboutBtn');
 
         // 用于查看答案确认弹窗期间暂停计时
         let hintPauseState = null;
@@ -847,6 +988,136 @@
             }
         }
 
+        /* ========== 关卡数据的编码与解码 ========== */
+        function encodeLevel() {
+            const size = gameState.currentSize;
+            const pointsStr = gameState.points.map(p => `${p.x},${p.y}`).join('|');
+            const wallsStr = gameState.walls.map(w => `${w.x},${w.y}`).join('|');
+            const wallLinesStr = gameState.wallLines.map(line => `${line.start.x},${line.start.y}-${line.end.x},${line.end.y}`).join('|');
+            return `${size};${pointsStr};${wallsStr};${wallLinesStr}`;
+        }
+
+        function decodeAndLoad(code) {
+            const parts = code.split(';');
+            if (parts.length !== 4) throw new Error('格式错误：必须包含4个部分（尺寸;点;墙;墙线）');
+            const [sizeLetter, pointsPart, wallsPart, wallLinesPart] = parts;
+            if (!['S','M','L'].includes(sizeLetter)) throw new Error('尺寸必须是 S, M, 或 L');
+
+            const newPoints = [];
+            if (pointsPart.trim() !== '') {
+                const pointTokens = pointsPart.split('|');
+                for (const token of pointTokens) {
+                    const [x, y] = token.split(',').map(Number);
+                    if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
+                        throw new Error(`点坐标无效: ${token}`);
+                    newPoints.push({ x, y });
+                }
+            }
+
+            const newWalls = [];
+            if (wallsPart.trim() !== '') {
+                const wallTokens = wallsPart.split('|');
+                for (const token of wallTokens) {
+                    const [x, y] = token.split(',').map(Number);
+                    if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
+                        throw new Error(`墙坐标无效: ${token}`);
+                    newWalls.push({ x, y });
+                }
+            }
+
+            const newWallLines = [];
+            const wallLinePointsSet = new Set();
+            if (wallLinesPart.trim() !== '') {
+                const lineTokens = wallLinesPart.split('|');
+                for (const token of lineTokens) {
+                    const [startStr, endStr] = token.split('-');
+                    if (!startStr || !endStr) throw new Error(`墙线段格式错误: ${token}`);
+                    const [sx, sy] = startStr.split(',').map(Number);
+                    const [ex, ey] = endStr.split(',').map(Number);
+                    if ([sx, sy, ex, ey].some(isNaN) || !Number.isInteger(sx) || !Number.isInteger(sy) || !Number.isInteger(ex) || !Number.isInteger(ey))
+                        throw new Error(`墙线段坐标无效: ${token}`);
+                    const dx = ex - sx, dy = ey - sy;
+                    if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)))
+                        throw new Error(`墙线段必须水平、垂直或45度对角线: ${token}`);
+                    const steps = Math.max(Math.abs(dx), Math.abs(dy));
+                    for (let i = 0; i <= steps; i++) {
+                        const x = sx + Math.round(dx * i / steps);
+                        const y = sy + Math.round(dy * i / steps);
+                        wallLinePointsSet.add(`${x},${y}`);
+                    }
+                    newWallLines.push({
+                        start: { x: sx, y: sy },
+                        end: { x: ex, y: ey },
+                        angle: dx === 0 ? 90 : (dy === 0 ? 0 : (dx * dy > 0 ? 45 : 135))
+                    });
+                }
+            }
+
+            for (const p of newPoints) {
+                if (wallLinePointsSet.has(`${p.x},${p.y}`)) throw new Error(`点 (${p.x},${p.y}) 位于墙线上，非法`);
+            }
+            const pointSet = new Set(newPoints.map(p => `${p.x},${p.y}`));
+            for (const w of newWalls) {
+                if (pointSet.has(`${w.x},${w.y}`)) throw new Error(`墙 (${w.x},${w.y}) 与点重叠`);
+            }
+
+            const sizeDef = sizeDefinitions[sizeLetter];
+            const maxX = sizeDef.width - 1, maxY = sizeDef.height - 1;
+            for (const p of newPoints) if (p.x < 0 || p.x > maxX || p.y < 0 || p.y > maxY) throw new Error(`点 (${p.x},${p.y}) 超出棋盘范围`);
+            for (const w of newWalls) if (w.x < 0 || w.x > maxX || w.y < 0 || w.y > maxY) throw new Error(`墙 (${w.x},${w.y}) 超出棋盘范围`);
+            for (const line of newWallLines) {
+                if (line.start.x < 0 || line.start.x > maxX || line.start.y < 0 || line.start.y > maxY ||
+                    line.end.x < 0 || line.end.x > maxX || line.end.y < 0 || line.end.y > maxY)
+                    throw new Error(`墙线段端点超出棋盘范围`);
+            }
+
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+            gameState.points = newPoints.map((p, index) => ({ ...p, id: index + 1 }));
+            gameState.walls = newWalls.map((w, index) => ({ ...w, id: index + 1 }));
+            gameState.wallLines = newWallLines;
+            gameState.wallLinePoints = wallLinePointsSet;
+            gameState.lines = [];
+            gameState.annotations.clear();
+            gameState.selectedPoint = null;
+            gameState.selectedWallLineStart = null;
+            gameState.pointIdCounter = gameState.points.length + 1;
+            gameState.wallIdCounter = gameState.walls.length + 1;
+            gameState.currentSize = sizeLetter;
+            gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
+            setPhase('placing');
+            gameState.history = [];
+            gameState.isAnswering = false;
+            gameState.isCompleted = false;
+            gameState.answerLocked = false;
+            gameState.specialFireworkActive = false;
+            gameState.isPaused = false;
+            gameState.pausedDuration = 0;
+            gameState.startTime = 0;
+            gameState.elapsedTime = 0;
+            gameState.solutionPath = null;
+            gameState.hintShown = false;
+            hintPauseState = null;
+            timerFreezeReasons.clear();
+            timerFrozenAt = null;
+            timerDisplay.style.display = 'none';
+            timerDisplay.classList.remove('timer-gray');
+            pauseOverlay.style.display = 'none';
+            // 恢复所有按钮状态
+            document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
+            specialActionBtn.disabled = false;
+            hintBtn.disabled = false;
+            hintBtn.style.display = 'none';
+            returnPhase1Btn.disabled = false;
+            toolAnnotationModeBtn.style.display = '';
+            updateSpecialButton();
+            updateSizeUI();
+            updateUI();
+            resizeCanvas();
+            drawEverything();
+            saveToHistory();
+        }
+
         function initGame() {
             sizeS.addEventListener('click', () => startGame('S'));
             sizeM.addEventListener('click', () => startGame('M'));
@@ -888,6 +1159,16 @@
             congrats2ExitBtn.addEventListener('click', function() {
                 showConfirmMessage('返回主界面', '确定要返回主界面吗？', exitWithoutConfirm);
             });
+
+            /* ===== 主菜单按钮 ===== */
+            menuLevelsBtn.addEventListener('click', enterLevelSelect);
+            menuTutorialBtn.addEventListener('click', () => showMessage('教程', '教程功能正在建设中，敬请期待！'));
+            menuSettingsBtn.addEventListener('click', () => showMessage('设置', '设置功能正在建设中，敬请期待！'));
+            menuAboutBtn.addEventListener('click', () => showMessage('关于', '点桥网页版<br>DotLink Association'));
+            levelExitBtn.addEventListener('click', exitLevelSelectToMenu);
+            levelSizeS.addEventListener('click', () => switchLevelSize('S'));
+            levelSizeM.addEventListener('click', () => switchLevelSize('M'));
+            levelSizeL.addEventListener('click', () => switchLevelSize('L'));
             
             canvas.addEventListener('click', handleCanvasClick);
 
@@ -906,8 +1187,9 @@
                 unfreezeTimer('blur');
             });
             
-            startScreen.style.display = 'block';
+            startScreen.style.display = 'flex';
             gameScreen.style.display = 'none';
+            levelSelectScreen.style.display = 'none';
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
             congratsScreen2.style.display = 'none';
@@ -935,135 +1217,6 @@
                 exportToast.textContent = text || '复制成功';
                 exportToast.style.display = 'block';
                 setTimeout(() => { exportToast.style.display = 'none'; }, 1000);
-            }
-
-            function encodeLevel() {
-                const size = gameState.currentSize;
-                const pointsStr = gameState.points.map(p => `${p.x},${p.y}`).join('|');
-                const wallsStr = gameState.walls.map(w => `${w.x},${w.y}`).join('|');
-                const wallLinesStr = gameState.wallLines.map(line => `${line.start.x},${line.start.y}-${line.end.x},${line.end.y}`).join('|');
-                return `${size};${pointsStr};${wallsStr};${wallLinesStr}`;
-            }
-
-            function decodeAndLoad(code) {
-                const parts = code.split(';');
-                if (parts.length !== 4) throw new Error('格式错误：必须包含4个部分（尺寸;点;墙;墙线）');
-                const [sizeLetter, pointsPart, wallsPart, wallLinesPart] = parts;
-                if (!['S','M','L'].includes(sizeLetter)) throw new Error('尺寸必须是 S, M, 或 L');
-
-                const newPoints = [];
-                if (pointsPart.trim() !== '') {
-                    const pointTokens = pointsPart.split('|');
-                    for (const token of pointTokens) {
-                        const [x, y] = token.split(',').map(Number);
-                        if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
-                            throw new Error(`点坐标无效: ${token}`);
-                        newPoints.push({ x, y });
-                    }
-                }
-
-                const newWalls = [];
-                if (wallsPart.trim() !== '') {
-                    const wallTokens = wallsPart.split('|');
-                    for (const token of wallTokens) {
-                        const [x, y] = token.split(',').map(Number);
-                        if (isNaN(x) || isNaN(y) || x < 0 || y < 0 || !Number.isInteger(x) || !Number.isInteger(y))
-                            throw new Error(`墙坐标无效: ${token}`);
-                        newWalls.push({ x, y });
-                    }
-                }
-
-                const newWallLines = [];
-                const wallLinePointsSet = new Set();
-                if (wallLinesPart.trim() !== '') {
-                    const lineTokens = wallLinesPart.split('|');
-                    for (const token of lineTokens) {
-                        const [startStr, endStr] = token.split('-');
-                        if (!startStr || !endStr) throw new Error(`墙线段格式错误: ${token}`);
-                        const [sx, sy] = startStr.split(',').map(Number);
-                        const [ex, ey] = endStr.split(',').map(Number);
-                        if ([sx, sy, ex, ey].some(isNaN) || !Number.isInteger(sx) || !Number.isInteger(sy) || !Number.isInteger(ex) || !Number.isInteger(ey))
-                            throw new Error(`墙线段坐标无效: ${token}`);
-                        const dx = ex - sx, dy = ey - sy;
-                        if (!(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)))
-                            throw new Error(`墙线段必须水平、垂直或45度对角线: ${token}`);
-                        const steps = Math.max(Math.abs(dx), Math.abs(dy));
-                        for (let i = 0; i <= steps; i++) {
-                            const x = sx + Math.round(dx * i / steps);
-                            const y = sy + Math.round(dy * i / steps);
-                            wallLinePointsSet.add(`${x},${y}`);
-                        }
-                        newWallLines.push({
-                            start: { x: sx, y: sy },
-                            end: { x: ex, y: ey },
-                            angle: dx === 0 ? 90 : (dy === 0 ? 0 : (dx * dy > 0 ? 45 : 135))
-                        });
-                    }
-                }
-
-                for (const p of newPoints) {
-                    if (wallLinePointsSet.has(`${p.x},${p.y}`)) throw new Error(`点 (${p.x},${p.y}) 位于墙线上，非法`);
-                }
-                const pointSet = new Set(newPoints.map(p => `${p.x},${p.y}`));
-                for (const w of newWalls) {
-                    if (pointSet.has(`${w.x},${w.y}`)) throw new Error(`墙 (${w.x},${w.y}) 与点重叠`);
-                }
-
-                const sizeDef = sizeDefinitions[sizeLetter];
-                const maxX = sizeDef.width - 1, maxY = sizeDef.height - 1;
-                for (const p of newPoints) if (p.x < 0 || p.x > maxX || p.y < 0 || p.y > maxY) throw new Error(`点 (${p.x},${p.y}) 超出棋盘范围`);
-                for (const w of newWalls) if (w.x < 0 || w.x > maxX || w.y < 0 || w.y > maxY) throw new Error(`墙 (${w.x},${w.y}) 超出棋盘范围`);
-                for (const line of newWallLines) {
-                    if (line.start.x < 0 || line.start.x > maxX || line.start.y < 0 || line.start.y > maxY ||
-                        line.end.x < 0 || line.end.x > maxX || line.end.y < 0 || line.end.y > maxY)
-                        throw new Error(`墙线段端点超出棋盘范围`);
-                }
-
-                if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
-                gameState.points = newPoints.map((p, index) => ({ ...p, id: index + 1 }));
-                gameState.walls = newWalls.map((w, index) => ({ ...w, id: index + 1 }));
-                gameState.wallLines = newWallLines;
-                gameState.wallLinePoints = wallLinePointsSet;
-                gameState.lines = [];
-                gameState.annotations.clear();
-                gameState.selectedPoint = null;
-                gameState.selectedWallLineStart = null;
-                gameState.pointIdCounter = gameState.points.length + 1;
-                gameState.wallIdCounter = gameState.walls.length + 1;
-                gameState.currentSize = sizeLetter;
-                gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-                setPhase('placing');
-                gameState.history = [];
-                gameState.isAnswering = false;
-                gameState.isCompleted = false;
-                gameState.answerLocked = false;
-                gameState.specialFireworkActive = false;
-                gameState.isPaused = false;
-                gameState.pausedDuration = 0;
-                gameState.startTime = 0;
-                gameState.elapsedTime = 0;
-                gameState.solutionPath = null;
-                gameState.hintShown = false;
-                hintPauseState = null;
-                timerFreezeReasons.clear();
-                timerFrozenAt = null;
-                timerDisplay.style.display = 'none';
-                timerDisplay.classList.remove('timer-gray');
-                pauseOverlay.style.display = 'none';
-                // 恢复所有按钮状态
-                document.querySelectorAll('.control-btn').forEach(btn => btn.disabled = false);
-                document.querySelectorAll('.tool-btn').forEach(btn => btn.disabled = false);
-                specialActionBtn.disabled = false;
-                hintBtn.disabled = false;
-                hintBtn.style.display = 'none';
-                returnPhase1Btn.disabled = false;
-                toolAnnotationModeBtn.style.display = '';
-                updateSpecialButton();
-                updateSizeUI();
-                updateUI();
-                resizeCanvas();
-                drawEverything();
-                saveToHistory();
             }
 
             exportBtn.addEventListener('click', async () => {
@@ -1123,9 +1276,142 @@
             });
         }
 
-        function exitWithoutConfirm() {
-            startScreen.style.display = 'block';
+        /* ========== 主菜单 / 关卡选择逻辑 ========== */
+        function enterLevelSelect() {
+            startScreen.style.display = 'none';
             gameScreen.style.display = 'none';
+            levelSelectScreen.style.display = 'block';
+            secretScreen.style.display = 'none';
+            congratsScreen.style.display = 'none';
+            congratsScreen2.style.display = 'none';
+            switchLevelSize(gameState.levelSelectSize || 'L');
+        }
+
+        function exitLevelSelectToMenu() {
+            levelSelectScreen.style.display = 'none';
+            gameScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+
+        function switchLevelSize(sizeLetter) {
+            gameState.levelSelectSize = sizeLetter;
+            levelSizeS.classList.toggle('active', sizeLetter === 'S');
+            levelSizeM.classList.toggle('active', sizeLetter === 'M');
+            levelSizeL.classList.toggle('active', sizeLetter === 'L');
+            updateLevelTitleText(sizeLetter);
+            renderLevelList(sizeLetter);
+        }
+
+        function updateLevelTitleText(sizeLetter) {
+            const def = sizeDefinitions[sizeLetter];
+            levelTitle.textContent = `关卡：${SIZE_NAMES[sizeLetter]}，${def.width}x${def.height}`;
+        }
+
+        /* ========== 关卡资源加载（相对路径 + 超时 + 缓存） ========== */
+        let levelIndexCache = null;
+
+        function fetchWithTimeout(url, timeoutMs = 8000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { cache: 'no-store', signal: controller.signal })
+                .finally(() => clearTimeout(timer));
+        }
+
+        async function fetchTextSmart(path) {
+            const res = await fetchWithTimeout(path);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.text();
+        }
+
+        async function getLevelIndex() {
+            if (levelIndexCache) return levelIndexCache;
+
+            // 先看本地缓存
+            try {
+                const cached = localStorage.getItem(LEVEL_INDEX_CACHE_KEY);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        levelIndexCache = parsed;
+                        // 后台静默刷新
+                        refreshLevelIndex().catch(() => {});
+                        return levelIndexCache;
+                    }
+                }
+            } catch (e) {}
+
+            return await refreshLevelIndex();
+        }
+
+        async function refreshLevelIndex() {
+            const text = await fetchTextSmart('index.json');
+            const data = JSON.parse(text);
+            if (!Array.isArray(data)) throw new Error('index.json 格式错误');
+            levelIndexCache = data;
+            try { localStorage.setItem(LEVEL_INDEX_CACHE_KEY, text); } catch (e) {}
+            return data;
+        }
+
+        async function renderLevelList(sizeLetter) {
+            levelGrid.innerHTML = '<div class="level-status">加载中…</div>';
+            try {
+                const index = await getLevelIndex();
+                const items = index
+                    .filter(it => (it.filename || '').charAt(0).toUpperCase() === sizeLetter)
+                    .map(it => {
+                        const m = (it.filename || '').match(/(\d+)/);
+                        const num = m ? parseInt(m[1], 10) : 0;
+                        return { ...it, num };
+                    })
+                    .filter(it => it.num > 0)
+                    .sort((a, b) => a.num - b.num);
+
+                if (items.length === 0) {
+                    levelGrid.innerHTML = '<div class="level-status">此大小暂无关卡</div>';
+                    return;
+                }
+                levelGrid.innerHTML = '';
+                items.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'level-item';
+                    btn.textContent = item.num;
+                    btn.title = item.name || item.filename;
+                    btn.addEventListener('click', () => openLevel(item, sizeLetter));
+                    levelGrid.appendChild(btn);
+                });
+            } catch (e) {
+                levelGrid.innerHTML = '<div class="level-status">关卡列表加载失败：' + escapeHtml(e.message) + '</div>';
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        async function openLevel(item, sizeLetter) {
+            const folder = LEVEL_FOLDERS[sizeLetter];
+            const path = `${folder}/${item.filename}`;
+            levelGrid.innerHTML = '<div class="level-status">加载关卡中…</div>';
+            try {
+                const text = (await fetchTextSmart(path)).trim();
+                if (!text) throw new Error('关卡文件为空');
+                // 先切到游戏界面，再解码
+                levelSelectScreen.style.display = 'none';
+                gameScreen.style.display = 'block';
+                startScreen.style.display = 'none';
+                decodeAndLoad(text);
+                gameState.fromLevel = true;
+                gameState.levelSize = sizeLetter;
+            } catch (e) {
+                levelGrid.innerHTML = '<div class="level-status">关卡加载失败：' + escapeHtml(e.message) + '</div>';
+                setTimeout(() => renderLevelList(sizeLetter), 2000);
+            }
+        }
+
+        function exitWithoutConfirm() {
+            startScreen.style.display = 'flex';
+            gameScreen.style.display = 'none';
+            levelSelectScreen.style.display = 'none';
             secretScreen.style.display = 'none';
             congratsScreen.style.display = 'none';
             congratsScreen2.style.display = 'none';
@@ -1136,7 +1422,28 @@
             hintPauseState = null;
             timerFreezeReasons.clear();
             timerFrozenAt = null;
+            gameState.fromLevel = false;
             updateSpecialButton();
+        }
+
+        function returnToLevelSelect() {
+            gameScreen.style.display = 'none';
+            startScreen.style.display = 'none';
+            levelSelectScreen.style.display = 'block';
+            if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval = null; }
+            gameState.timerRunning = false;
+            gameState.isPaused = false;
+            pauseOverlay.style.display = 'none';
+            hintPauseState = null;
+            timerFreezeReasons.clear();
+            timerFrozenAt = null;
+            const sz = gameState.levelSize || 'L';
+            gameState.levelSelectSize = sz;
+            levelSizeS.classList.toggle('active', sz === 'S');
+            levelSizeM.classList.toggle('active', sz === 'M');
+            levelSizeL.classList.toggle('active', sz === 'L');
+            updateLevelTitleText(sz);
+            renderLevelList(sz);
         }
 
         function updateSizeButtonStyles() {
@@ -1201,6 +1508,12 @@
         }
 
         function exitToStartScreen() {
+            if (gameState.fromLevel) {
+                showConfirmMessage("返回关卡选择", "确定要返回关卡选择吗？当前游戏进度将会丢失！", () => {
+                    returnToLevelSelect();
+                });
+                return;
+            }
             if (gameState.phase === 'connecting' && gameState.isAnswering && !gameState.isCompleted) {
                 showConfirmMessage("返回主界面","确定要返回主界面吗？当前游戏进度将会丢失！",()=>{
                     exitWithoutConfirm();
@@ -1238,10 +1551,12 @@
         }
 
         function startGame(size) {
+            gameState.fromLevel = false;
             gameState.currentSize = size;
             const sizeDef = sizeDefinitions[size];
             gameState.gridSize = { width: sizeDef.width, height: sizeDef.height };
-            startScreen.style.display = 'none'; gameScreen.style.display = 'block'; secretScreen.style.display = 'none'; congratsScreen.style.display = 'none'; congratsScreen2.style.display = 'none';
+            startScreen.style.display = 'none'; gameScreen.style.display = 'block'; levelSelectScreen.style.display = 'none';
+            secretScreen.style.display = 'none'; congratsScreen.style.display = 'none'; congratsScreen2.style.display = 'none';
             resetGameState(); setPhase('placing'); updateSizeUI(); updateUI(); resizeCanvas(); drawEverything(); saveToHistory();
         }
 
